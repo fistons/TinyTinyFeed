@@ -19,8 +19,6 @@ public class ViewArticleActivity extends Activity {
         WebSettings settings = view.getSettings();
         settings.setJavaScriptEnabled(true);
         view.loadUrl(intent.getStringExtra(TinyTinyFeed.INTENT_VIEW_ARTICLE));
-
-
     }
 
 
