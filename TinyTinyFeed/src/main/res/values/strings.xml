@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Tiny Tiny Feed</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_setup">Setup</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="setupUrlLabel">Adresse de votre TTRss:</string>
+    <string name="setupUserLabel">Login:</string>
+    <string name="setupPasswordLabel">Mot de passe:</string>
+    <string name="pleaseSetup">Enregistrez vos infos</string>
+    <string name="urlMalFormed">Url de merde, apprends a taper, merde</string>
+    <string name="update_button_label">Mettre à jour</string>
+    <string name="setupNumArticles">Nombre d\'articles à récupérer</string>
+    <string name="title_activity_view_article">ViewArticleActivity</string>
+
+</resources>
