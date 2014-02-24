@@ -1,5 +1,7 @@
 package org.poopeeland.tinytinyfeed;
 
+import android.text.Html;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -24,13 +26,13 @@ public class Article {
     public Article(JSONObject json) throws JSONException {
         this.id = json.getInt("id");
         this.title = json.getString("title");
-        this.content = json.getString("excerpt");
-        this.feedTitle = json.getString("feed_title");
+        this.content = Html.fromHtml(json.getString("excerpt")).toString();
         this.url = json.getString("link");
 
         long timestamp = Long.parseLong(json.getString("updated")) * 1000;
         Date date1 = new Date(timestamp);
         this.date = Article.sdf.format(date1);
+        this.feedTitle = json.getString("feed_title");
     }
 
     public Article(String title, String content) {

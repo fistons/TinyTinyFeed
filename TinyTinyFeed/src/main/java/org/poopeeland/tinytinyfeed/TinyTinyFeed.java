@@ -72,7 +72,7 @@ public class TinyTinyFeed extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Article article = (Article) parent.getItemAtPosition(position);
-                setArticleToSeen(article);
+                setArticleToSeenState(article);
                 Intent intent = new Intent(TinyTinyFeed.this, ViewArticleActivity.class);
                 intent.putExtra(INTENT_VIEW_ARTICLE, article.getUrl());
                 startActivity(intent);
@@ -99,10 +99,10 @@ public class TinyTinyFeed extends ActionBarActivity {
         this.updateFeeds(null);
     }
 
-    private void setArticleToSeen(Article article) {
+    private void setArticleToSeenState(Article article) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("session_id", session);
+            jsonObject.put("sid", session);
             jsonObject.put("op", "updateArticle");
             jsonObject.put("article_ids", article.getId());
             jsonObject.put("mode", "0");
@@ -123,9 +123,9 @@ public class TinyTinyFeed extends ActionBarActivity {
 
             JSONObject jsonObject = new JSONObject();
             try {
-                jsonObject.put("session_id", session);
+                jsonObject.put("sid", session);
                 jsonObject.put("op", "getHeadlines");
-                jsonObject.put("feed_id", "-3");
+                jsonObject.put("feed_id", "-4");
                 jsonObject.put("limit", this.numArticles);
                 jsonObject.put("show_excerpt", "true");
 
@@ -180,7 +180,7 @@ public class TinyTinyFeed extends ActionBarActivity {
     private boolean isLogged() {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("session_id", session);
+            jsonObject.put("sid", session);
             jsonObject.put("op", "isLoggedIn");
 
             RequestTask task = new RequestTask(this.client);
