@@ -46,6 +46,7 @@ public class SetupActivity extends Activity {
         super.onPause();
 
         SharedPreferences.Editor editor = this.preferences.edit();
+
         try {
             new URL(url.getText().toString());
             editor.putString(TinyTinyFeed.URL_KEY, url.getText().toString());

@@ -25,11 +25,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name="org.poopeeland.tinytinyfeed.SetupActivity"
             android:label="@string/title_activity_setup"
-            android:parentActivityName="org.poopeeland.tinytinyfeed.TinyTinyFeed"></activity>
+            android:parentActivityName="org.poopeeland.tinytinyfeed.TinyTinyFeed" />
         <activity
             android:name="org.poopeeland.tinytinyfeed.ViewArticleActivity"
             android:label="@string/title_activity_view_article"
@@ -38,6 +37,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.poopeeland.tinytinyfeed.FeedActivity" />
         </activity>
+
+        <service
+            android:name="org.poopeeland.tinytinyfeed.FeedRetriever"
+            android:enabled="true"
+            android:exported="false"></service>
     </application>
 
 </manifest>
