@@ -13,5 +13,10 @@
     <string name="update_button_label">Mettre à jour</string>
     <string name="setupNumArticles">Nombre d\'articles à récupérer</string>
     <string name="title_activity_view_article">ViewArticleActivity</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="configure">Configure</string>
+    <string name="add_widget">Add widget</string>
+    <string name="emptyWidgetListTest">Aucun flux a afficher</string>
+    <string name="setupOkButtonText">Enregistrer</string>
 
 </resources>
