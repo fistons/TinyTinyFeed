@@ -41,7 +41,23 @@
         <service
             android:name="org.poopeeland.tinytinyfeed.FeedRetriever"
             android:enabled="true"
-            android:exported="false"></service>
+            android:exported="false" />
+
+        <activity android:name="org.poopeeland.tinytinyfeed.TinyTinyFeedWidgetConfigureActivity">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
+        <receiver android:name="org.poopeeland.tinytinyfeed.TinyTinyFeedWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/tiny_tiny_feed_widget_info" />
+        </receiver>
     </application>
 
 </manifest>

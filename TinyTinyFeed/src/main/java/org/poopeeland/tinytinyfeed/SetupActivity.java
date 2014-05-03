@@ -1,8 +1,11 @@
 package org.poopeeland.tinytinyfeed;
 
 import android.app.Activity;
+import android.appwidget.AppWidgetManager;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -11,6 +14,7 @@ import java.net.URL;
 
 public class SetupActivity extends Activity {
 
+    private int widgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     private SharedPreferences preferences;
     private EditText url;
     private EditText user;
@@ -21,9 +25,46 @@ public class SetupActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // On annule, comme ça si le user fait "back" sans faire ok avant, on est perché
+        setResult(RESULT_CANCELED);
         setContentView(R.layout.activity_setup);
+
+        findViewById(R.id.setupOkButton).setOnClickListener(onClickListener);
+
+        // Find the widget id from the intent.
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            widgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+        }
+
+        // If this activity was started with an intent without an app widget ID, finish with an error.
+       /* if (widgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
+            finish();
+            return;
+        }*/
+
+
+
     }
 
+    View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            save();
+
+            if (widgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+                Intent resultValue = new Intent();
+                resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
+                setResult(RESULT_OK, resultValue);
+            } else {
+                setResult(RESULT_OK);
+            }
+
+            finish();
+        }
+    };
 
     @Override
     protected void onResume() {
@@ -41,10 +82,7 @@ public class SetupActivity extends Activity {
         this.numArticle.setText(this.preferences.getString(TinyTinyFeed.NUM_ARTICLE_KEY, ""));
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-
+    private void save() {
         SharedPreferences.Editor editor = this.preferences.edit();
 
         try {
