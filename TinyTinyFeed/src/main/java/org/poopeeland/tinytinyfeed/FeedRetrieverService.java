@@ -9,6 +9,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
+import android.widget.RemoteViewsService;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -30,7 +31,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class FeedRetriever extends Service {
+@Deprecated
+public class FeedRetrieverService extends Service {
 
     private final IBinder mBinder = new LocalBinder();
     private ConnectivityManager connMgr;
@@ -41,7 +43,6 @@ public class FeedRetriever extends Service {
     private String user;
     private String numArticles;
     private HttpClient client;
-
 
     private void login() throws RequiredInfoNotRegistred {
 
@@ -163,8 +164,8 @@ public class FeedRetriever extends Service {
 
 
     public class LocalBinder extends Binder {
-        public FeedRetriever getService() {
-            return FeedRetriever.this;
+        public FeedRetrieverService getService() {
+            return FeedRetrieverService.this;
         }
     }
 
@@ -181,6 +182,7 @@ public class FeedRetriever extends Service {
 
         return mBinder;
     }
+
 
     private class RequestTask extends AsyncTask<JSONObject, Void, JSONObject> {
 

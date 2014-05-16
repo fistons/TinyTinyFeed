@@ -21,6 +21,10 @@ public class SetupActivity extends Activity {
     private EditText password;
     private EditText numArticle;
 
+    public SetupActivity() {
+        super();
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

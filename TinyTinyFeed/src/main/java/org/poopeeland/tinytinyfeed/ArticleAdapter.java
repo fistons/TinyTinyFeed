@@ -1,12 +1,16 @@
 package org.poopeeland.tinytinyfeed;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.RemoteViews;
+import android.widget.RemoteViewsService;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,6 +30,8 @@ public class ArticleAdapter extends ArrayAdapter<Article> {
         this.articles = values;
         this.layoutInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
+
+
 
 
     @Override

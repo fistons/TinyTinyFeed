@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:minWidth="250dp"
+    android:minWidth="300dp"
     android:minHeight="40dp"
-    android:updatePeriodMillis="900000"
+    android:updatePeriodMillis="1800000"
     android:initialLayout="@layout/tiny_tiny_feed_widget"
     android:configure="org.poopeeland.tinytinyfeed.SetupActivity"
     android:resizeMode="vertical"
     android:widgetCategory="home_screen"
-    android:initialKeyguardLayout="@layout/tiny_tiny_feed_widget"></appwidget-provider>
+    android:initialKeyguardLayout="@layout/tiny_tiny_feed_widget"/>

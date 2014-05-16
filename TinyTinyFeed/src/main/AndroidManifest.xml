@@ -5,7 +5,7 @@
     android:versionName="1.0">
 
     <uses-sdk
-        android:minSdkVersion="7"
+        android:minSdkVersion="16"
         android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -16,7 +16,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
-        <activity
+       <!-- <activity
             android:name="org.poopeeland.tinytinyfeed.TinyTinyFeed"
             android:label="@string/app_name">
             <intent-filter>
@@ -24,11 +24,16 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity>  -->
         <activity
             android:name="org.poopeeland.tinytinyfeed.SetupActivity"
-            android:label="@string/title_activity_setup"
-            android:parentActivityName="org.poopeeland.tinytinyfeed.TinyTinyFeed" />
+            android:label="@string/app_name">
+                <intent-filter>
+                    <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+                    <action android:name="android.intent.action.MAIN" />
+                    <category android:name="android.intent.category.LAUNCHER" />
+                </intent-filter>
+        </activity>
         <activity
             android:name="org.poopeeland.tinytinyfeed.ViewArticleActivity"
             android:label="@string/title_activity_view_article"
@@ -38,16 +43,14 @@
                 android:value="org.poopeeland.tinytinyfeed.FeedActivity" />
         </activity>
 
-        <service
-            android:name="org.poopeeland.tinytinyfeed.FeedRetriever"
+        <!--<service
+            android:name=".FeedRetrieverService"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="false" />-->
 
-        <activity android:name="org.poopeeland.tinytinyfeed.TinyTinyFeedWidgetConfigureActivity">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
-            </intent-filter>
-        </activity>
+
+        <service android:name=".widget.WidgetService"
+                 android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <receiver android:name="org.poopeeland.tinytinyfeed.TinyTinyFeedWidget">
             <intent-filter>

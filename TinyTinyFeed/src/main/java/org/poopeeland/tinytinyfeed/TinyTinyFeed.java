@@ -21,7 +21,7 @@ import org.poopeeland.tinytinyfeed.exceptions.RequiredInfoNotRegistred;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Deprecated
 public class TinyTinyFeed extends ActionBarActivity {
 
     public static final String PREFERENCE_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_KEY";
@@ -45,7 +45,7 @@ public class TinyTinyFeed extends ActionBarActivity {
     private ListView listView;
 
 
-    private FeedRetriever service;
+    private FeedRetrieverService service;
     private boolean bound = false;
 
 
@@ -91,6 +91,7 @@ public class TinyTinyFeed extends ActionBarActivity {
         }
     }
 
+    @Override
     protected void onStart() {
         super.onStart();
 
@@ -98,7 +99,7 @@ public class TinyTinyFeed extends ActionBarActivity {
     }
 
     private void bound() {
-        Intent intent = new Intent(this, FeedRetriever.class);
+        Intent intent = new Intent(this, FeedRetrieverService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
@@ -158,7 +159,7 @@ public class TinyTinyFeed extends ActionBarActivity {
         @Override
         public void onServiceConnected(ComponentName className, IBinder mservice) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
-            FeedRetriever.LocalBinder binder = (FeedRetriever.LocalBinder) mservice;
+            FeedRetrieverService.LocalBinder binder = (FeedRetrieverService.LocalBinder) mservice;
             service = binder.getService();
             bound = true;
             updateFeeds(null);
