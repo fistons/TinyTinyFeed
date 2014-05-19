@@ -40,6 +40,12 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
             rv.setEmptyView(R.id.listViewWidget, R.id.widgetEmptyList);
             rv.setOnClickPendingIntent(R.id.setupButton, actionPendingIntent(context));
 
+            Intent startActivityIntent = new Intent(Intent.ACTION_VIEW);
+            PendingIntent startActivityPendingIntent = PendingIntent.getActivity(context, 0, startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            rv.setPendingIntentTemplate(R.id.listViewWidget, startActivityPendingIntent);
+
+
+
 
             appWidgetManager.updateAppWidget(appWidgetIds[i], rv);
             super.onUpdate(context, appWidgetManager, appWidgetIds);

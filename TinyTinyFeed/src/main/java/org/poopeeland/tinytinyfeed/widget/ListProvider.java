@@ -1,12 +1,14 @@
 package org.poopeeland.tinytinyfeed.widget;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -30,27 +32,36 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+;
+
 /**
  * Created by eric on 11/05/14.
  */
-public class ListProvider  implements RemoteViewsService.RemoteViewsFactory {
+public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
     private static final String TAG = "ListProvider";
+    public static final String ARTICLE_URL = "ARTICLE_URL";
 
     private List<Article> articleList = new ArrayList();
     private Context context;
     private int appWidgetId;
-
+    private ConnectivityManager connMgr;
+    private String session;
+    private String url;
+    private String password;
+    private String user;
+    private String numArticles;
+    private HttpClient client;
 
     public ListProvider(Context context, Intent intent) {
         this.context = context;
         appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
     }
-
 
     private void populateListItem() {
         Log.d(TAG, "Refresh the articles list");
@@ -67,7 +78,6 @@ public class ListProvider  implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public void onCreate() {
         start();
-        populateListItem();
     }
 
     @Override
@@ -86,13 +96,23 @@ public class ListProvider  implements RemoteViewsService.RemoteViewsFactory {
         return articleList.size();
     }
 
+
     @Override
     public RemoteViews getViewAt(int position) {
         final RemoteViews remoteView = new RemoteViews(context.getPackageName(), R.layout.article_layout);
         Article listItem = articleList.get(position);
+
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(listItem.getUrl()));
+
         remoteView.setTextViewText(R.id.title, listItem.getTitle());
         remoteView.setTextViewText(R.id.feedNameAndDate, listItem.getFeeTitle());
         remoteView.setTextViewText(R.id.resume, listItem.getContent());
+
+        Intent fillInIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(listItem.getUrl()));
+        remoteView.setOnClickFillInIntent(R.id.articleLayout, fillInIntent);
+
 
         return remoteView;
     }
@@ -116,32 +136,6 @@ public class ListProvider  implements RemoteViewsService.RemoteViewsFactory {
     public boolean hasStableIds() {
         return true;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    private ConnectivityManager connMgr;
-
-    private String session;
-    private String url;
-    private String password;
-    private String user;
-    private String numArticles;
-    private HttpClient client;
 
     private void login() throws RequiredInfoNotRegistred {
 
@@ -260,7 +254,6 @@ public class ListProvider  implements RemoteViewsService.RemoteViewsFactory {
         NetworkInfo networkInfo = this.connMgr.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnected();
     }
-
 
 
     public void start() {

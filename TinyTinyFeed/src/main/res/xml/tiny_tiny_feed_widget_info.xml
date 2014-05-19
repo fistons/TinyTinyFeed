@@ -7,4 +7,5 @@
     android:configure="org.poopeeland.tinytinyfeed.SetupActivity"
     android:resizeMode="vertical"
     android:widgetCategory="home_screen"
-    android:initialKeyguardLayout="@layout/tiny_tiny_feed_widget"/>
+    android:initialKeyguardLayout="@layout/tiny_tiny_feed_widget"
+    android:previewImage="@drawable/appwidget_preview"/>
