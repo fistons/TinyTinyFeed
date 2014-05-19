@@ -13,6 +13,9 @@ import android.widget.RemoteViews;
 
 import org.poopeeland.tinytinyfeed.widget.WidgetService;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 
 /**
  * Implementation of App Widget functionality.
@@ -22,11 +25,20 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
 
     private static final String TAG = "TinyTinyFeedWidget";
 
+    public static PendingIntent actionPendingIntent(Context context, int[] id) {
+        Log.d(TAG, "Create pending intent");
+        Intent intent = new Intent(context, TinyTinyFeedWidget.class);
+
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, id);
+
+        return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-
-        Log.d(TAG,"Widget update");
+        Log.d(TAG, "Widget update");
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.listViewWidget);
 
         for (int i = 0; i < appWidgetIds.length; ++i) {
@@ -38,25 +50,22 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
             RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.tiny_tiny_feed_widget);
             rv.setRemoteAdapter(R.id.listViewWidget, intent);
             rv.setEmptyView(R.id.listViewWidget, R.id.widgetEmptyList);
-            rv.setOnClickPendingIntent(R.id.setupButton, actionPendingIntent(context));
+            rv.setOnClickPendingIntent(R.id.lastUpdateText, actionPendingIntent(context, appWidgetIds));
 
             Intent startActivityIntent = new Intent(Intent.ACTION_VIEW);
             PendingIntent startActivityPendingIntent = PendingIntent.getActivity(context, 0, startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             rv.setPendingIntentTemplate(R.id.listViewWidget, startActivityPendingIntent);
 
 
-
+            Date date = new Date();
+            DateFormat dateFormat = DateFormat.getDateTimeInstance();
+            String dateStr = dateFormat.format(date);
+            CharSequence text = context.getText(R.string.lastUpdateText);
+            rv.setTextViewText(R.id.lastUpdateText, String.format(text.toString(), dateStr));
 
             appWidgetManager.updateAppWidget(appWidgetIds[i], rv);
             super.onUpdate(context, appWidgetManager, appWidgetIds);
         }
-    }
-
-
-    public static PendingIntent actionPendingIntent(Context context) {
-        Intent intent = new Intent(context, SetupActivity.class);
-        intent.setAction("LAUNCH_ACTIVITY");
-        return PendingIntent.getActivity(context, 0, intent,PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
 }
