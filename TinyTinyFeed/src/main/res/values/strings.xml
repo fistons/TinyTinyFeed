@@ -18,5 +18,7 @@
     <string name="add_widget">Add widget</string>
     <string name="emptyWidgetListTest">Aucun flux a afficher</string>
     <string name="setupOkButtonText">Enregistrer</string>
+    <string name="defaultLastUpdateText">Never updated</string>
+    <string name="lastUpdateText">Dernière mise à jour: %s</string>
 
 </resources>
