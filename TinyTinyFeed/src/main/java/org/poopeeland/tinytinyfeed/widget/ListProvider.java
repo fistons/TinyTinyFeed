@@ -1,6 +1,5 @@
 package org.poopeeland.tinytinyfeed.widget;
 
-import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
@@ -23,7 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.poopeeland.tinytinyfeed.Article;
 import org.poopeeland.tinytinyfeed.R;
-import org.poopeeland.tinytinyfeed.TinyTinyFeed;
+import org.poopeeland.tinytinyfeed.TinyTinyFeedWidget;
 import org.poopeeland.tinytinyfeed.exceptions.ArticleNotUpdatedException;
 import org.poopeeland.tinytinyfeed.exceptions.NoDataException;
 import org.poopeeland.tinytinyfeed.exceptions.RequiredInfoNotRegistred;
@@ -32,12 +31,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-;
 
 /**
  * Created by eric on 11/05/14.
@@ -45,11 +42,9 @@ import java.util.concurrent.ExecutionException;
 public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
     private static final String TAG = "ListProvider";
-    public static final String ARTICLE_URL = "ARTICLE_URL";
-
-    private List<Article> articleList = new ArrayList();
-    private Context context;
-    private int appWidgetId;
+    private List<Article> articleList = new ArrayList<Article>();
+    private final Context context;
+    private final int appWidgetId;
     private ConnectivityManager connMgr;
     private String session;
     private String url;
@@ -60,7 +55,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
     public ListProvider(Context context, Intent intent) {
         this.context = context;
-        appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+        this.appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
     }
 
     private void populateListItem() {
@@ -161,7 +156,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
         }
     }
 
-    public List<Article> updateFeeds() throws NoDataException, RequiredInfoNotRegistred {
+    private List<Article> updateFeeds() throws NoDataException, RequiredInfoNotRegistred {
         List<Article> list = new ArrayList<Article>();
         if (checkNetwork()) {
             if (!isLogged()) {
@@ -179,7 +174,6 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
                 RequestTask task = new RequestTask(this.client);
                 task.execute(jsonObject);
                 JSONObject response = task.get();
-                List<Article> articles = new ArrayList<Article>();
                 for (int i = 0; i < response.getJSONArray("content").length(); i++) {
                     list.add(new Article(response.getJSONArray("content").getJSONObject(i)));
                 }
@@ -223,7 +217,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     }
 
 
-    public void setArticleToSeenState(Article article) throws ArticleNotUpdatedException {
+    private void setArticleToSeenState(Article article) throws ArticleNotUpdatedException {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("sid", session);
@@ -241,11 +235,11 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
 
     private void checkRequieredInfoRegistred() throws RequiredInfoNotRegistred {
-        SharedPreferences preferences = context.getSharedPreferences(TinyTinyFeed.PREFERENCE_KEY, context.MODE_PRIVATE);
-        if (!(preferences.contains(TinyTinyFeed.URL_KEY) &&
-                preferences.contains(TinyTinyFeed.USER_KEY) &&
-                preferences.contains(TinyTinyFeed.PASSWORD_KEY) &&
-                preferences.contains(TinyTinyFeed.NUM_ARTICLE_KEY))) {
+        SharedPreferences preferences = context.getSharedPreferences(TinyTinyFeedWidget.PREFERENCE_KEY, Context.MODE_PRIVATE);
+        if (!(preferences.contains(TinyTinyFeedWidget.URL_KEY) &&
+                preferences.contains(TinyTinyFeedWidget.USER_KEY) &&
+                preferences.contains(TinyTinyFeedWidget.PASSWORD_KEY) &&
+                preferences.contains(TinyTinyFeedWidget.NUM_ARTICLE_KEY))) {
             throw new RequiredInfoNotRegistred();
         }
     }
@@ -256,15 +250,15 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     }
 
 
-    public void start() {
+    private void start() {
         this.connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         this.client = new DefaultHttpClient();
 
-        SharedPreferences preferences = context.getSharedPreferences(TinyTinyFeed.PREFERENCE_KEY, Context.MODE_PRIVATE);
-        this.url = preferences.getString(TinyTinyFeed.URL_KEY, "");
-        this.user = preferences.getString(TinyTinyFeed.USER_KEY, "");
-        this.password = preferences.getString(TinyTinyFeed.PASSWORD_KEY, "");
-        this.numArticles = preferences.getString(TinyTinyFeed.NUM_ARTICLE_KEY, "");
+        SharedPreferences preferences = context.getSharedPreferences(TinyTinyFeedWidget.PREFERENCE_KEY, Context.MODE_PRIVATE);
+        this.url = preferences.getString(TinyTinyFeedWidget.URL_KEY, "");
+        this.user = preferences.getString(TinyTinyFeedWidget.USER_KEY, "");
+        this.password = preferences.getString(TinyTinyFeedWidget.PASSWORD_KEY, "");
+        this.numArticles = preferences.getString(TinyTinyFeedWidget.NUM_ARTICLE_KEY, "");
     }
 
 

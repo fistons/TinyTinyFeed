@@ -30,7 +30,5 @@
         android:layout_height="wrap_content"
         android:text=""
         android:id="@+id/resume"
-        android:layout_gravity="left|center_vertical"
-        android:autoText="false"
-        android:inputType="none" />
+        android:layout_gravity="left|center_vertical" />
 </LinearLayout>

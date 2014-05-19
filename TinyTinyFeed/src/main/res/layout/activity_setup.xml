@@ -16,7 +16,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/setupUrl"
-        android:layout_gravity="left|center_vertical" />
+        android:layout_gravity="left|center_vertical"
+        android:inputType="textUri" />
 
     <TextView
         android:layout_width="fill_parent"
@@ -29,7 +30,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/setupUser"
-        android:layout_gravity="left|center_vertical" />
+        android:layout_gravity="left|center_vertical"
+        android:inputType="textPersonName" />
 
     <TextView
         android:layout_width="fill_parent"
@@ -41,7 +43,7 @@
     <EditText
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPassword"
+        android:inputType="textVisiblePassword"
         android:ems="10"
         android:id="@+id/setupPassword"
         android:layout_gravity="left|center_vertical" />

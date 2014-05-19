@@ -4,8 +4,6 @@ import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.widget.RemoteViewsService;
 
-import java.util.ArrayList;
-
 /**
  * Created by eric on 11/05/14.
  */

@@ -23,9 +23,14 @@ import java.util.Date;
  */
 public class TinyTinyFeedWidget extends AppWidgetProvider {
 
+    public static final String PREFERENCE_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_KEY";
+    public static final String URL_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_URL";
+    public static final String USER_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_USER";
+    public static final String PASSWORD_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_PASSWORD";
+    public static final String NUM_ARTICLE_KEY = "org.poopeeland.tinytinyfeed.NUM_ARTICLE_KEY";
     private static final String TAG = "TinyTinyFeedWidget";
 
-    public static PendingIntent actionPendingIntent(Context context, int[] id) {
+    private static PendingIntent actionPendingIntent(Context context, int[] id) {
         Log.d(TAG, "Create pending intent");
         Intent intent = new Intent(context, TinyTinyFeedWidget.class);
 
@@ -41,10 +46,9 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
         Log.d(TAG, "Widget update");
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.listViewWidget);
 
-        for (int i = 0; i < appWidgetIds.length; ++i) {
-
+        for (int i : appWidgetIds) {
             Intent intent = new Intent(context, WidgetService.class);
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetIds[i]);
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, i);
             intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
 
             RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.tiny_tiny_feed_widget);
@@ -63,7 +67,7 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
             CharSequence text = context.getText(R.string.lastUpdateText);
             rv.setTextViewText(R.id.lastUpdateText, String.format(text.toString(), dateStr));
 
-            appWidgetManager.updateAppWidget(appWidgetIds[i], rv);
+            appWidgetManager.updateAppWidget(i, rv);
             super.onUpdate(context, appWidgetManager, appWidgetIds);
         }
     }
