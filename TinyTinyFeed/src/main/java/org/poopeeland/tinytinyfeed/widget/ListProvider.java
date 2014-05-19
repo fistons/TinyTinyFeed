@@ -102,12 +102,12 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
         final RemoteViews remoteView = new RemoteViews(context.getPackageName(), R.layout.article_layout);
         Article listItem = articleList.get(position);
 
-
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(listItem.getUrl()));
 
+        String feedNameAndDate = String.format("%s - %s", listItem.getFeeTitle(), listItem.getDate());
         remoteView.setTextViewText(R.id.title, listItem.getTitle());
-        remoteView.setTextViewText(R.id.feedNameAndDate, listItem.getFeeTitle());
+        remoteView.setTextViewText(R.id.feedNameAndDate, feedNameAndDate);
         remoteView.setTextViewText(R.id.resume, listItem.getContent());
 
         Intent fillInIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(listItem.getUrl()));
