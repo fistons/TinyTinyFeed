@@ -22,6 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.poopeeland.tinytinyfeed.Article;
 import org.poopeeland.tinytinyfeed.R;
+import org.poopeeland.tinytinyfeed.RequestTask;
 import org.poopeeland.tinytinyfeed.TinyTinyFeedWidget;
 import org.poopeeland.tinytinyfeed.exceptions.ArticleNotUpdatedException;
 import org.poopeeland.tinytinyfeed.exceptions.NoDataException;
@@ -67,7 +68,6 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
         } catch (RequiredInfoNotRegistred requiredInfoNotRegistred) {
             requiredInfoNotRegistred.printStackTrace();
         }
-
     }
 
     @Override
@@ -108,7 +108,6 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
         Intent fillInIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(listItem.getUrl()));
         remoteView.setOnClickFillInIntent(R.id.articleLayout, fillInIntent);
 
-
         return remoteView;
     }
 
@@ -142,7 +141,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
             jsonObject.put("password", password);
             jsonObject.put("op", "login");
 
-            RequestTask task = new RequestTask(this.client);
+            RequestTask task = new RequestTask(this.client, this.url);
             task.execute(jsonObject);
             JSONObject response = task.get();
 
@@ -171,7 +170,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
                 jsonObject.put("limit", this.numArticles);
                 jsonObject.put("show_excerpt", "true");
 
-                RequestTask task = new RequestTask(this.client);
+                RequestTask task = new RequestTask(this.client, this.url);
                 task.execute(jsonObject);
                 JSONObject response = task.get();
                 for (int i = 0; i < response.getJSONArray("content").length(); i++) {
@@ -202,7 +201,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
             jsonObject.put("sid", session);
             jsonObject.put("op", "isLoggedIn");
 
-            RequestTask task = new RequestTask(this.client);
+            RequestTask task = new RequestTask(this.client, this.url);
             task.execute(jsonObject);
             JSONObject response = task.get();
             return response.getJSONObject("content").getBoolean("status");
@@ -226,7 +225,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
             jsonObject.put("mode", "0");
             jsonObject.put("field", "2");
 
-            RequestTask task = new RequestTask(this.client);
+            RequestTask task = new RequestTask(this.client, this.url);
             task.execute(jsonObject);
         } catch (JSONException e) {
             throw new ArticleNotUpdatedException();
@@ -262,48 +261,6 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     }
 
 
-    private class RequestTask extends AsyncTask<JSONObject, Void, JSONObject> {
-
-        private final HttpClient client;
-
-        public RequestTask(HttpClient client) {
-            this.client = client;
-        }
-
-        @Override
-        protected JSONObject doInBackground(JSONObject... params) {
-            JSONObject json = params[0];
-
-            try {
-                HttpPost post = new HttpPost(url);
-                StringEntity entity = new StringEntity(json.toString());
-                entity.setContentType("application/json");
-                post.setEntity(entity);
-
-                HttpResponse response = this.client.execute(post);
-                BufferedReader r = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-                StringBuilder sb = new StringBuilder();
-                String buffer;
-                while ((buffer = r.readLine()) != null) {
-                    sb.append(buffer);
-                }
-                r.close();
-
-                return new JSONObject(sb.toString());
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            } catch (ClientProtocolException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-    }
 
 
 }

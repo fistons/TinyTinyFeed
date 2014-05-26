@@ -5,6 +5,8 @@
     <string name="setupUserLabel">Login:</string>
     <string name="setupPasswordLabel">Password:</string>
     <string name="urlMalFormed">Malformed url</string>
+    <string name="urlBadSuffix">The url must end by %s</string>
+    <string name="badLogin">Check your login/password</string>
     <string name="setupNumArticles">Number of article to retrieve</string>
     <string name="emptyWidgetListTest">Feed list is empty</string>
     <string name="setupOkButtonText">Save</string>
