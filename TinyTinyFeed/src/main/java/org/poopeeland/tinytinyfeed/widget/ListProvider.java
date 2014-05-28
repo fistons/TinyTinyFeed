@@ -193,9 +193,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
 
     private boolean isLogged() throws RequiredInfoNotRegistred {
-
         checkRequieredInfoRegistred();
-
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("sid", session);
@@ -214,24 +212,6 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
         }
         return false;
     }
-
-
-    private void setArticleToSeenState(Article article) throws ArticleNotUpdatedException {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("sid", session);
-            jsonObject.put("op", "updateArticle");
-            jsonObject.put("article_ids", article.getId());
-            jsonObject.put("mode", "0");
-            jsonObject.put("field", "2");
-
-            RequestTask task = new RequestTask(this.client, this.url);
-            task.execute(jsonObject);
-        } catch (JSONException e) {
-            throw new ArticleNotUpdatedException();
-        }
-    }
-
 
     private void checkRequieredInfoRegistred() throws RequiredInfoNotRegistred {
         SharedPreferences preferences = context.getSharedPreferences(TinyTinyFeedWidget.PREFERENCE_KEY, Context.MODE_PRIVATE);

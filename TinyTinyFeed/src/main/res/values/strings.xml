@@ -12,4 +12,8 @@
     <string name="setupOkButtonText">Enregistrer</string>
     <string name="defaultLastUpdateText">Jamais mis à jour</string>
     <string name="lastUpdateText">Dernière mise à jour: %s</string>
+
+    <string name="connectionError">Problème de connexion - Vérifiez que le serveur est fonctionnel et que l\'URL est la bonne</string>
+    <string name="impossibleError">LOLWUT?! Comment c\'est possible? Erreur à la con: %s</string>
+    <string name="unknownError">Erreur inconnue: %s</string>
 </resources>

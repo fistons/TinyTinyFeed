@@ -12,4 +12,8 @@
     <string name="setupOkButtonText">Save</string>
     <string name="defaultLastUpdateText">Never updated</string>
     <string name="lastUpdateText">Last update: %s</string>
+
+    <string name="connectionError">Connection issue - Check if the server is online and if the url is the good one</string>
+    <string name="impossibleError">LOLWUT?! Diz iz not pozible! LOOK AT ZAT!: %s</string>
+    <string name="unknownError">Unknow issue: %s</string>
 </resources>

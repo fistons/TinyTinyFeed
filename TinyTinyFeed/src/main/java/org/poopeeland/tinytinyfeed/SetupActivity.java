@@ -108,7 +108,8 @@ public class SetupActivity extends Activity {
         this.numArticle.setText(this.preferences.getString(TinyTinyFeedWidget.NUM_ARTICLE_KEY, "20"));
     }
 
-    private void checkSetup() throws MalformedURLException, UrlSuffixException, JSONException, ExecutionException, InterruptedException, CheckException {        String urlString = url.getText().toString();
+    private void checkSetup() throws MalformedURLException, UrlSuffixException, JSONException, ExecutionException, InterruptedException, CheckException {
+        String urlString = url.getText().toString();
         if (!urlString.endsWith(URL_SUFFIX)) {
             throw new UrlSuffixException();
         }
@@ -121,28 +122,32 @@ public class SetupActivity extends Activity {
         task.execute(jsonObject);
         JSONObject response = task.get();
         if (response.getInt("status") != 0) {
-            TtrssError reason = TtrssError.valueOf(response.getJSONObject("content").getString("error"));
-
-            switch (reason) {
-                case LOGIN_ERROR:
-                    throw new CheckException(getText(R.string.badLogin).toString());
-                case CLIENT_PROTOCOL_EXCEPTION:
-                    Log.e(TAG, response.getJSONObject("content").getString("message"));
-                    throw new CheckException("client protcol");
-                case IO_EXCEPTION:
-                    Log.e(TAG, response.getJSONObject("content").getString("message"));
-                    throw new CheckException("url?");
-                case UNSUPPORTED_ENCODING:
-                    Log.e(TAG, response.getJSONObject("content").getString("message"));
-                    throw new CheckException("encoding");
-                case JSON_EXCEPTION:
-                    Log.e(TAG, response.getJSONObject("content").getString("message"));
-                    throw new CheckException("json");
-                default:
-                    break;
+            try {
+                TtrssError reason = TtrssError.valueOf(response.getJSONObject("content").getString("error"));
+                switch (reason) {
+                    case LOGIN_ERROR:
+                        Log.e(TAG, response.getJSONObject("content").getString("error"));
+                        throw new CheckException(getText(R.string.badLogin).toString());
+                    case CLIENT_PROTOCOL_EXCEPTION:
+                    case UNREACHABLE_TTRSS:
+                    case IO_EXCEPTION:
+                        Log.e(TAG, response.getJSONObject("content").getString("message"));
+                        throw new CheckException(getString(R.string.connectionError));
+                    case UNSUPPORTED_ENCODING:
+                    case JSON_EXCEPTION:
+                        Log.e(TAG, response.getJSONObject("content").getString("message"));
+                        throw new CheckException(String.format(getString(R.string.impossibleError).toString(), response.getJSONObject("content").getString("message")));
+                    default:
+                        Log.e(TAG, response.getJSONObject("content").getString("message"));
+                        throw new CheckException(String.format(getString(R.string.unknownError).toString(), response.getJSONObject("content").getString("message")));
+                }
+            } catch (IllegalArgumentException ex) {
+                Log.e(TAG, response.getJSONObject("content").getString("message"));
+                throw new CheckException(String.format(getString(R.string.unknownError).toString(), response.getJSONObject("content").getString("message")));
             }
         }
     }
+
     private void save() {
         SharedPreferences.Editor editor = this.preferences.edit();
         editor.putString(TinyTinyFeedWidget.URL_KEY, url.getText().toString());
