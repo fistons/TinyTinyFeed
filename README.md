@@ -8,3 +8,5 @@ You need to have an account on a Tiny Tiny RSS installation (v1.12 at least) wit
 The widget updates itself every 30 minutes and shows you the last 20 articles (you can change this value in the settings). 
 
 Be aware that the widget update isn't in sync with the TTRss update.
+
+Artworks from Namida (https://www.facebook.com/NamidaArt / http://boulangermaude.wix.com/namidaart ) - Kuddos to her
