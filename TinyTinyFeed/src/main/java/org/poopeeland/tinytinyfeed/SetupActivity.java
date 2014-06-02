@@ -136,14 +136,14 @@ public class SetupActivity extends Activity {
                     case UNSUPPORTED_ENCODING:
                     case JSON_EXCEPTION:
                         Log.e(TAG, response.getJSONObject("content").getString("message"));
-                        throw new CheckException(String.format(getString(R.string.impossibleError).toString(), response.getJSONObject("content").getString("message")));
+                        throw new CheckException(String.format(getString(R.string.impossibleError), response.getJSONObject("content").getString("message")));
                     default:
                         Log.e(TAG, response.getJSONObject("content").getString("message"));
-                        throw new CheckException(String.format(getString(R.string.unknownError).toString(), response.getJSONObject("content").getString("message")));
+                        throw new CheckException(String.format(getString(R.string.unknownError), response.getJSONObject("content").getString("message")));
                 }
             } catch (IllegalArgumentException ex) {
                 Log.e(TAG, response.getJSONObject("content").getString("message"));
-                throw new CheckException(String.format(getString(R.string.unknownError).toString(), response.getJSONObject("content").getString("message")));
+                throw new CheckException(String.format(getString(R.string.unknownError), response.getJSONObject("content").getString("message")));
             }
         }
     }

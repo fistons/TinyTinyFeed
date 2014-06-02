@@ -30,12 +30,18 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
     public static final String NUM_ARTICLE_KEY = "org.poopeeland.tinytinyfeed.NUM_ARTICLE_KEY";
     private static final String TAG = "TinyTinyFeedWidget";
 
-    private static PendingIntent actionPendingIntent(Context context, int[] id) {
+    /**
+     * Return a Pending Intent asking the refresh of the widget
+     * @param context
+     * @param ids
+     * @return
+     */
+    private static PendingIntent actionPendingIntent(Context context, int[] ids) {
         Log.d(TAG, "Create pending intent");
         Intent intent = new Intent(context, TinyTinyFeedWidget.class);
 
         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, id);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
 
         return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
@@ -45,7 +51,7 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         Log.d(TAG, "Widget update");
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.listViewWidget);
-
+        PendingIntent refreshIntent = actionPendingIntent(context, appWidgetIds);
         for (int i : appWidgetIds) {
             Intent intent = new Intent(context, WidgetService.class);
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, i);
@@ -54,8 +60,9 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
             RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.tiny_tiny_feed_widget);
             rv.setRemoteAdapter(R.id.listViewWidget, intent);
             rv.setEmptyView(R.id.listViewWidget, R.id.widgetEmptyList);
-            rv.setOnClickPendingIntent(R.id.lastUpdateText, actionPendingIntent(context, appWidgetIds));
 
+            rv.setOnClickPendingIntent(R.id.lastUpdateText, refreshIntent);
+            rv.setOnClickPendingIntent(R.id.widgetEmptyList, refreshIntent);
             Intent startActivityIntent = new Intent(Intent.ACTION_VIEW);
             PendingIntent startActivityPendingIntent = PendingIntent.getActivity(context, 0, startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             rv.setPendingIntentTemplate(R.id.listViewWidget, startActivityPendingIntent);
