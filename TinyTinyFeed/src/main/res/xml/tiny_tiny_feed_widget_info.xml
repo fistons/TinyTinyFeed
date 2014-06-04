@@ -5,7 +5,7 @@
     android:updatePeriodMillis="1800000"
     android:initialLayout="@layout/tiny_tiny_feed_widget"
     android:configure="org.poopeeland.tinytinyfeed.SetupActivity"
-    android:resizeMode="vertical"
+    android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen"
     android:initialKeyguardLayout="@layout/tiny_tiny_feed_widget"
     android:previewImage="@drawable/appwidget_preview"/>
