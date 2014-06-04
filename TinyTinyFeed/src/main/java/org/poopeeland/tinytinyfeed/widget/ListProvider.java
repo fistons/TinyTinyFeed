@@ -67,11 +67,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
                 Log.e(TAG, "Some informations are missing");
             } catch (CheckException e) {
                 Log.e(TAG, e.getMessage());
-            } catch (InterruptedException e) {
-                Log.e(TAG, e.getLocalizedMessage());
-            } catch (ExecutionException e) {
-                Log.e(TAG, e.getLocalizedMessage());
-            } catch (JSONException e) {
+            } catch (InterruptedException | ExecutionException | JSONException e) {
                 Log.e(TAG, e.getLocalizedMessage());
             }
         } else {
