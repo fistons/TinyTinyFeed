@@ -20,7 +20,11 @@ If you want, you can send me a [gift](https://www.paypal.com/cgi-bin/webscr?cmd=
 
 * V1.1:
  
-    Correction of the issues #1 #2 #3 #4 #5
+    * Add basic HTTP auth support (thanks to Xeno for the report) (issue #1)
+    * Allow to change the widget width (issue #2)
+    * Change minimum version of android to 4.0 (issue #5)
+    * Change the default language to english (issue #3)
+    * Change the widget preview image (issue #4)
 * V1.0:
 
     Initial release.
