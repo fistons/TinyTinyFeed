@@ -63,6 +63,33 @@
         android:id="@+id/setupArticlesNum"
         android:layout_gravity="left|center_vertical" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/httpAuthUserLabel"
+        android:id="@+id/textView5" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/setupHttpUser"
+        android:linksClickable="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/httpAuthPasswordLabel"
+        android:id="@+id/textView6" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/setupHttpPassword" />
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -1,11 +1,9 @@
 package org.poopeeland.tinytinyfeed;
 
-import android.app.Application;
 import android.os.AsyncTask;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -53,8 +51,14 @@ public class RequestTask extends AsyncTask<JSONObject, Void, JSONObject> {
                 post.setEntity(entity);
 
                 HttpResponse response = this.client.execute(post);
-                if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-                    return createError(TtrssError.UNREACHABLE_TTRSS, "");
+                switch (response.getStatusLine().getStatusCode()) {
+                    case HttpStatus.SC_OK:
+                        // All is fine
+                        break;
+                    case HttpStatus.SC_UNAUTHORIZED:
+                        return createError(TtrssError.HTTP_AUTH_REQUIERED, "");
+                    default:
+                        return createError(TtrssError.UNREACHABLE_TTRSS, "");
                 }
                 BufferedReader r = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
                 StringBuilder sb = new StringBuilder();

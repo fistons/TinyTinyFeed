@@ -11,6 +11,8 @@ import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
@@ -43,7 +45,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     private String password;
     private String user;
     private String numArticles;
-    private HttpClient client;
+    private DefaultHttpClient client;
 
     public ListProvider(Context context, Intent intent) {
         this.context = context;
@@ -204,6 +206,9 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
                     case IO_EXCEPTION:
                         Log.e(TAG, response.getJSONObject("content").getString("message"));
                         throw new CheckException(context.getString(R.string.connectionError));
+                    case HTTP_AUTH_REQUIERED:
+                        Log.e(TAG, response.getJSONObject("content").getString("message"));
+                        throw new CheckException(context.getString(R.string.connectionAuthError));
                     case UNSUPPORTED_ENCODING:
                     case JSON_EXCEPTION:
                         Log.e(TAG, response.getJSONObject("content").getString("message"));
@@ -249,13 +254,19 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
      */
     private void start() {
         this.connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        this.client = new DefaultHttpClient();
-
         SharedPreferences preferences = context.getSharedPreferences(TinyTinyFeedWidget.PREFERENCE_KEY, Context.MODE_PRIVATE);
         this.url = preferences.getString(TinyTinyFeedWidget.URL_KEY, "");
         this.user = preferences.getString(TinyTinyFeedWidget.USER_KEY, "");
         this.password = preferences.getString(TinyTinyFeedWidget.PASSWORD_KEY, "");
         this.numArticles = preferences.getString(TinyTinyFeedWidget.NUM_ARTICLE_KEY, "");
+        String httpUser = preferences.getString(TinyTinyFeedWidget.HTTP_USER_KEY, "");
+        String httpPassword = preferences.getString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, "");
+        this.client = new DefaultHttpClient();
+        if (!httpUser.isEmpty()) {
+            this.client.getCredentialsProvider().setCredentials(AuthScope.ANY,
+                    new UsernamePasswordCredentials(httpUser, httpPassword));
+        }
+
     }
 
 

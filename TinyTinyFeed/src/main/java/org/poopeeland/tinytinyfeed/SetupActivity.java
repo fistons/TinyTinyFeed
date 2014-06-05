@@ -10,6 +10,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -69,6 +72,8 @@ public class SetupActivity extends Activity {
     private EditText url;
     private EditText user;
     private EditText password;
+    private EditText httpPassword;
+    private EditText httpUser;
     private EditText numArticle;
 
 
@@ -101,11 +106,15 @@ public class SetupActivity extends Activity {
         this.user = (EditText) findViewById(R.id.setupUser);
         this.password = (EditText) findViewById(R.id.setupPassword);
         this.numArticle = (EditText) findViewById(R.id.setupArticlesNum);
+        this.httpUser = (EditText) findViewById(R.id.setupHttpUser);
+        this.httpPassword = (EditText) findViewById(R.id.setupHttpPassword);
 
         this.url.setText(this.preferences.getString(TinyTinyFeedWidget.URL_KEY, "http://"));
         this.user.setText(this.preferences.getString(TinyTinyFeedWidget.USER_KEY, ""));
         this.password.setText(this.preferences.getString(TinyTinyFeedWidget.PASSWORD_KEY, ""));
         this.numArticle.setText(this.preferences.getString(TinyTinyFeedWidget.NUM_ARTICLE_KEY, "20"));
+        this.httpUser.setText(this.preferences.getString(TinyTinyFeedWidget.HTTP_USER_KEY, ""));
+        this.httpPassword.setText(this.preferences.getString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, ""));
     }
 
     private void checkSetup() throws MalformedURLException, UrlSuffixException, JSONException, ExecutionException, InterruptedException, CheckException {
@@ -113,12 +122,19 @@ public class SetupActivity extends Activity {
         if (!urlString.endsWith(URL_SUFFIX)) {
             throw new UrlSuffixException();
         }
+        String httpUser = this.httpUser.getText().toString();
+        String httpPassword = this.httpPassword.getText().toString();
         new URL(urlString); // To check if the URL is a real one
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("user", user.getText().toString());
         jsonObject.put("password", password.getText().toString());
         jsonObject.put("op", "login");
-        RequestTask task = new RequestTask(new DefaultHttpClient(), urlString);
+        DefaultHttpClient client = new DefaultHttpClient();
+        if (!httpUser.isEmpty()) {
+            client.getCredentialsProvider().setCredentials(AuthScope.ANY,
+                    new UsernamePasswordCredentials(httpUser, httpPassword));
+        }
+        RequestTask task = new RequestTask(client, urlString);
         task.execute(jsonObject);
         JSONObject response = task.get();
         if (response.getInt("status") != 0) {
@@ -133,6 +149,9 @@ public class SetupActivity extends Activity {
                     case IO_EXCEPTION:
                         Log.e(TAG, response.getJSONObject("content").getString("message"));
                         throw new CheckException(getString(R.string.connectionError));
+                    case HTTP_AUTH_REQUIERED:
+                        Log.e(TAG, response.getJSONObject("content").getString("message"));
+                        throw new CheckException(getString(R.string.connectionAuthError));
                     case UNSUPPORTED_ENCODING:
                     case JSON_EXCEPTION:
                         Log.e(TAG, response.getJSONObject("content").getString("message"));
@@ -154,6 +173,8 @@ public class SetupActivity extends Activity {
         editor.putString(TinyTinyFeedWidget.USER_KEY, user.getText().toString());
         editor.putString(TinyTinyFeedWidget.PASSWORD_KEY, password.getText().toString());
         editor.putString(TinyTinyFeedWidget.NUM_ARTICLE_KEY, numArticle.getText().toString());
+        editor.putString(TinyTinyFeedWidget.HTTP_USER_KEY, httpUser.getText().toString());
+        editor.putString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, httpPassword.getText().toString());
         editor.commit();
     }
 }
