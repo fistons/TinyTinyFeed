@@ -1,6 +1,9 @@
 TinyTinyFeed
 ============
 
+## Introduction
+
+
 A Simple Widget to publish your [Tiny Tiny RSS Feeds](http://tt-rss.org) on your home screen
 
 You need to have an account on a Tiny Tiny RSS installation (v1.12 at least) with the APIs enabled in order to use this widget.
@@ -13,3 +16,11 @@ Artworks from [Namida](https://www.facebook.com/NamidaArt) (or [here](http://bou
 
 If you want, you can send me a [gift](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=TPHRD64MV2B5U)
 
+## Release notes
+
+* V1.1:
+ 
+    Correction of the issues #1 #2 #3 #4 #5
+* V1.0:
+
+    Initial release.
