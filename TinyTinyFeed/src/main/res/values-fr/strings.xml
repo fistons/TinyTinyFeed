@@ -4,8 +4,8 @@
     <string name="setupUrlLabel">Adresse de votre TTRss:</string>
     <string name="setupUserLabel">Login TTRss:</string>
     <string name="setupPasswordLabel">Mot de passe TTRss:</string>
-    <string name="httpAuthUserLabel">(optional) Http auth - Login :</string>
-    <string name="httpAuthPasswordLabel">(optional) Http auth - Mot de passe:</string>
+    <string name="httpAuthUserLabel">Login :</string>
+    <string name="httpAuthPasswordLabel">Mot de passe:</string>
     <string name="urlMalFormed">Addresse malformée</string>
     <string name="urlBadSuffix">L\'url doit se terminer par %s</string>
     <string name="badLogin">Vérifiez votre login/mot de passe</string>
@@ -19,4 +19,5 @@
     <string name="connectionAuthError">HTTP auth - Veuillez vérifier vos identifiant</string>
     <string name="impossibleError">LOLWUT?! Comment c\'est possible? Erreur à la con: %s</string>
     <string name="unknownError">Erreur inconnue: %s</string>
+    <string name="httpAuthHeader">Authentification HTTP (optionel)</string>
 </resources>

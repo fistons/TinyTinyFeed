@@ -4,12 +4,12 @@
     <string name="setupUrlLabel">TTRss url:</string>
     <string name="setupUserLabel">TTRss Login:</string>
     <string name="setupPasswordLabel">TTrss Password:</string>
-    <string name="httpAuthUserLabel">(optional) Http auth - Login:</string>
-    <string name="httpAuthPasswordLabel">(optional) Http auth - Password:</string>
+    <string name="httpAuthUserLabel">Login:</string>
+    <string name="httpAuthPasswordLabel">Password:</string>
     <string name="urlMalFormed">Malformed url</string>
     <string name="urlBadSuffix">The url must end by %s</string>
     <string name="badLogin">Check your login/password</string>
-    <string name="setupNumArticles">Number of article to retrieve</string>
+    <string name="setupNumArticles">Number of articles to retrieve</string>
     <string name="emptyWidgetListTest">Feed list is empty</string>
     <string name="setupOkButtonText">Save</string>
     <string name="defaultLastUpdateText">Never updated</string>
@@ -19,4 +19,5 @@
     <string name="connectionAuthError">HTTP auth - Please check your credentials</string>
     <string name="impossibleError">LOLWUT?! Diz iz not pozible! LOOK AT ZAT!: %s</string>
     <string name="unknownError">Unknow issue: %s</string>
+    <string name="httpAuthHeader">HTTP Authentification (optional)</string>
 </resources>
