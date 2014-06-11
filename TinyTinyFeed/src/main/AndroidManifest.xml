@@ -27,6 +27,12 @@
                 </intent-filter>
         </activity>
 
+        <activity android:name=".ArticleManagementActivity"
+            android:theme="@android:style/Theme.NoDisplay"
+            android:noHistory="true"
+            android:excludeFromRecents="true">
+        </activity>
+
         <service android:name=".widget.WidgetService"
                  android:permission="android.permission.BIND_REMOTEVIEWS" />
 
