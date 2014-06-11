@@ -21,6 +21,7 @@ public class Article {
     private String feedTitle;
     private String date;
     private String url;
+    private boolean read;
 
 
     public Article(JSONObject json) throws JSONException {
@@ -33,6 +34,7 @@ public class Article {
         Date date1 = new Date(timestamp);
         this.date = Article.sdf.format(date1);
         this.feedTitle = json.getString("feed_title");
+        this.read = !json.getBoolean("unread");
     }
 
     public Article(String title, String content) {
@@ -86,5 +88,13 @@ public class Article {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public boolean isRead() {
+        return read;
+    }
+
+    public void setRead(boolean read) {
+        this.read = read;
     }
 }

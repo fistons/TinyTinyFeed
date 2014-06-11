@@ -13,7 +13,6 @@ import android.widget.RemoteViewsService;
 
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -90,20 +89,25 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public RemoteViews getViewAt(int position) {
-        final RemoteViews remoteView = new RemoteViews(context.getPackageName(), R.layout.article_layout);
         Article listItem = articleList.get(position);
 
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(listItem.getUrl()));
+        final RemoteViews remoteView;
+        Intent fillInIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(listItem.getUrl()));
 
         String feedNameAndDate = String.format("%s - %s", listItem.getFeeTitle(), listItem.getDate());
-        remoteView.setTextViewText(R.id.title, listItem.getTitle());
-        remoteView.setTextViewText(R.id.feedNameAndDate, feedNameAndDate);
-        remoteView.setTextViewText(R.id.resume, listItem.getContent());
-
-        Intent fillInIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(listItem.getUrl()));
-        remoteView.setOnClickFillInIntent(R.id.articleLayout, fillInIntent);
-
+        if (listItem.isRead()) {
+            remoteView = new RemoteViews(context.getPackageName(), R.layout.read_article_layout);
+            remoteView.setTextViewText(R.id.readTitle, listItem.getTitle());
+            remoteView.setTextViewText(R.id.readFeedNameAndDate, feedNameAndDate);
+            remoteView.setTextViewText(R.id.readResume, listItem.getContent());
+            remoteView.setOnClickFillInIntent(R.id.readArticleLayout, fillInIntent);
+        } else {
+            remoteView = new RemoteViews(context.getPackageName(), R.layout.article_layout);
+            remoteView.setTextViewText(R.id.title, listItem.getTitle());
+            remoteView.setTextViewText(R.id.feedNameAndDate, feedNameAndDate);
+            remoteView.setTextViewText(R.id.resume, listItem.getContent());
+            remoteView.setOnClickFillInIntent(R.id.articleLayout, fillInIntent);
+        }
         return remoteView;
     }
 
@@ -114,7 +118,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public int getViewTypeCount() {
-        return 1;
+        return 2;
     }
 
     @Override

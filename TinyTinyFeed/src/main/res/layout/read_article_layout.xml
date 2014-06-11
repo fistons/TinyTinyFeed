@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/articleLayout"
+    android:id="@+id/readArticleLayout"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -11,16 +11,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="title"
-        android:id="@+id/title"
+        android:id="@+id/readTitle"
         android:layout_gravity="left|center_vertical"
-        android:textColor="#ffffff"
-        android:textStyle="bold" />
+        android:textColor="#ffffff" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="feed"
-        android:id="@+id/feedNameAndDate"
+        android:id="@+id/readFeedNameAndDate"
         android:layout_gravity="left|center_vertical"
         android:textStyle="italic"
         android:textColor="#ffffff" />
@@ -29,6 +28,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="resume"
-        android:id="@+id/resume"
+        android:id="@+id/readResume"
         android:layout_gravity="left|center_vertical" />
 </LinearLayout>
