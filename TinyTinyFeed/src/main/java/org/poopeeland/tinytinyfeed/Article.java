@@ -5,13 +5,14 @@ import android.text.Html;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
  * Created by setdemr on 03/09/13.
  */
-public class Article {
+public class Article implements Serializable {
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
 
