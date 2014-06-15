@@ -14,8 +14,10 @@ import android.widget.Toast;
 
 import org.json.JSONException;
 import org.poopeeland.tinytinyfeed.Article;
+import org.poopeeland.tinytinyfeed.R;
 import org.poopeeland.tinytinyfeed.TinyTinyFeedWidget;
 import org.poopeeland.tinytinyfeed.exceptions.CheckException;
+import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
 import org.poopeeland.tinytinyfeed.exceptions.RequiredInfoNotRegistred;
 
 import java.util.concurrent.ExecutionException;
@@ -27,22 +29,27 @@ import java.util.concurrent.ExecutionException;
 public class ArticleManagementActivity extends Activity {
 
     private static final String TAG = "ArticleManagementActivity";
-    private TtrssService service;
+    private WidgetService service;
     private boolean bound;
     private Article article;
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className, IBinder binder) {
-            TtrssService.LocalBinder mbinder = (TtrssService.LocalBinder) binder;
+            WidgetService.LocalBinder mbinder = (WidgetService.LocalBinder) binder;
             service = mbinder.getService();
             bound = true;
+            Log.d(TAG, "bounded!");
             try {
                 service.setArticleToRead(article);
             } catch (CheckException | InterruptedException | ExecutionException | JSONException | RequiredInfoNotRegistred e) {
                 Log.e(TAG, e.getMessage());
                 Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                return;
+            } catch (NoInternetException e) {
+                Log.e(TAG, e.getMessage());
+                Toast.makeText(getApplicationContext(), R.string.connectionError, Toast.LENGTH_LONG).show();
+                return;
             }
-            Log.d(TAG, "bounded!");
 
             // Retrieve the widgets Ids
             int ids[] = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), TinyTinyFeedWidget.class));
@@ -63,27 +70,20 @@ public class ArticleManagementActivity extends Activity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Creation");
 
-
         // Bound to service
-        Intent intentBound = new Intent(this, TtrssService.class);
+        Intent intentBound = new Intent(this, WidgetService.class);
+        intentBound.putExtra(WidgetService.ACTIVITY_FLAG, true);
         bindService(intentBound, mConnection, Context.BIND_AUTO_CREATE);
 
         // Retrieve the article
         this.article = (Article) getIntent().getExtras().getSerializable("article");
 
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        // Open it
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(article.getUrl()));
         startActivity(intent);
 
         finish();
     }
+
 
     @Override
     protected void onDestroy() {

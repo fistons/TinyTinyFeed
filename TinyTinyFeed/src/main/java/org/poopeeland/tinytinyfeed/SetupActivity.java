@@ -2,39 +2,38 @@ package org.poopeeland.tinytinyfeed;
 
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.poopeeland.tinytinyfeed.exceptions.CheckException;
-import org.poopeeland.tinytinyfeed.exceptions.TtrssError;
+import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
 import org.poopeeland.tinytinyfeed.exceptions.UrlSuffixException;
+import org.poopeeland.tinytinyfeed.widget.WidgetService;
 
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
 public class SetupActivity extends Activity {
 
+    public static final String URL_SUFFIX = "/api/";
     private static final String TAG = "TinyTinyFeedSetup";
-    private final String URL_SUFFIX = "/api/";
     private int widgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     public View.OnClickListener onOkClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
 
             try {
-                checkSetup();
+                service.checkSetup(url.getText().toString(), httpUser.getText().toString(), httpPassword.getText().toString(), user.getText().toString(), password.getText().toString());
             } catch (MalformedURLException e) {
                 Toast.makeText(getApplicationContext(), R.string.urlMalFormed, Toast.LENGTH_LONG).show();
                 return;
@@ -52,6 +51,9 @@ public class SetupActivity extends Activity {
                 return;
             } catch (CheckException e) {
                 Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                return;
+            } catch (NoInternetException ex) {
+                Toast.makeText(getApplicationContext(), R.string.noInternetConnection, Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -75,6 +77,20 @@ public class SetupActivity extends Activity {
     private EditText httpPassword;
     private EditText httpUser;
     private EditText numArticle;
+    private WidgetService service;
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder binder) {
+            WidgetService.LocalBinder mbinder = (WidgetService.LocalBinder) binder;
+            service = mbinder.getService();
+            Log.d(TAG, "bounded!");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+        }
+    };
 
 
     public SetupActivity() {
@@ -95,6 +111,16 @@ public class SetupActivity extends Activity {
         if (extras != null) {
             widgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
         }
+
+        Intent intentBound = new Intent(this, WidgetService.class);
+        intentBound.putExtra(WidgetService.ACTIVITY_FLAG, true);
+        bindService(intentBound, mConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onDestroy() {
+        unbindService(mConnection);
+        super.onDestroy();
     }
 
     @Override
@@ -117,55 +143,6 @@ public class SetupActivity extends Activity {
         this.httpPassword.setText(this.preferences.getString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, ""));
     }
 
-    private void checkSetup() throws MalformedURLException, UrlSuffixException, JSONException, ExecutionException, InterruptedException, CheckException {
-        String urlString = url.getText().toString();
-        if (!urlString.endsWith(URL_SUFFIX)) {
-            throw new UrlSuffixException();
-        }
-        String httpUser = this.httpUser.getText().toString();
-        String httpPassword = this.httpPassword.getText().toString();
-        new URL(urlString); // To check if the URL is a real one
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("user", user.getText().toString());
-        jsonObject.put("password", password.getText().toString());
-        jsonObject.put("op", "login");
-        DefaultHttpClient client = new DefaultHttpClient();
-        if (!httpUser.isEmpty()) {
-            client.getCredentialsProvider().setCredentials(AuthScope.ANY,
-                    new UsernamePasswordCredentials(httpUser, httpPassword));
-        }
-        RequestTask task = new RequestTask(client, urlString);
-        task.execute(jsonObject);
-        JSONObject response = task.get();
-        if (response.getInt("status") != 0) {
-            try {
-                TtrssError reason = TtrssError.valueOf(response.getJSONObject("content").getString("error"));
-                switch (reason) {
-                    case LOGIN_ERROR:
-                        Log.e(TAG, response.getJSONObject("content").getString("error"));
-                        throw new CheckException(getText(R.string.badLogin).toString());
-                    case CLIENT_PROTOCOL_EXCEPTION:
-                    case UNREACHABLE_TTRSS:
-                    case IO_EXCEPTION:
-                        Log.e(TAG, response.getJSONObject("content").getString("message"));
-                        throw new CheckException(getString(R.string.connectionError));
-                    case HTTP_AUTH_REQUIERED:
-                        Log.e(TAG, response.getJSONObject("content").getString("message"));
-                        throw new CheckException(getString(R.string.connectionAuthError));
-                    case UNSUPPORTED_ENCODING:
-                    case JSON_EXCEPTION:
-                        Log.e(TAG, response.getJSONObject("content").getString("message"));
-                        throw new CheckException(String.format(getString(R.string.impossibleError), response.getJSONObject("content").getString("message")));
-                    default:
-                        Log.e(TAG, response.getJSONObject("content").getString("message"));
-                        throw new CheckException(String.format(getString(R.string.unknownError), response.getJSONObject("content").getString("message")));
-                }
-            } catch (IllegalArgumentException ex) {
-                Log.e(TAG, response.getJSONObject("content").getString("message"));
-                throw new CheckException(String.format(getString(R.string.unknownError), response.getJSONObject("content").getString("message")));
-            }
-        }
-    }
 
     private void save() {
         SharedPreferences.Editor editor = this.preferences.edit();

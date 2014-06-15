@@ -1,6 +1,5 @@
 package org.poopeeland.tinytinyfeed.widget;
 
-import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -12,6 +11,7 @@ import org.json.JSONException;
 import org.poopeeland.tinytinyfeed.Article;
 import org.poopeeland.tinytinyfeed.R;
 import org.poopeeland.tinytinyfeed.exceptions.CheckException;
+import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
 import org.poopeeland.tinytinyfeed.exceptions.RequiredInfoNotRegistred;
 
 import java.util.ArrayList;
@@ -26,8 +26,8 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
     private static final String TAG = "ListProvider";
     private final Context context;
-    private WidgetService service;
     private final String unreadSymbol;
+    private WidgetService service;
     private List<Article> articleList = new ArrayList();
 
     public ListProvider(WidgetService service) {
@@ -39,7 +39,6 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public void onCreate() {
-
     }
 
     @Override
@@ -55,6 +54,8 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
             Log.e(TAG, e.getMessage());
         } catch (InterruptedException | ExecutionException | JSONException e) {
             Log.e(TAG, e.getLocalizedMessage());
+        } catch (NoInternetException ex) {
+            Log.e(TAG, context.getText(R.string.noInternetConnection).toString());
         }
     }
 

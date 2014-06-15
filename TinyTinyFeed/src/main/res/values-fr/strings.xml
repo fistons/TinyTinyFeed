@@ -20,4 +20,5 @@
     <string name="impossibleError">LOLWUT?! Comment c\'est possible? Erreur à la con: %s</string>
     <string name="unknownError">Erreur inconnue: %s</string>
     <string name="httpAuthHeader">Authentification HTTP (optionel)</string>
+    <string name="noInternetConnection">Aucune connexion internet disponible pour le moment</string>
 </resources>

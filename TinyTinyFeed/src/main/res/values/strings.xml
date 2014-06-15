@@ -20,4 +20,5 @@
     <string name="impossibleError">LOLWUT?! Diz iz not pozible! LOOK AT ZAT!: %s</string>
     <string name="unknownError">Unknow issue: %s</string>
     <string name="httpAuthHeader">HTTP Authentification (optional)</string>
+    <string name="noInternetConnection">No Internet connection available right now</string>
 </resources>

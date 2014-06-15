@@ -5,8 +5,6 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -43,51 +41,40 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
     private static PendingIntent actionPendingIntent(Context context, int[] ids) {
         Log.d(TAG, "Create pending intent");
         Intent intent = new Intent(context, TinyTinyFeedWidget.class);
-
         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-
         return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-    }
-
-    private boolean checkNetwork(Context context) {
-        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        return networkInfo != null && networkInfo.isConnected();
     }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        if (checkNetwork(context)) {
-            Log.d(TAG, "Widget update");
-            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.listViewWidget);
-            PendingIntent refreshIntent = actionPendingIntent(context, appWidgetIds);
-            for (int i : appWidgetIds) {
-                Intent intent = new Intent(context, WidgetService.class);
-                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, i);
-                intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
 
-                RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.tiny_tiny_feed_widget);
-                rv.setRemoteAdapter(R.id.listViewWidget, intent);
-                rv.setEmptyView(R.id.listViewWidget, R.id.widgetEmptyList);
-                rv.setOnClickPendingIntent(R.id.lastUpdateText, refreshIntent);
-                rv.setOnClickPendingIntent(R.id.widgetEmptyList, refreshIntent);
+        Log.d(TAG, "Widget update");
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.listViewWidget);
+        PendingIntent refreshIntent = actionPendingIntent(context, appWidgetIds);
+        for (int i : appWidgetIds) {
+            Intent intent = new Intent(context, WidgetService.class);
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, i);
+            intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
 
-                Intent startActivityIntent = new Intent(context, ArticleManagementActivity.class);
-                PendingIntent startActivityPendingIntent = PendingIntent.getActivity(context, 0, startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                rv.setPendingIntentTemplate(R.id.listViewWidget, startActivityPendingIntent);
+            RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.tiny_tiny_feed_widget);
+            rv.setRemoteAdapter(R.id.listViewWidget, intent);
+            rv.setEmptyView(R.id.listViewWidget, R.id.widgetEmptyList);
+            rv.setOnClickPendingIntent(R.id.lastUpdateText, refreshIntent);
+            rv.setOnClickPendingIntent(R.id.widgetEmptyList, refreshIntent);
 
-                Date date = new Date();
-                DateFormat dateFormat = DateFormat.getDateTimeInstance();
-                String dateStr = dateFormat.format(date);
-                CharSequence text = context.getText(R.string.lastUpdateText);
-                rv.setTextViewText(R.id.lastUpdateText, String.format(text.toString(), dateStr));
+            Intent startActivityIntent = new Intent(context, ArticleManagementActivity.class);
+            PendingIntent startActivityPendingIntent = PendingIntent.getActivity(context, 0, startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            rv.setPendingIntentTemplate(R.id.listViewWidget, startActivityPendingIntent);
 
-                appWidgetManager.updateAppWidget(i, rv);
-                super.onUpdate(context, appWidgetManager, appWidgetIds);
-            }
-        } else {
-            Log.d(TAG, "No network, no update");
+            Date date = new Date();
+            DateFormat dateFormat = DateFormat.getDateTimeInstance();
+            String dateStr = dateFormat.format(date);
+            CharSequence text = context.getText(R.string.lastUpdateText);
+            rv.setTextViewText(R.id.lastUpdateText, String.format(text.toString(), dateStr));
+
+            appWidgetManager.updateAppWidget(i, rv);
+            super.onUpdate(context, appWidgetManager, appWidgetIds);
         }
     }
 

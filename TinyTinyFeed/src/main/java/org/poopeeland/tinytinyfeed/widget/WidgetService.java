@@ -1,11 +1,11 @@
 package org.poopeeland.tinytinyfeed.widget;
 
-import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.RemoteViewsService;
@@ -18,11 +18,16 @@ import org.json.JSONObject;
 import org.poopeeland.tinytinyfeed.Article;
 import org.poopeeland.tinytinyfeed.R;
 import org.poopeeland.tinytinyfeed.RequestTask;
+import org.poopeeland.tinytinyfeed.SetupActivity;
 import org.poopeeland.tinytinyfeed.TinyTinyFeedWidget;
 import org.poopeeland.tinytinyfeed.exceptions.CheckException;
+import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
 import org.poopeeland.tinytinyfeed.exceptions.RequiredInfoNotRegistred;
 import org.poopeeland.tinytinyfeed.exceptions.TtrssError;
+import org.poopeeland.tinytinyfeed.exceptions.UrlSuffixException;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -32,7 +37,9 @@ import java.util.concurrent.ExecutionException;
  */
 public class WidgetService extends RemoteViewsService {
 
+    public static final String ACTIVITY_FLAG = "Activity";
     private static final String TAG = "WidgetService";
+    protected IBinder binder = new LocalBinder();
     private ConnectivityManager connMgr;
     private String session;
     private String url;
@@ -40,7 +47,6 @@ public class WidgetService extends RemoteViewsService {
     private String user;
     private String numArticles;
     private DefaultHttpClient client;
-
 
     @Override
     public void onCreate() {
@@ -54,6 +60,27 @@ public class WidgetService extends RemoteViewsService {
         return (new ListProvider(this));
     }
 
+    @Override
+    public IBinder onBind(Intent intent) {
+
+        if (intent.getExtras().containsKey(ACTIVITY_FLAG)) {
+            return binder;
+        } else {
+            return super.onBind(intent);
+        }
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        Log.d(TAG, "Unbinded");
+        return super.onUnbind(intent);
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.d(TAG, "Don't! stop! me! noooooow...");
+        super.onDestroy();
+    }
 
     /**
      * Log into the TTRss server
@@ -80,9 +107,9 @@ public class WidgetService extends RemoteViewsService {
         this.session = response.getJSONObject("content").getString("session_id");
     }
 
-    public List<Article> updateFeeds() throws RequiredInfoNotRegistred, CheckException, JSONException, ExecutionException, InterruptedException {
+    public List<Article> updateFeeds() throws RequiredInfoNotRegistred, CheckException, JSONException, ExecutionException, InterruptedException, NoInternetException {
+        this.checkNetwork();
         List<Article> list = new ArrayList();
-
         if (!isLogged()) {
             login();
         }
@@ -105,6 +132,75 @@ public class WidgetService extends RemoteViewsService {
 
 
         return list;
+    }
+
+    public void setArticleToRead(Article article) throws CheckException, ExecutionException, InterruptedException, JSONException, RequiredInfoNotRegistred, NoInternetException {
+        this.checkNetwork();
+        Log.d(TAG, String.format("Article %s set to read", article.getTitle()));
+        if (!isLogged()) {
+            login();
+        }
+        JSONObject jsonObject = new JSONObject();
+
+        jsonObject.put("sid", session);
+        jsonObject.put("op", "updateArticle");
+        jsonObject.put("article_ids", article.getId());
+        jsonObject.put("mode", "0");
+        jsonObject.put("field", "2");
+
+        RequestTask task = new RequestTask(this.client, this.url);
+        task.execute(jsonObject);
+        JSONObject response = task.get();
+        checkJsonResponse(response);
+    }
+
+    public void checkSetup(String url, String httpUser, String httpPassword, String user, String password) throws MalformedURLException, UrlSuffixException, JSONException, ExecutionException, InterruptedException, CheckException, NoInternetException {
+        this.checkNetwork();
+        if (!url.endsWith(SetupActivity.URL_SUFFIX)) {
+            throw new UrlSuffixException();
+        }
+        new URL(url); // To check if the URL is a real one
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("user", user);
+        jsonObject.put("password", password);
+        jsonObject.put("op", "login");
+        DefaultHttpClient client = new DefaultHttpClient();
+        if (!httpUser.isEmpty()) {
+            client.getCredentialsProvider().setCredentials(AuthScope.ANY,
+                    new UsernamePasswordCredentials(httpUser, httpPassword));
+        }
+        RequestTask task = new RequestTask(client, url);
+        task.execute(jsonObject);
+        JSONObject response = task.get();
+        if (response.getInt("status") != 0) {
+            try {
+                TtrssError reason = TtrssError.valueOf(response.getJSONObject("content").getString("error"));
+                switch (reason) {
+                    case LOGIN_ERROR:
+                        Log.e(TAG, response.getJSONObject("content").getString("error"));
+                        throw new CheckException(getText(R.string.badLogin).toString());
+                    case CLIENT_PROTOCOL_EXCEPTION:
+                    case UNREACHABLE_TTRSS:
+                    case IO_EXCEPTION:
+                        Log.e(TAG, response.getJSONObject("content").getString("message"));
+                        throw new CheckException(getString(R.string.connectionError));
+                    case HTTP_AUTH_REQUIERED:
+                        Log.e(TAG, response.getJSONObject("content").getString("message"));
+                        throw new CheckException(getString(R.string.connectionAuthError));
+                    case UNSUPPORTED_ENCODING:
+                    case JSON_EXCEPTION:
+                        Log.e(TAG, response.getJSONObject("content").getString("message"));
+                        throw new CheckException(String.format(getString(R.string.impossibleError), response.getJSONObject("content").getString("message")));
+                    default:
+                        Log.e(TAG, response.getJSONObject("content").getString("message"));
+                        throw new CheckException(String.format(getString(R.string.unknownError), response.getJSONObject("content").getString("message")));
+                }
+            } catch (IllegalArgumentException ex) {
+                Log.e(TAG, response.getJSONObject("content").getString("message"));
+                throw new CheckException(String.format(getString(R.string.unknownError), response.getJSONObject("content").getString("message")));
+            }
+        }
+
     }
 
 
@@ -172,9 +268,11 @@ public class WidgetService extends RemoteViewsService {
      *
      * @return true if we can use the use the data connection, false otherwise
      */
-    private boolean checkNetwork() {
+    private void checkNetwork() throws NoInternetException {
         NetworkInfo networkInfo = this.connMgr.getActiveNetworkInfo();
-        return networkInfo != null && networkInfo.isConnected();
+        if (networkInfo == null || !networkInfo.isConnected()) {
+            throw new NoInternetException();
+        }
     }
 
     /**
@@ -197,5 +295,11 @@ public class WidgetService extends RemoteViewsService {
 
     }
 
+
+    public class LocalBinder extends Binder {
+        public WidgetService getService() {
+            return WidgetService.this;
+        }
+    }
 
 }
