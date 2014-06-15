@@ -18,6 +18,11 @@ If you want, you can send me a [gift](https://www.paypal.com/cgi-bin/webscr?cmd=
 
 ## Release notes
 
+* V1.2:
+    
+    * Now there is two different layout for read and unread articles (Unread ones have a little [ * ] before the name)
+    * Opening an article make it "as read" in TinyTinyRss and refresh the list
+
 * V1.1:
  
     * Add basic HTTP auth support (thanks to Xeno for the report) (issue #1)
