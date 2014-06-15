@@ -4,7 +4,7 @@
     android:versionCode="3"
     android:versionName="1.2">
 
-<uses-sdk
+    <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="19" />
 
@@ -30,7 +30,7 @@
             android:name=".widget.ArticleManagementActivity"
             android:excludeFromRecents="true"
             android:noHistory="true"
-            android:theme="@android:style/Theme.NoDisplay"></activity>
+            android:theme="@android:style/Theme.NoDisplay" />
 
         <service
             android:name=".widget.WidgetService"
@@ -45,11 +45,6 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/tiny_tiny_feed_widget_info" />
         </receiver>
-
-        <service
-            android:name=".widget.TtrssService"
-            android:enabled="true"
-            android:exported="false"></service>
     </application>
 
 </manifest>
