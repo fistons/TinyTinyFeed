@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import org.poopeeland.tinytinyfeed.widget.ArticleManagementActivity;
 import org.poopeeland.tinytinyfeed.widget.WidgetService;
 
 import java.text.DateFormat;
