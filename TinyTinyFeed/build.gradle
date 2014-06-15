@@ -32,6 +32,11 @@ android {
             proguardFile getDefaultProguardFile('proguard-android-optimize.txt')
         }
     }
+
+    lintOptions {
+        checkReleaseBuilds false
+    }
+
     productFlavors {
         defaultFlavor {
             proguardFile 'proguard-rules.txt'
