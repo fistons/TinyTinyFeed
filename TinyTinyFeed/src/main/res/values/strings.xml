@@ -4,6 +4,7 @@
     <string name="setupUrlLabel">TTRss url:</string>
     <string name="setupUserLabel">TTRss Login:</string>
     <string name="setupPasswordLabel">TTrss Password:</string>
+    <string name="setupRetrieveOnlyUnread">Retrieve only unread article</string>
     <string name="httpAuthUserLabel">Login:</string>
     <string name="httpAuthPasswordLabel">Password:</string>
     <string name="urlMalFormed">Malformed url</string>

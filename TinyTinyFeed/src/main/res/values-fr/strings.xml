@@ -4,6 +4,7 @@
     <string name="setupUrlLabel">Adresse de votre TTRss:</string>
     <string name="setupUserLabel">Login TTRss:</string>
     <string name="setupPasswordLabel">Mot de passe TTRss:</string>
+    <string name="setupRetrieveOnlyUnread">Récuperer uniquement les articles non lus</string>
     <string name="httpAuthUserLabel">Login :</string>
     <string name="httpAuthPasswordLabel">Mot de passe:</string>
     <string name="urlMalFormed">Addresse malformée</string>

@@ -46,6 +46,7 @@ public class WidgetService extends RemoteViewsService {
     private String password;
     private String user;
     private String numArticles;
+    private boolean onlyUnread;
     private DefaultHttpClient client;
 
     @Override
@@ -113,10 +114,17 @@ public class WidgetService extends RemoteViewsService {
         if (!isLogged()) {
             login();
         }
+
+        String feedId;
+        if (onlyUnread) {
+            feedId = "-3";
+        } else {
+            feedId  ="-4";
+        }
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("sid", session);
         jsonObject.put("op", "getHeadlines");
-        jsonObject.put("feed_id", "-4");
+        jsonObject.put("feed_id", feedId);
         jsonObject.put("limit", this.numArticles);
         jsonObject.put("show_excerpt", "true");
 
@@ -285,6 +293,7 @@ public class WidgetService extends RemoteViewsService {
         this.user = preferences.getString(TinyTinyFeedWidget.USER_KEY, "");
         this.password = preferences.getString(TinyTinyFeedWidget.PASSWORD_KEY, "");
         this.numArticles = preferences.getString(TinyTinyFeedWidget.NUM_ARTICLE_KEY, "");
+        this.onlyUnread = preferences.getBoolean(TinyTinyFeedWidget.ONLY_UNREAD_KEY, false);
         String httpUser = preferences.getString(TinyTinyFeedWidget.HTTP_USER_KEY, "");
         String httpPassword = preferences.getString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, "");
         this.client = new DefaultHttpClient();

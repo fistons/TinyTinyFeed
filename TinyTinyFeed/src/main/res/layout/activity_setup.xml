@@ -63,6 +63,12 @@
         android:id="@+id/setupArticlesNum"
         android:layout_gravity="left|center_vertical" />
 
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/setupRetrieveOnlyUnread"
+        android:id="@+id/setupOnlyUnread" />
+
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

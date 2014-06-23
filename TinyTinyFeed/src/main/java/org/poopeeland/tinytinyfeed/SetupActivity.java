@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -74,6 +75,7 @@ public class SetupActivity extends Activity {
     private EditText url;
     private EditText user;
     private EditText password;
+    private CheckBox checkBox;
     private EditText httpPassword;
     private EditText httpUser;
     private EditText numArticle;
@@ -131,6 +133,7 @@ public class SetupActivity extends Activity {
         this.url = (EditText) findViewById(R.id.setupUrl);
         this.user = (EditText) findViewById(R.id.setupUser);
         this.password = (EditText) findViewById(R.id.setupPassword);
+        this.checkBox = (CheckBox) findViewById(R.id.setupOnlyUnread);
         this.numArticle = (EditText) findViewById(R.id.setupArticlesNum);
         this.httpUser = (EditText) findViewById(R.id.setupHttpUser);
         this.httpPassword = (EditText) findViewById(R.id.setupHttpPassword);
@@ -138,6 +141,7 @@ public class SetupActivity extends Activity {
         this.url.setText(this.preferences.getString(TinyTinyFeedWidget.URL_KEY, "http://"));
         this.user.setText(this.preferences.getString(TinyTinyFeedWidget.USER_KEY, ""));
         this.password.setText(this.preferences.getString(TinyTinyFeedWidget.PASSWORD_KEY, ""));
+        this.checkBox.setChecked(this.preferences.getBoolean(TinyTinyFeedWidget.ONLY_UNREAD_KEY, false));
         this.numArticle.setText(this.preferences.getString(TinyTinyFeedWidget.NUM_ARTICLE_KEY, "20"));
         this.httpUser.setText(this.preferences.getString(TinyTinyFeedWidget.HTTP_USER_KEY, ""));
         this.httpPassword.setText(this.preferences.getString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, ""));
@@ -149,6 +153,7 @@ public class SetupActivity extends Activity {
         editor.putString(TinyTinyFeedWidget.URL_KEY, url.getText().toString());
         editor.putString(TinyTinyFeedWidget.USER_KEY, user.getText().toString());
         editor.putString(TinyTinyFeedWidget.PASSWORD_KEY, password.getText().toString());
+        editor.putBoolean(TinyTinyFeedWidget.ONLY_UNREAD_KEY, checkBox.isChecked());
         editor.putString(TinyTinyFeedWidget.NUM_ARTICLE_KEY, numArticle.getText().toString());
         editor.putString(TinyTinyFeedWidget.HTTP_USER_KEY, httpUser.getText().toString());
         editor.putString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, httpPassword.getText().toString());
