@@ -65,8 +65,6 @@ public class WidgetService extends RemoteViewsService {
     @Override
     public IBinder onBind(Intent intent) {
         Log.d(TAG, "onBind");
-        this.start();
-
         if (intent.getExtras().containsKey(ACTIVITY_FLAG)) {
             return binder;
         } else {
@@ -112,6 +110,7 @@ public class WidgetService extends RemoteViewsService {
     }
 
     public List<Article> updateFeeds() throws RequiredInfoNotRegistred, CheckException, JSONException, ExecutionException, InterruptedException, NoInternetException {
+        this.start();
         try {
             this.checkNetwork();
         } catch (NoInternetException ex) {
@@ -154,6 +153,7 @@ public class WidgetService extends RemoteViewsService {
     }
 
     public void setArticleToRead(Article article) throws CheckException, ExecutionException, InterruptedException, JSONException, RequiredInfoNotRegistred, NoInternetException {
+        this.start();
         this.checkNetwork();
         Log.d(TAG, String.format("Article %s set to read", article.getTitle()));
         if (!isLogged()) {
@@ -174,6 +174,7 @@ public class WidgetService extends RemoteViewsService {
     }
 
     public void checkSetup(String url, String httpUser, String httpPassword, String user, String password) throws MalformedURLException, UrlSuffixException, JSONException, ExecutionException, InterruptedException, CheckException, NoInternetException {
+        this.start();
         this.checkNetwork();
         if (!url.endsWith(SetupActivity.URL_SUFFIX)) {
             throw new UrlSuffixException();
