@@ -13,6 +13,7 @@ import android.widget.RemoteViewsService;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.poopeeland.tinytinyfeed.Article;
@@ -29,6 +30,7 @@ import org.poopeeland.tinytinyfeed.exceptions.UrlSuffixException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -53,7 +55,6 @@ public class WidgetService extends RemoteViewsService {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate");
-        this.start();
     }
 
     @Override
@@ -63,6 +64,8 @@ public class WidgetService extends RemoteViewsService {
 
     @Override
     public IBinder onBind(Intent intent) {
+        Log.d(TAG, "onBind");
+        this.start();
 
         if (intent.getExtras().containsKey(ACTIVITY_FLAG)) {
             return binder;
@@ -109,7 +112,12 @@ public class WidgetService extends RemoteViewsService {
     }
 
     public List<Article> updateFeeds() throws RequiredInfoNotRegistred, CheckException, JSONException, ExecutionException, InterruptedException, NoInternetException {
-        this.checkNetwork();
+        try {
+            this.checkNetwork();
+        } catch (NoInternetException ex) {
+            Log.d(TAG, "No internet right now, load the last list");
+            return this.loadLastList();
+        }
         List<Article> list = new ArrayList();
         if (!isLogged()) {
             login();
@@ -117,9 +125,11 @@ public class WidgetService extends RemoteViewsService {
 
         String feedId;
         if (onlyUnread) {
+            Log.d(TAG, "Retrieve only unread articles");
             feedId = "-3";
         } else {
-            feedId  ="-4";
+            Log.d(TAG, "Retrieve all articles");
+            feedId = "-4";
         }
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("sid", session);
@@ -138,6 +148,7 @@ public class WidgetService extends RemoteViewsService {
             list.add(new Article(response.getJSONArray("content").getJSONObject(i)));
         }
 
+        this.saveList(response.getJSONArray("content"));
 
         return list;
     }
@@ -257,6 +268,39 @@ public class WidgetService extends RemoteViewsService {
     }
 
     /**
+     * Save the articles in the preferences, so it can be retrevied when an update
+     *
+     * @param json the articles to save
+     */
+    private void saveList(JSONArray json) {
+        Log.d(TAG, "Saving the list");
+        SharedPreferences.Editor editor = getSharedPreferences(TinyTinyFeedWidget.PREFERENCE_KEY, Context.MODE_PRIVATE).edit();
+        editor.putString(TinyTinyFeedWidget.LAST_LIST_KEY, json.toString());
+        editor.commit();
+    }
+
+    /**
+     * Load the last saved list from the preference (pretty ugly, maybe I should store it elsewhere?)
+     *
+     * @return the last list of articles
+     * @throws JSONException
+     */
+    private List<Article> loadLastList() throws JSONException {
+        SharedPreferences preferences = getSharedPreferences(TinyTinyFeedWidget.PREFERENCE_KEY, Context.MODE_PRIVATE);
+        String json = preferences.getString(TinyTinyFeedWidget.LAST_LIST_KEY, "");
+        if (json.isEmpty()) {
+            return Collections.EMPTY_LIST;
+        }
+
+        JSONArray response = new JSONArray(json);
+        List<Article> articles = new ArrayList<>();
+        for (int i = 0; i < response.length(); i++) {
+            articles.add(new Article(response.getJSONObject(i)));
+        }
+        return articles;
+    }
+
+    /**
      * Check if all the requiered information has been filled
      *
      * @throws RequiredInfoNotRegistred if it is not the case
@@ -301,6 +345,7 @@ public class WidgetService extends RemoteViewsService {
             this.client.getCredentialsProvider().setCredentials(AuthScope.ANY,
                     new UsernamePasswordCredentials(httpUser, httpPassword));
         }
+        Log.d(TAG, "Preferences loaded");
 
     }
 

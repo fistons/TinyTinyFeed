@@ -45,9 +45,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     public void onDataSetChanged() {
         try {
             Log.d(TAG, "Refresh the articles list");
-            List<Article> tempList = service.updateFeeds();
-            articleList.clear();
-            articleList = tempList;
+            articleList = service.updateFeeds();
         } catch (RequiredInfoNotRegistred ex) {
             Log.e(TAG, "Some informations are missing");
         } catch (CheckException e) {

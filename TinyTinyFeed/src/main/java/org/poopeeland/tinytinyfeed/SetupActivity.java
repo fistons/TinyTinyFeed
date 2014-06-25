@@ -158,5 +158,6 @@ public class SetupActivity extends Activity {
         editor.putString(TinyTinyFeedWidget.HTTP_USER_KEY, httpUser.getText().toString());
         editor.putString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, httpPassword.getText().toString());
         editor.commit();
+        Log.d(TAG, "Preferences saved");
     }
 }
