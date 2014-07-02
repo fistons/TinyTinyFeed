@@ -13,6 +13,7 @@
     <string name="setupNumArticles">Number of articles to retrieve</string>
     <string name="emptyWidgetListTest">Feed list is empty</string>
     <string name="setupOkButtonText">Save</string>
+    <string name="setupCheckButtonText">Check</string>
     <string name="defaultLastUpdateText">Never updated</string>
     <string name="lastUpdateText">Last update: %s</string>
     <string name="unreadSymbol">[*]</string>

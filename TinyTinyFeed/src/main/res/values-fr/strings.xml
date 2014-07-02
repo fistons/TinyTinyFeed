@@ -13,6 +13,7 @@
     <string name="setupNumArticles">Nombre d\'articles à récupérer</string>
     <string name="emptyWidgetListTest">Aucun flux a afficher</string>
     <string name="setupOkButtonText">Enregistrer</string>
+    <string name="setupCheckButtonText">Vérifier</string>
     <string name="defaultLastUpdateText">Jamais mis à jour</string>
     <string name="lastUpdateText">Dernière mise à jour: %s</string>
 
