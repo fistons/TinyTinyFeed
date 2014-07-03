@@ -23,4 +23,6 @@
     <string name="unknownError">Unknow issue: %s</string>
     <string name="httpAuthHeader">HTTP Authentification (optional)</string>
     <string name="noInternetConnection">No Internet connection available right now</string>
+    <string name="waitTitle">Please wait</string>
+    <string name="waitCheck">Checking your configuration</string>
 </resources>

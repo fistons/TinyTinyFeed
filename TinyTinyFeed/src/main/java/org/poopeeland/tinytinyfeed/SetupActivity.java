@@ -3,18 +3,14 @@ package org.poopeeland.tinytinyfeed;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -25,11 +21,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.poopeeland.tinytinyfeed.exceptions.CheckException;
 import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
 import org.poopeeland.tinytinyfeed.exceptions.TtrssError;
 import org.poopeeland.tinytinyfeed.exceptions.UrlSuffixException;
-import org.poopeeland.tinytinyfeed.widget.WidgetService;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -49,20 +43,6 @@ public class SetupActivity extends Activity implements View.OnClickListener {
     private EditText httpPassword;
     private EditText httpUser;
     private EditText numArticle;
-    private WidgetService service;
-
-    private ServiceConnection mConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder binder) {
-            WidgetService.LocalBinder mbinder = (WidgetService.LocalBinder) binder;
-            service = mbinder.getService();
-            Log.d(TAG, "bounded!");
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-        }
-    };
 
     @Override
     public void onClick(View view) {
@@ -70,7 +50,6 @@ public class SetupActivity extends Activity implements View.OnClickListener {
         switch (view.getId()) {
             case R.id.setupOkButton:
                 save();
-
                 if (widgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
                     Intent resultValue = new Intent();
                     resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
@@ -78,29 +57,23 @@ public class SetupActivity extends Activity implements View.OnClickListener {
                 } else {
                     setResult(RESULT_OK);
                 }
-
                 finish();
                 break;
+
             case R.id.setupCheckButton:
                 try {
                     this.checkSetup(url.getText().toString(), httpUser.getText().toString(), httpPassword.getText().toString(), user.getText().toString(), password.getText().toString());
                 } catch (MalformedURLException e) {
-                    Toast.makeText(getApplicationContext(), R.string.urlMalFormed, Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.urlMalFormed, Toast.LENGTH_LONG).show();
                     return;
                 } catch (UrlSuffixException e) {
-                    Toast.makeText(getApplicationContext(), String.format(getText(R.string.urlBadSuffix).toString(), URL_SUFFIX), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, String.format(getText(R.string.urlBadSuffix).toString(), URL_SUFFIX), Toast.LENGTH_LONG).show();
                     return;
-                } catch (InterruptedException e) {
-                    Toast.makeText(getApplicationContext(), String.format("%s", e.getMessage()), Toast.LENGTH_LONG).show();
-                    return;
-                } catch (ExecutionException e) {
-                    Toast.makeText(getApplicationContext(), String.format("%s", e.getMessage()), Toast.LENGTH_LONG).show();
-                    return;
-                } catch (JSONException e) {
-                    Toast.makeText(getApplicationContext(), String.format("%s", e.getMessage()), Toast.LENGTH_LONG).show();
+                } catch (InterruptedException | JSONException | ExecutionException e) {
+                    Toast.makeText(this, String.format("%s", e.getMessage()), Toast.LENGTH_LONG).show();
                     return;
                 } catch (NoInternetException ex) {
-                    Toast.makeText(getApplicationContext(), R.string.noInternetConnection, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.noInternetConnection, Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -126,17 +99,7 @@ public class SetupActivity extends Activity implements View.OnClickListener {
             widgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
         }
 
-        Intent intentBound = new Intent(this, WidgetService.class);
-        intentBound.putExtra(WidgetService.ACTIVITY_FLAG, true);
-        bindService(intentBound, mConnection, Context.BIND_AUTO_CREATE);
-
         this.connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-    }
-
-    @Override
-    protected void onDestroy() {
-        unbindService(mConnection);
-        super.onDestroy();
     }
 
     @Override
@@ -171,7 +134,7 @@ public class SetupActivity extends Activity implements View.OnClickListener {
         editor.putString(TinyTinyFeedWidget.NUM_ARTICLE_KEY, numArticle.getText().toString());
         editor.putString(TinyTinyFeedWidget.HTTP_USER_KEY, httpUser.getText().toString());
         editor.putString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, httpPassword.getText().toString());
-        editor.commit();
+        editor.apply();
         Log.d(TAG, "Preferences saved");
     }
 
@@ -213,8 +176,7 @@ public class SetupActivity extends Activity implements View.OnClickListener {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            this.dialog = ProgressDialog.show(SetupActivity.this, "youpi", "youpi");
-
+            this.dialog = ProgressDialog.show(SetupActivity.this, getText(R.string.waitTitle), getText(R.string.waitCheck));
         }
 
         @Override
@@ -224,33 +186,36 @@ public class SetupActivity extends Activity implements View.OnClickListener {
 
             try {
                 if (response.getInt("status") != 0) {
+                    findViewById(R.id.setupOkButton).setEnabled(false);
                     TtrssError reason = TtrssError.valueOf(response.getJSONObject("content").getString("error"));
                     switch (reason) {
                         case LOGIN_ERROR:
                             Log.e(TAG, response.getJSONObject("content").getString("error"));
-                            Toast.makeText(getApplicationContext(), R.string.badLogin, Toast.LENGTH_LONG).show();
+                            Toast.makeText(SetupActivity.this, R.string.badLogin, Toast.LENGTH_LONG).show();
                         case CLIENT_PROTOCOL_EXCEPTION:
                         case UNREACHABLE_TTRSS:
                         case IO_EXCEPTION:
                             Log.e(TAG, response.getJSONObject("content").getString("message"));
-                            Toast.makeText(getApplicationContext(), R.string.connectionError, Toast.LENGTH_LONG).show();
+                            Toast.makeText(SetupActivity.this, R.string.connectionError, Toast.LENGTH_LONG).show();
                         case HTTP_AUTH_REQUIERED:
                             Log.e(TAG, response.getJSONObject("content").getString("message"));
-                            Toast.makeText(getApplicationContext(), R.string.connectionAuthError, Toast.LENGTH_LONG).show();
+                            Toast.makeText(SetupActivity.this, R.string.connectionAuthError, Toast.LENGTH_LONG).show();
                         case UNSUPPORTED_ENCODING:
                         case JSON_EXCEPTION:
                             Log.e(TAG, response.getJSONObject("content").getString("message"));
-                            Toast.makeText(getApplicationContext(), R.string.impossibleError, Toast.LENGTH_LONG).show();
+                            Toast.makeText(SetupActivity.this, R.string.impossibleError, Toast.LENGTH_LONG).show();
                         default:
                             Log.e(TAG, response.getJSONObject("content").getString("message"));
-                            Toast.makeText(getApplicationContext(), R.string.unknownError, Toast.LENGTH_LONG).show();
+                            Toast.makeText(SetupActivity.this, R.string.unknownError, Toast.LENGTH_LONG).show();
                     }
                 }
             } catch (JSONException ex) {
-
+                // This can not happen
+                Log.e(TAG, ex.getMessage());
+                return;
             }
 
-            ((Button) findViewById(R.id.setupOkButton)).setEnabled(true);
+            findViewById(R.id.setupOkButton).setEnabled(true);
         }
     }
 }
