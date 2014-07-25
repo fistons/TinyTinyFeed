@@ -27,6 +27,12 @@ import org.poopeeland.tinytinyfeed.exceptions.RequiredInfoNotRegistred;
 import org.poopeeland.tinytinyfeed.exceptions.TtrssError;
 import org.poopeeland.tinytinyfeed.exceptions.UrlSuffixException;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -41,6 +47,7 @@ public class WidgetService extends RemoteViewsService {
 
     public static final String ACTIVITY_FLAG = "Activity";
     private static final String TAG = "WidgetService";
+    private final String listFileName = "listlist.json";
     protected IBinder binder = new LocalBinder();
     private ConnectivityManager connMgr;
     private String session;
@@ -50,11 +57,13 @@ public class WidgetService extends RemoteViewsService {
     private String numArticles;
     private boolean onlyUnread;
     private DefaultHttpClient client;
+    private File lastListFile;
 
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate");
+        this.lastListFile = new File(getApplicationContext().getFilesDir(), this.listFileName);
     }
 
     @Override
@@ -91,7 +100,7 @@ public class WidgetService extends RemoteViewsService {
      * @throws org.json.JSONException                                          (should not happen)
      * @throws java.util.concurrent.ExecutionException
      * @throws InterruptedException
-     * @throws org.poopeeland.tinytinyfeed.exceptions.CheckException           When something wring happened with the server
+     * @throws org.poopeeland.tinytinyfeed.exceptions.CheckException           When something wrong happened with the server
      */
     private void login() throws RequiredInfoNotRegistred, JSONException, ExecutionException, InterruptedException, CheckException {
 
@@ -173,56 +182,6 @@ public class WidgetService extends RemoteViewsService {
         checkJsonResponse(response);
     }
 
-    public void checkSetup(String url, String httpUser, String httpPassword, String user, String password) throws MalformedURLException, UrlSuffixException, JSONException, ExecutionException, InterruptedException, CheckException, NoInternetException {
-        this.start();
-        this.checkNetwork();
-        if (!url.endsWith(SetupActivity.URL_SUFFIX)) {
-            throw new UrlSuffixException();
-        }
-        new URL(url); // To check if the URL is a real one
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("user", user);
-        jsonObject.put("password", password);
-        jsonObject.put("op", "login");
-        DefaultHttpClient client = new DefaultHttpClient();
-        if (!httpUser.isEmpty()) {
-            client.getCredentialsProvider().setCredentials(AuthScope.ANY,
-                    new UsernamePasswordCredentials(httpUser, httpPassword));
-        }
-        RequestTask task = new RequestTask(client, url);
-        task.execute(jsonObject);
-        JSONObject response = task.get();
-        if (response.getInt("status") != 0) {
-            try {
-                TtrssError reason = TtrssError.valueOf(response.getJSONObject("content").getString("error"));
-                switch (reason) {
-                    case LOGIN_ERROR:
-                        Log.e(TAG, response.getJSONObject("content").getString("error"));
-                        throw new CheckException(getText(R.string.badLogin).toString());
-                    case CLIENT_PROTOCOL_EXCEPTION:
-                    case UNREACHABLE_TTRSS:
-                    case IO_EXCEPTION:
-                        Log.e(TAG, response.getJSONObject("content").getString("message"));
-                        throw new CheckException(getString(R.string.connectionError));
-                    case HTTP_AUTH_REQUIERED:
-                        Log.e(TAG, response.getJSONObject("content").getString("message"));
-                        throw new CheckException(getString(R.string.connectionAuthError));
-                    case UNSUPPORTED_ENCODING:
-                    case JSON_EXCEPTION:
-                        Log.e(TAG, response.getJSONObject("content").getString("message"));
-                        throw new CheckException(String.format(getString(R.string.impossibleError), response.getJSONObject("content").getString("message")));
-                    default:
-                        Log.e(TAG, response.getJSONObject("content").getString("message"));
-                        throw new CheckException(String.format(getString(R.string.unknownError), response.getJSONObject("content").getString("message")));
-                }
-            } catch (IllegalArgumentException ex) {
-                Log.e(TAG, response.getJSONObject("content").getString("message"));
-                throw new CheckException(String.format(getString(R.string.unknownError), response.getJSONObject("content").getString("message")));
-            }
-        }
-
-    }
-
 
     private boolean isLogged() throws RequiredInfoNotRegistred, JSONException, ExecutionException, InterruptedException, CheckException {
         checkRequieredInfoRegistred();
@@ -275,25 +234,47 @@ public class WidgetService extends RemoteViewsService {
      */
     private void saveList(JSONArray json) {
         Log.d(TAG, "Saving the list");
-        SharedPreferences.Editor editor = getSharedPreferences(TinyTinyFeedWidget.PREFERENCE_KEY, Context.MODE_PRIVATE).edit();
-        editor.putString(TinyTinyFeedWidget.LAST_LIST_KEY, json.toString());
-        editor.commit();
+        try {
+            FileOutputStream outputStream = new FileOutputStream(this.lastListFile);
+            outputStream.write(json.toString().getBytes());
+            outputStream.close();
+        } catch (Exception e) {
+            Log.d(TAG, String.format("Error while saving the last articles list: %s", e.getLocalizedMessage()));
+        }
+
     }
 
     /**
-     * Load the last saved list from the preference (pretty ugly, maybe I should store it elsewhere?)
+     * Load the last saved list from the preference in a file
      *
      * @return the last list of articles
      * @throws JSONException
      */
     private List<Article> loadLastList() throws JSONException {
-        SharedPreferences preferences = getSharedPreferences(TinyTinyFeedWidget.PREFERENCE_KEY, Context.MODE_PRIVATE);
-        String json = preferences.getString(TinyTinyFeedWidget.LAST_LIST_KEY, "");
-        if (json.isEmpty()) {
+        if (!this.lastListFile.isFile()) {
             return Collections.EMPTY_LIST;
         }
 
-        JSONArray response = new JSONArray(json);
+
+        StringBuilder sb = new StringBuilder();
+        try {
+            BufferedReader fis = new BufferedReader(new FileReader(this.lastListFile));
+            String buffer;
+            while ((buffer = fis.readLine()) != null) {
+                sb.append(buffer);
+            }
+            fis.readLine();
+            fis.close();
+        } catch (IOException ex) {
+            Log.d(TAG, String.format("Error while reading the last article list: %s", ex.getLocalizedMessage()));
+        }
+
+        if (sb.toString().isEmpty()) {
+            return Collections.EMPTY_LIST;
+        }
+
+
+        JSONArray response = new JSONArray(sb.toString());
         List<Article> articles = new ArrayList<>();
         for (int i = 0; i < response.length(); i++) {
             articles.add(new Article(response.getJSONObject(i)));
