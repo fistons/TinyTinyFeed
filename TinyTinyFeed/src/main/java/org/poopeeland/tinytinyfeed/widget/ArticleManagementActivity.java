@@ -47,7 +47,7 @@ public class ArticleManagementActivity extends Activity {
                 return;
             } catch (NoInternetException e) {
                 Log.e(TAG, e.getMessage());
-                Toast.makeText(getApplicationContext(), R.string.connectionError, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), R.string.noInternetConnection, Toast.LENGTH_LONG).show();
                 return;
             }
 
