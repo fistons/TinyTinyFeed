@@ -19,28 +19,25 @@ import org.json.JSONObject;
 import org.poopeeland.tinytinyfeed.Article;
 import org.poopeeland.tinytinyfeed.R;
 import org.poopeeland.tinytinyfeed.RequestTask;
-import org.poopeeland.tinytinyfeed.SetupActivity;
 import org.poopeeland.tinytinyfeed.TinyTinyFeedWidget;
 import org.poopeeland.tinytinyfeed.exceptions.CheckException;
 import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
 import org.poopeeland.tinytinyfeed.exceptions.RequiredInfoNotRegistred;
 import org.poopeeland.tinytinyfeed.exceptions.TtrssError;
-import org.poopeeland.tinytinyfeed.exceptions.UrlSuffixException;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
+ * Central service managing the connections to the server
+ *
  * Created by eric on 11/05/14.
  */
 public class WidgetService extends RemoteViewsService {
@@ -151,12 +148,13 @@ public class WidgetService extends RemoteViewsService {
         JSONObject response = task.get();
 
         checkJsonResponse(response);
+        this.saveList(response.getJSONArray("content"));
 
         for (int i = 0; i < response.getJSONArray("content").length(); i++) {
             list.add(new Article(response.getJSONArray("content").getJSONObject(i)));
         }
 
-        this.saveList(response.getJSONArray("content"));
+
 
         return list;
     }
@@ -233,6 +231,11 @@ public class WidgetService extends RemoteViewsService {
      * @param json the articles to save
      */
     private void saveList(JSONArray json) {
+        if (json == null) {
+            Log.d(TAG, "List is empty, not saving it");
+            return;
+        }
+
         Log.d(TAG, "Saving the list");
         try {
             FileOutputStream outputStream = new FileOutputStream(this.lastListFile);
@@ -300,7 +303,6 @@ public class WidgetService extends RemoteViewsService {
     /**
      * Check if a data connection is available
      *
-     * @return true if we can use the use the data connection, false otherwise
      */
     private void checkNetwork() throws NoInternetException {
         NetworkInfo networkInfo = this.connMgr.getActiveNetworkInfo();
