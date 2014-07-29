@@ -25,4 +25,5 @@
     <string name="noInternetConnection">Aucune connexion internet disponible pour le moment</string>
     <string name="waitTitle">Veuillez patienter</string>
     <string name="waitCheck">Vérification de votre configuration</string>
+    <string name="title_activity_subscribe">S\'inscrire au flux RSS</string>
 </resources>
