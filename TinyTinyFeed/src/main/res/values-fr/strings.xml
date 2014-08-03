@@ -26,4 +26,5 @@
     <string name="waitTitle">Veuillez patienter</string>
     <string name="waitCheck">Vérification de votre configuration</string>
     <string name="title_activity_subscribe">S\'inscrire au flux RSS</string>
+    <string name="subActSubButton">S\'inscrire</string>
 </resources>

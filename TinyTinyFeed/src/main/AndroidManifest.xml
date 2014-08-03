@@ -35,6 +35,7 @@
 
         <activity
             android:name=".SubscribeActivity"
+            android:theme="@android:style/Theme.Holo.Dialog"
             android:label="@string/title_activity_subscribe">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
