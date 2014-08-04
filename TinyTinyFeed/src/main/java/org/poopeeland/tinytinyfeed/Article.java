@@ -10,19 +10,20 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
+ * TTRss Article
  * Created by setdemr on 03/09/13.
  */
 public class Article implements Serializable {
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
 
-    private int id;
-    private String title;
-    private String content;
-    private String feedTitle;
-    private String date;
-    private String url;
-    private boolean read;
+    private final int id;
+    private final String title;
+    private final String content;
+    private final String feedTitle;
+    private final String date;
+    private final String url;
+    private final boolean read;
 
 
     public Article(JSONObject json) throws JSONException {
@@ -38,64 +39,31 @@ public class Article implements Serializable {
         this.read = !json.getBoolean("unread");
     }
 
-    public Article(String title, String content) {
-        this.title = title;
-        this.content = content;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getContent() {
         return content;
     }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
-
     public String getFeeTitle() {
         return feedTitle;
-    }
-
-    public void setFeedTitle(String feedTitle) {
-        this.feedTitle = feedTitle;
     }
 
     public String getDate() {
         return date;
     }
 
-    public void setDate(String date) {
-        this.date = date;
-    }
-
     public String getUrl() {
         return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public boolean isRead() {
         return read;
-    }
-
-    public void setRead(boolean read) {
-        this.read = read;
     }
 }
