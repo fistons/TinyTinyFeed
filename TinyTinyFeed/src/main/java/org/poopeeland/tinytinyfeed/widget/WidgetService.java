@@ -17,6 +17,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.poopeeland.tinytinyfeed.Article;
+import org.poopeeland.tinytinyfeed.Category;
 import org.poopeeland.tinytinyfeed.R;
 import org.poopeeland.tinytinyfeed.RequestTask;
 import org.poopeeland.tinytinyfeed.TinyTinyFeedWidget;
@@ -37,14 +38,15 @@ import java.util.concurrent.ExecutionException;
 
 /**
  * Central service managing the connections to the server
- *
+ * <p/>
  * Created by eric on 11/05/14.
  */
 public class WidgetService extends RemoteViewsService {
 
     public static final String ACTIVITY_FLAG = "Activity";
-    private static final String TAG = "WidgetService";
-    private final String listFileName = "listlist.json";
+    private static final String TAG = WidgetService.class.getSimpleName();
+    private final String listFileName = "listArticles.json";
+    private final String listCatName = "listCat.json";
     protected IBinder binder = new LocalBinder();
     private ConnectivityManager connMgr;
     private String session;
@@ -55,12 +57,14 @@ public class WidgetService extends RemoteViewsService {
     private boolean onlyUnread;
     private DefaultHttpClient client;
     private File lastListFile;
+    private File catListFile;
 
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate");
         this.lastListFile = new File(getApplicationContext().getFilesDir(), this.listFileName);
+        this.catListFile = new File(getApplicationContext().getFilesDir(), this.listCatName);
     }
 
     @Override
@@ -115,6 +119,17 @@ public class WidgetService extends RemoteViewsService {
         this.session = response.getJSONObject("content").getString("session_id");
     }
 
+    /**
+     * Refresh the feeds et return the list of articles
+     *
+     * @return the list of last articles
+     * @throws RequiredInfoNotRegistred if the requiered info (login, password, url, etc) are not registred
+     * @throws CheckException           if the json response is not correct
+     * @throws JSONException            if there is a probleme with json parsing
+     * @throws ExecutionException
+     * @throws InterruptedException
+     * @throws NoInternetException      if the is no internet connexion right now
+     */
     public List<Article> updateFeeds() throws RequiredInfoNotRegistred, CheckException, JSONException, ExecutionException, InterruptedException, NoInternetException {
         this.start();
         try {
@@ -155,10 +170,20 @@ public class WidgetService extends RemoteViewsService {
         }
 
 
-
         return list;
     }
 
+    /**
+     * Set the article as read on the server
+     *
+     * @param article the article to set as read
+     * @throws RequiredInfoNotRegistred if the requiered info (login, password, url, etc) are not registred
+     * @throws CheckException           if the json response is not correct
+     * @throws JSONException            if there is a probleme with json parsing
+     * @throws ExecutionException
+     * @throws InterruptedException
+     * @throws NoInternetException      if the is no internet connexion right now
+     */
     public void setArticleToRead(Article article) throws CheckException, ExecutionException, InterruptedException, JSONException, RequiredInfoNotRegistred, NoInternetException {
         this.start();
         this.checkNetwork();
@@ -178,6 +203,44 @@ public class WidgetService extends RemoteViewsService {
         task.execute(jsonObject);
         JSONObject response = task.get();
         checkJsonResponse(response);
+    }
+
+    /**
+     * Load all the category from TTRss Server
+     * @return a List of Category
+     * @throws RequiredInfoNotRegistred if the requiered info (login, password, url, etc) are not registred
+     * @throws CheckException           if the json response is not correct
+     * @throws JSONException            if there is a probleme with json parsing
+     * @throws ExecutionException
+     * @throws InterruptedException
+     * @throws NoInternetException      if the is no internet connexion right now
+     */
+    public List<Category> loadCategories() throws InterruptedException, ExecutionException, CheckException, JSONException, RequiredInfoNotRegistred, NoInternetException {
+        this.start();
+        if (!isLogged()) {
+            login();
+        }
+        this.checkNetwork();
+        List<Category> categories = new ArrayList<>();
+        Log.d(TAG, "Retrieve the list of category");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("sid", session);
+        jsonObject.put("op", "getCategories");
+        jsonObject.put("unread_only", false);
+        jsonObject.put("enable_nested", false);
+        jsonObject.put("include_empty", true);
+
+        RequestTask task = new RequestTask(this.client, this.url);
+        task.execute(jsonObject);
+        JSONObject response = task.get();
+        checkJsonResponse(response);
+        Log.d(TAG, response.toString());
+
+        for (int i = 0; i < response.getJSONArray("content").length(); i++) {
+            categories.add(new Category(response.getJSONArray("content").getJSONObject(i)));
+        }
+
+        return categories;
     }
 
 
@@ -302,7 +365,6 @@ public class WidgetService extends RemoteViewsService {
 
     /**
      * Check if a data connection is available
-     *
      */
     private void checkNetwork() throws NoInternetException {
         NetworkInfo networkInfo = this.connMgr.getActiveNetworkInfo();
@@ -313,6 +375,7 @@ public class WidgetService extends RemoteViewsService {
 
     /**
      * Prepare the service
+     * TODO: Ugly, need to change that
      */
     private void start() {
         this.connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
