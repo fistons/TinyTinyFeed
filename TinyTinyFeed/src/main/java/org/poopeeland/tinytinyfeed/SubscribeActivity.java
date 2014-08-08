@@ -10,10 +10,12 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.poopeeland.tinytinyfeed.exceptions.CheckException;
@@ -29,7 +31,7 @@ import java.util.concurrent.ExecutionException;
  * Allow to subscribe to a RSS feed from the app
  * Created by eric on 01/08/14.
  */
-public class SubscribeActivity extends Activity {
+public class SubscribeActivity extends Activity implements AdapterView.OnItemSelectedListener {
 
     private final String TAG = getClass().getSimpleName();
     private String url;
@@ -45,8 +47,7 @@ public class SubscribeActivity extends Activity {
             try {
                 List<Category> categories = service.loadCategories();
                 ArrayAdapter<Category> dataAdapter = new ArrayAdapter<Category>(SubscribeActivity.this, android.R.layout.simple_spinner_item, categories);
-                Spinner spinner = (Spinner) findViewById(R.id.catList);
-                spinner.setAdapter(dataAdapter);
+                categorySpinner.setAdapter(dataAdapter);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
@@ -67,6 +68,9 @@ public class SubscribeActivity extends Activity {
             bound = false;
         }
     };
+    private Spinner categorySpinner;
+    private EditText urlEditText;
+    private Category selectedCategory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +80,10 @@ public class SubscribeActivity extends Activity {
         requestWindowFeature(Window.FEATURE_LEFT_ICON);
         setContentView(R.layout.activity_subscribe);
         getWindow().setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.ic_launcher);
+
+        this.urlEditText = (EditText) findViewById(R.id.subActUrl);
+        this.categorySpinner = (Spinner) findViewById(R.id.catList);
+        this.categorySpinner.setOnItemSelectedListener(this);
 
         /* Bind to the service */
         Intent intentBound = new Intent(this, WidgetService.class);
@@ -89,13 +97,42 @@ public class SubscribeActivity extends Activity {
             this.url = getIntent().getStringExtra(Intent.EXTRA_TEXT);
         }
 
-        ((EditText) findViewById(R.id.subActUrl)).setText(url);
-
+        this.urlEditText.setText(url);
 
         Button b = (Button) findViewById(R.id.subActButton);
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                int response = service.subscribe(urlEditText.getText().toString(), selectedCategory);
+                switch (response) {
+                    case -1:
+                        Toast.makeText(SubscribeActivity.this, getString(R.string.unknownError), Toast.LENGTH_LONG).show();
+                        break;
+                    case 0:
+                        Toast.makeText(SubscribeActivity.this, getString(R.string.unknownError), Toast.LENGTH_LONG).show();
+                        finish();
+                        break;
+                    case 1:
+                        Toast.makeText(SubscribeActivity.this, getString(R.string.unknownError), Toast.LENGTH_LONG).show();
+                        finish();
+                        break;
+                    case 2:
+                        Toast.makeText(SubscribeActivity.this, getString(R.string.unknownError), Toast.LENGTH_LONG).show();
+                        break;
+                    case 3:
+                        Toast.makeText(SubscribeActivity.this, getString(R.string.unknownError), Toast.LENGTH_LONG).show();
+                        break;
+                    case 4:
+                        Toast.makeText(SubscribeActivity.this, getString(R.string.unknownError), Toast.LENGTH_LONG).show();
+                        break;
+                    case 5:
+                        Toast.makeText(SubscribeActivity.this, getString(R.string.unknownError), Toast.LENGTH_LONG).show();
+                        break;
+                    default:
+                        Toast.makeText(SubscribeActivity.this, getString(R.string.unknownError), Toast.LENGTH_LONG).show();
+                        break;
+                }
+
             }
         });
 
@@ -110,5 +147,15 @@ public class SubscribeActivity extends Activity {
             unbindService(mConnection);
             bound = false;
         }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        this.selectedCategory = (Category) adapterView.getItemAtPosition(i);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+        this.selectedCategory = Category.UNCATEGORIZED;
     }
 }

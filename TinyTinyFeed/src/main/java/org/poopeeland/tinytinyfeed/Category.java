@@ -14,10 +14,18 @@ public class Category {
     private final int orderId;
     private final String name;
 
+    public static final Category UNCATEGORIZED = new Category(0, "", NO_ORDER_ID);
+
     public Category(JSONObject json) throws JSONException {
         this.id = json.getInt("id");
         this.name = json.getString("title");
         this.orderId = json.has("order_id") ? json.getInt("order_id") : NO_ORDER_ID;
+    }
+
+    public Category(int id, String name, int orderId) {
+        this.id = id;
+        this.name = name;
+        this.orderId = orderId;
     }
 
     @Override
