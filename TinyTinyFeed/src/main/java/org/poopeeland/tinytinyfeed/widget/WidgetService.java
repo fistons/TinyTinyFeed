@@ -38,7 +38,6 @@ import java.util.concurrent.ExecutionException;
 
 /**
  * Central service managing the connections to the server
- * <p/>
  * Created by eric on 11/05/14.
  */
 public class WidgetService extends RemoteViewsService {
@@ -48,6 +47,7 @@ public class WidgetService extends RemoteViewsService {
     private final String listFileName = "listArticles.json";
     private final String listCatName = "listCat.json";
     protected IBinder binder = new LocalBinder();
+    private boolean started;
     private ConnectivityManager connMgr;
     private String session;
     private String url;
@@ -207,6 +207,7 @@ public class WidgetService extends RemoteViewsService {
 
     /**
      * Load all the category from TTRss Server
+     *
      * @return a List of Category
      * @throws RequiredInfoNotRegistred if the requiered info (login, password, url, etc) are not registred
      * @throws CheckException           if the json response is not correct
@@ -241,6 +242,43 @@ public class WidgetService extends RemoteViewsService {
         }
 
         return categories;
+    }
+
+    /**
+     * Try to subscribe to a feed
+     *
+     * @param url      the url of the feed
+     * @param category the caterogy for the
+     * @return From TTrss source code: <ul>
+     * <li>-1 - Unknown error</li>
+     * <li>0 - OK, Feed already exists</li>
+     * <li>1 - OK, Feed added</li>
+     * <li>2 - Invalid URL</li>
+     * <li>3 - URL content is HTML, no feeds available</li>
+     * <li>4 - URL content is HTML which contains multiple feeds.
+     * Here you should call extractfeedurls in rpc-backend
+     * to get all possible feeds.</li>
+     * <li>5 - Couldn't download the URL content.</li>
+     * </ul>
+     */
+    public int subscribe(String url, Category category) {
+
+        try {
+            this.start();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("op", "subscribeToFeed");
+            jsonObject.put("feed_url", url);
+            jsonObject.put("category_id", category.getId());
+            jsonObject.put("login", this.user);
+            jsonObject.put("password", this.password);
+            RequestTask task = new RequestTask(this.client, this.url);
+            task.execute(jsonObject);
+            JSONObject response = task.get();
+            return response.getJSONObject("status").getInt("code");
+        } catch (InterruptedException | ExecutionException | JSONException ex) {
+            Log.e(TAG, String.format("Error while subscribing to a stream: %s", ex.getMessage()));
+            return -1;
+        }
     }
 
 
@@ -305,7 +343,7 @@ public class WidgetService extends RemoteViewsService {
             outputStream.write(json.toString().getBytes());
             outputStream.close();
         } catch (Exception e) {
-            Log.d(TAG, String.format("Error while saving the last articles list: %s", e.getLocalizedMessage()));
+            Log.e(TAG, String.format("Error while saving the last articles list: %s", e.getLocalizedMessage()));
         }
 
     }
@@ -332,7 +370,7 @@ public class WidgetService extends RemoteViewsService {
             fis.readLine();
             fis.close();
         } catch (IOException ex) {
-            Log.d(TAG, String.format("Error while reading the last article list: %s", ex.getLocalizedMessage()));
+            Log.e(TAG, String.format("Error while reading the last article list: %s", ex.getLocalizedMessage()));
         }
 
         if (sb.toString().isEmpty()) {
@@ -378,21 +416,24 @@ public class WidgetService extends RemoteViewsService {
      * TODO: Ugly, need to change that
      */
     private void start() {
-        this.connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        SharedPreferences preferences = getSharedPreferences(TinyTinyFeedWidget.PREFERENCE_KEY, Context.MODE_PRIVATE);
-        this.url = preferences.getString(TinyTinyFeedWidget.URL_KEY, "");
-        this.user = preferences.getString(TinyTinyFeedWidget.USER_KEY, "");
-        this.password = preferences.getString(TinyTinyFeedWidget.PASSWORD_KEY, "");
-        this.numArticles = preferences.getString(TinyTinyFeedWidget.NUM_ARTICLE_KEY, "");
-        this.onlyUnread = preferences.getBoolean(TinyTinyFeedWidget.ONLY_UNREAD_KEY, false);
-        String httpUser = preferences.getString(TinyTinyFeedWidget.HTTP_USER_KEY, "");
-        String httpPassword = preferences.getString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, "");
-        this.client = new DefaultHttpClient();
-        if (!httpUser.isEmpty()) {
-            this.client.getCredentialsProvider().setCredentials(AuthScope.ANY,
-                    new UsernamePasswordCredentials(httpUser, httpPassword));
+        if (!started) {
+            this.connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            SharedPreferences preferences = getSharedPreferences(TinyTinyFeedWidget.PREFERENCE_KEY, Context.MODE_PRIVATE);
+            this.url = preferences.getString(TinyTinyFeedWidget.URL_KEY, "");
+            this.user = preferences.getString(TinyTinyFeedWidget.USER_KEY, "");
+            this.password = preferences.getString(TinyTinyFeedWidget.PASSWORD_KEY, "");
+            this.numArticles = preferences.getString(TinyTinyFeedWidget.NUM_ARTICLE_KEY, "");
+            this.onlyUnread = preferences.getBoolean(TinyTinyFeedWidget.ONLY_UNREAD_KEY, false);
+            String httpUser = preferences.getString(TinyTinyFeedWidget.HTTP_USER_KEY, "");
+            String httpPassword = preferences.getString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, "");
+            this.client = new DefaultHttpClient();
+            if (!httpUser.isEmpty()) {
+                this.client.getCredentialsProvider().setCredentials(AuthScope.ANY,
+                        new UsernamePasswordCredentials(httpUser, httpPassword));
+            }
+            Log.d(TAG, "Preferences loaded");
+            started = true;
         }
-        Log.d(TAG, "Preferences loaded");
 
     }
 
