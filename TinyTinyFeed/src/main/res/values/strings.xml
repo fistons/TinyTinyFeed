@@ -28,4 +28,12 @@
     <string name="waitCheck">Checking your configuration</string>
     <string name="title_activity_subscribe">Subscribe to the RSS feed</string>
     <string name="subActSubButton">Subscribe</string>
+    <string name="subActUnknownError">Unknown error</string>
+    <string name="subActFeedAlreadyExist">You already have subscribed to this feed</string>
+    <string name="subActOk">Subscription ok!</string>
+    <string name="subActInvalidUrl">Invalide URL</string>
+    <string name="subActNoValidFeed">No feeds available on this page</string>
+    <string name="subActMultipleFeeds">There is multiple feeds on this page, please choose one</string>
+    <string name="subActNoUrlContent">Could not download URL content</string>
+
 </resources>
