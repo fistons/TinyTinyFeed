@@ -27,4 +27,11 @@
     <string name="waitCheck">Vérification de votre configuration</string>
     <string name="title_activity_subscribe">S\'inscrire au flux RSS</string>
     <string name="subActSubButton">S\'inscrire</string>
+    <string name="subUnknownError">Erreur inconnue</string>
+    <string name="subAlreadyExist">Vous êtes déjà abonné à ce flux</string>
+    <string name="subOk">Abonnement réussi!</string>
+    <string name="subInvalidUrl">URL non valide</string>
+    <string name="subNoRssFeeds">Aucun flux RSS sur cette page</string>
+    <string name="subMultipleFeeds">La page contient plusieurs flux, impossible de choisir à votre place</string>
+    <string name="subCouldNotDl">Impossible de télécharger le contenu de la page</string>
 </resources>
