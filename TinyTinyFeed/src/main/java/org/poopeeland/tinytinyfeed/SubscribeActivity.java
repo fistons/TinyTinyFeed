@@ -105,31 +105,28 @@ public class SubscribeActivity extends Activity implements AdapterView.OnItemSel
             public void onClick(View v) {
                 int response = service.subscribe(urlEditText.getText().toString(), selectedCategory);
                 switch (response) {
-                    case -1:
-                        Toast.makeText(SubscribeActivity.this, getString(R.string.unknownError), Toast.LENGTH_LONG).show();
-                        break;
                     case 0:
-                        Toast.makeText(SubscribeActivity.this, getString(R.string.unknownError), Toast.LENGTH_LONG).show();
+                        Toast.makeText(SubscribeActivity.this, getString(R.string.subAlreadyExist), Toast.LENGTH_LONG).show();
                         finish();
                         break;
                     case 1:
-                        Toast.makeText(SubscribeActivity.this, getString(R.string.unknownError), Toast.LENGTH_LONG).show();
+                        Toast.makeText(SubscribeActivity.this, getString(R.string.subOk), Toast.LENGTH_LONG).show();
                         finish();
                         break;
                     case 2:
-                        Toast.makeText(SubscribeActivity.this, getString(R.string.unknownError), Toast.LENGTH_LONG).show();
+                        Toast.makeText(SubscribeActivity.this, getString(R.string.subInvalidUrl), Toast.LENGTH_LONG).show();
                         break;
                     case 3:
-                        Toast.makeText(SubscribeActivity.this, getString(R.string.unknownError), Toast.LENGTH_LONG).show();
+                        Toast.makeText(SubscribeActivity.this, getString(R.string.subNoRssFeeds), Toast.LENGTH_LONG).show();
                         break;
                     case 4:
-                        Toast.makeText(SubscribeActivity.this, getString(R.string.unknownError), Toast.LENGTH_LONG).show();
+                        Toast.makeText(SubscribeActivity.this, getString(R.string.subMultipleFeeds), Toast.LENGTH_LONG).show();
                         break;
                     case 5:
-                        Toast.makeText(SubscribeActivity.this, getString(R.string.unknownError), Toast.LENGTH_LONG).show();
+                        Toast.makeText(SubscribeActivity.this, getString(R.string.subCouldNotDl), Toast.LENGTH_LONG).show();
                         break;
                     default:
-                        Toast.makeText(SubscribeActivity.this, getString(R.string.unknownError), Toast.LENGTH_LONG).show();
+                        Toast.makeText(SubscribeActivity.this, getString(R.string.subUnknownError), Toast.LENGTH_LONG).show();
                         break;
                 }
 
