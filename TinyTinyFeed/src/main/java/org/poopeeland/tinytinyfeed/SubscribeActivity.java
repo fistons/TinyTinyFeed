@@ -34,7 +34,6 @@ import java.util.concurrent.ExecutionException;
 public class SubscribeActivity extends Activity implements AdapterView.OnItemSelectedListener {
 
     private final String TAG = getClass().getSimpleName();
-    private String url;
     private WidgetService service;
     private boolean bound;
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -48,17 +47,7 @@ public class SubscribeActivity extends Activity implements AdapterView.OnItemSel
                 List<Category> categories = service.loadCategories();
                 ArrayAdapter<Category> dataAdapter = new ArrayAdapter<Category>(SubscribeActivity.this, android.R.layout.simple_spinner_item, categories);
                 categorySpinner.setAdapter(dataAdapter);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (CheckException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            } catch (RequiredInfoNotRegistred requiredInfoNotRegistred) {
-                requiredInfoNotRegistred.printStackTrace();
-            } catch (NoInternetException e) {
+            } catch (InterruptedException | ExecutionException | CheckException | JSONException | RequiredInfoNotRegistred | NoInternetException e) {
                 e.printStackTrace();
             }
         }
@@ -91,10 +80,9 @@ public class SubscribeActivity extends Activity implements AdapterView.OnItemSel
         bindService(intentBound, mConnection, Context.BIND_AUTO_CREATE);
 
         /* Retrieve data from the intent */
-        Intent intent = getIntent();
-        this.url = getIntent().getDataString();
-        if (this.url == null) {
-            this.url = getIntent().getStringExtra(Intent.EXTRA_TEXT);
+        String url = getIntent().getDataString();
+        if (url == null) {
+            url = getIntent().getStringExtra(Intent.EXTRA_TEXT);
         }
 
         this.urlEditText.setText(url);
