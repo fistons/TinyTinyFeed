@@ -20,15 +20,16 @@ import java.util.concurrent.ExecutionException;
 
 
 /**
+ * ListProvider
  * Created by eric on 11/05/14.
  */
 public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
-    private static final String TAG = "ListProvider";
+    private static final String TAG = ListProvider.class.getSimpleName();
     private final Context context;
     private final String unreadSymbol;
     private WidgetService service;
-    private List<Article> articleList = new ArrayList();
+    private List<Article> articleList = new ArrayList<>();
 
     public ListProvider(WidgetService service) {
         this.service = service;
@@ -39,6 +40,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public void onCreate() {
+        Log.d(TAG, "onCreate");
     }
 
     @Override

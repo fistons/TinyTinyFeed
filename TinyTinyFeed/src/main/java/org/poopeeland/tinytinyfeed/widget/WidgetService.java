@@ -138,7 +138,7 @@ public class WidgetService extends RemoteViewsService {
             Log.d(TAG, "No internet right now, load the last list");
             return this.loadLastList();
         }
-        List<Article> list = new ArrayList();
+        List<Article> list = new ArrayList<Article>();
         if (!isLogged()) {
             login();
         }
@@ -260,22 +260,26 @@ public class WidgetService extends RemoteViewsService {
      * to get all possible feeds.</li>
      * <li>5 - Couldn't download the URL content.</li>
      * </ul>
+     * TODO: refactor this shit
      */
     public int subscribe(String url, Category category) {
 
         try {
             this.start();
+            if (!isLogged()) {
+                login();
+            }
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("op", "subscribeToFeed");
             jsonObject.put("feed_url", url);
             jsonObject.put("category_id", category.getId());
-            jsonObject.put("login", this.user);
-            jsonObject.put("password", this.password);
+            jsonObject.put("sid", session);
             RequestTask task = new RequestTask(this.client, this.url);
             task.execute(jsonObject);
             JSONObject response = task.get();
-            return response.getJSONObject("status").getInt("code");
-        } catch (InterruptedException | ExecutionException | JSONException ex) {
+            checkJsonResponse(response);
+            return response.getJSONObject("content").getJSONObject("status").getInt("code");
+        } catch (InterruptedException | ExecutionException | JSONException | CheckException | RequiredInfoNotRegistred ex) {
             Log.e(TAG, String.format("Error while subscribing to a stream: %s", ex.getMessage()));
             return -1;
         }

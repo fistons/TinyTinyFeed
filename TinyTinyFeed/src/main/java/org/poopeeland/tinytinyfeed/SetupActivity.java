@@ -9,6 +9,8 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
@@ -29,7 +31,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
-public class SetupActivity extends Activity implements View.OnClickListener {
+public class SetupActivity extends Activity implements View.OnClickListener, TextWatcher {
 
     public static final String URL_SUFFIX = "/api/";
     private static final String TAG = "TinyTinyFeedSetup";
@@ -115,6 +117,13 @@ public class SetupActivity extends Activity implements View.OnClickListener {
         this.httpUser = (EditText) findViewById(R.id.setupHttpUser);
         this.httpPassword = (EditText) findViewById(R.id.setupHttpPassword);
 
+        this.url.addTextChangedListener(this);
+        this.user.addTextChangedListener(this);
+        this.password.addTextChangedListener(this);
+        this.numArticle.addTextChangedListener(this);
+        this.httpUser.addTextChangedListener(this);
+        this.httpPassword.addTextChangedListener(this);
+
         this.url.setText(this.preferences.getString(TinyTinyFeedWidget.URL_KEY, "http://"));
         this.user.setText(this.preferences.getString(TinyTinyFeedWidget.USER_KEY, ""));
         this.password.setText(this.preferences.getString(TinyTinyFeedWidget.PASSWORD_KEY, ""));
@@ -162,6 +171,19 @@ public class SetupActivity extends Activity implements View.OnClickListener {
         }
         CheckSetupTask task = new CheckSetupTask(client, url);
         task.execute(jsonObject);
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+    }
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+        findViewById(R.id.setupOkButton).setEnabled(false);
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
     }
 
 
