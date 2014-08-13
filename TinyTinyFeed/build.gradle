@@ -13,8 +13,8 @@ repositories {
 }
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion "19.1.0"
+    compileSdkVersion 20
+    buildToolsVersion "20"
 
     defaultConfig {
         minSdkVersion 14
@@ -44,6 +44,3 @@ android {
     }
 }
 
-dependencies {
-    compile 'com.android.support:appcompat-v7:19.1.0'
-}
