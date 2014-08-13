@@ -61,6 +61,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public void onDestroy() {
+        Log.d(TAG, "onDestroy");
         this.articleList.clear();
     }
 
