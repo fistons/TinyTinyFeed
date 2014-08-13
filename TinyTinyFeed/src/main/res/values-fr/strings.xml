@@ -16,7 +16,7 @@
     <string name="setupCheckButtonText">Vérifier</string>
     <string name="defaultLastUpdateText">Jamais mis à jour</string>
     <string name="lastUpdateText">Dernière mise à jour: %s</string>
-
+    <string name="unreadSymbol">[*]</string>
     <string name="connectionError">Problème de connexion - Vérifiez que le serveur est fonctionnel et que l\'URL est la bonne</string>
     <string name="connectionAuthError">HTTP auth - Veuillez vérifier vos identifiant</string>
     <string name="impossibleError">LOLWUT?! Comment c\'est possible? Erreur à la con: %s</string>
