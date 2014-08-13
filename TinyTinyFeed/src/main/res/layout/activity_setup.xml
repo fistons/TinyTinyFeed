@@ -2,7 +2,7 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:layout_gravity="left|center_vertical"
+    android:layout_gravity="start|center_vertical"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:weightSum="1">
 
@@ -11,13 +11,13 @@
         android:layout_height="wrap_content"
         android:text="@string/setupUrlLabel"
         android:id="@+id/textView"
-        android:layout_gravity="left|center_vertical" />
+        android:layout_gravity="start|center_vertical" />
 
     <EditText
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/setupUrl"
-        android:layout_gravity="left|center_vertical"
+        android:layout_gravity="start|center_vertical"
         android:inputType="textUri" />
 
     <TextView
@@ -25,13 +25,13 @@
         android:layout_height="wrap_content"
         android:text="@string/setupUserLabel"
         android:id="@+id/textView2"
-        android:layout_gravity="left|center_vertical" />
+        android:layout_gravity="start|center_vertical" />
 
     <EditText
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/setupUser"
-        android:layout_gravity="left|center_vertical"
+        android:layout_gravity="start|center_vertical"
         android:inputType="textPersonName" />
 
     <TextView
@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:text="@string/setupPasswordLabel"
         android:id="@+id/textView3"
-        android:layout_gravity="left|center_vertical" />
+        android:layout_gravity="start|center_vertical" />
 
     <EditText
         android:layout_width="fill_parent"
@@ -47,14 +47,14 @@
         android:inputType="textPassword"
         android:ems="10"
         android:id="@+id/setupPassword"
-        android:layout_gravity="left|center_vertical" />
+        android:layout_gravity="start|center_vertical" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/setupNumArticles"
         android:id="@+id/textView4"
-        android:layout_gravity="left|center_vertical" />
+        android:layout_gravity="start|center_vertical" />
 
     <EditText
         android:layout_width="fill_parent"
@@ -62,7 +62,7 @@
         android:inputType="number"
         android:ems="10"
         android:id="@+id/setupArticlesNum"
-        android:layout_gravity="left|center_vertical" />
+        android:layout_gravity="start|center_vertical" />
 
     <CheckBox
         android:layout_width="wrap_content"
@@ -110,20 +110,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        style="?android:attr/buttonBarStyle">
+        style="?android:attr/buttonBarStyle"
+        android:gravity="bottom|right"
+        android:layout_alignParentBottom="true"
+        android:weightSum="1">
 
         <Button
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/setupOkButtonText"
             android:id="@+id/setupOkButton"
-            android:enabled="false"/>
+            android:enabled="false"
+            style="?android:attr/buttonBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_weight="146" />
 
         <Button
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/setupCheckButtonText"
-            android:id="@+id/setupCheckButton"/>
+            android:id="@+id/setupCheckButton"
+            style="?android:attr/buttonBarStyle"
+            android:layout_width="fill_parent"
+            android:layout_weight="139" />
     </LinearLayout>
 
 </LinearLayout>
