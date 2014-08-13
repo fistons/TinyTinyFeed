@@ -111,8 +111,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         style="?android:attr/buttonBarStyle"
-        android:gravity="bottom|right"
-        android:layout_alignParentBottom="true"
+        android:gravity="bottom|end"
         android:weightSum="1">
 
         <Button
