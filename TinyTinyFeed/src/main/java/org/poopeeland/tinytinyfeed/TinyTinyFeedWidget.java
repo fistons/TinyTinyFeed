@@ -35,9 +35,9 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
     /**
      * Return a Pending Intent asking the refresh of the widget
      *
-     * @param context
-     * @param ids
-     * @return
+     * @param context the context
+     * @param ids     the ids of the widgets to refresh
+     * @return a pending intent
      */
     private static PendingIntent actionPendingIntent(Context context, int[] ids) {
         Log.d(TAG, "Create pending intent");
