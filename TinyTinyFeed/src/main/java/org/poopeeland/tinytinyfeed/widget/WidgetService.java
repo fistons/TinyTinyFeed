@@ -45,7 +45,6 @@ public class WidgetService extends RemoteViewsService {
     public static final String ACTIVITY_FLAG = "Activity";
     private static final String TAG = WidgetService.class.getSimpleName();
     private final String listFileName = "listArticles.json";
-    private final String listCatName = "listCat.json";
     protected IBinder binder = new LocalBinder();
     private boolean started;
     private ConnectivityManager connMgr;
@@ -64,7 +63,8 @@ public class WidgetService extends RemoteViewsService {
         super.onCreate();
         Log.d(TAG, "onCreate");
         this.lastListFile = new File(getApplicationContext().getFilesDir(), this.listFileName);
-        this.catListFile = new File(getApplicationContext().getFilesDir(), this.listCatName);
+        String listCatName = "listCat.json";
+        this.catListFile = new File(getApplicationContext().getFilesDir(), listCatName);
     }
 
     @Override
