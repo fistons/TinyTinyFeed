@@ -138,7 +138,7 @@ public class WidgetService extends RemoteViewsService {
             Log.d(TAG, "No internet right now, load the last list");
             return this.loadLastList();
         }
-        List<Article> list = new ArrayList<Article>();
+        List<Article> list = new ArrayList<>();
         if (!isLogged()) {
             login();
         }

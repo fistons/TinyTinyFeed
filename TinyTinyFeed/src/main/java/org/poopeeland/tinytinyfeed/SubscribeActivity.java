@@ -45,7 +45,7 @@ public class SubscribeActivity extends Activity implements AdapterView.OnItemSel
             Log.d(TAG, "bounded!");
             try {
                 List<Category> categories = service.loadCategories();
-                ArrayAdapter<Category> dataAdapter = new ArrayAdapter<Category>(SubscribeActivity.this, android.R.layout.simple_spinner_item, categories);
+                ArrayAdapter<Category> dataAdapter = new ArrayAdapter<>(SubscribeActivity.this, android.R.layout.simple_spinner_item, categories);
                 categorySpinner.setAdapter(dataAdapter);
             } catch (InterruptedException | ExecutionException | CheckException | JSONException | RequiredInfoNotRegistred | NoInternetException e) {
                 e.printStackTrace();
