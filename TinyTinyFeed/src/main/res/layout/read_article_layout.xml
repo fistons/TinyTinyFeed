@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:text="title"
         android:id="@+id/readTitle"
-        android:layout_gravity="left|center_vertical"
+        android:layout_gravity="start|center_vertical"
         android:textColor="#ffffff" />
 
     <TextView
@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:text="feed"
         android:id="@+id/readFeedNameAndDate"
-        android:layout_gravity="left|center_vertical"
+        android:layout_gravity="start|center_vertical"
         android:textStyle="italic"
         android:textColor="#ffffff" />
 
@@ -29,5 +29,5 @@
         android:layout_height="wrap_content"
         android:text="resume"
         android:id="@+id/readResume"
-        android:layout_gravity="left|center_vertical" />
+        android:layout_gravity="start|center_vertical" />
 </LinearLayout>

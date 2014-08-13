@@ -1,14 +1,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/widget_margin"
-    android:background="#0000">
+    android:padding="@dimen/widget_margin">
 
     <ListView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:id="@+id/listViewWidget"
-        android:layout_gravity="left|top"
+        android:layout_gravity="start|top"
         android:clickable="true"
         android:fastScrollAlwaysVisible="false"
         android:fastScrollEnabled="true"
