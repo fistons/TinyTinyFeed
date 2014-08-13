@@ -30,7 +30,7 @@
     <string name="subActSubButton">Subscribe</string>
     <string name="subUnknownError">Unknown issue</string>
     <string name="subAlreadyExist">You already have subscrided to this feed</string>
-    <string name="subOk">Subscription successfull!</string>
+    <string name="subOk">Subscription successful!</string>
     <string name="subInvalidUrl">Invalid URL</string>
     <string name="subNoRssFeeds">No RSS Feeds available on this page</string>
     <string name="subMultipleFeeds">The pages contains multiple RSS feeds, could not choose between them.</string>
