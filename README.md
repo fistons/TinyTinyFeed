@@ -18,6 +18,12 @@ If you want, you can send me a [gift](https://www.paypal.com/cgi-bin/webscr?cmd=
 
 ## Release notes
 
+* V1.3:
+
+    * Add an option to retrieve only unread feeds
+    * You can now subscribe to rss feed by sharing links to the Tiny Tiny Feed (still in beta)
+    * New Setup Screen
+    
 * V1.2:
     
     * Now there is two different layout for read and unread articles (Unread ones have a little [ * ] before the name)
