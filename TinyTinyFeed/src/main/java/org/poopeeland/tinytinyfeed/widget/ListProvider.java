@@ -29,7 +29,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     private final Context context;
     private final String unreadSymbol;
     private WidgetService service;
-    private List<Article> articleList = new ArrayList<>();
+    private List<Article> articleList;
 
     public ListProvider(WidgetService service) {
         this.service = service;
@@ -41,6 +41,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public void onCreate() {
         Log.d(TAG, "onCreate");
+        this.articleList = new ArrayList<>();
     }
 
     @Override
@@ -80,6 +81,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
         fillInIntent.setData(Uri.parse(listItem.getUrl()));
         fillInIntent.putExtra("article", listItem);
 
+        // TODO: should use a theme or a style or something like that
         String feedNameAndDate = String.format("%s - %s", listItem.getFeeTitle(), listItem.getDate());
         if (listItem.isRead()) {
             remoteView = new RemoteViews(context.getPackageName(), R.layout.read_article_layout);
