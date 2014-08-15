@@ -107,7 +107,7 @@ public class SetupActivity extends Activity implements View.OnClickListener, Tex
     @Override
     protected void onResume() {
         super.onResume();
-
+        //TODO: Put all this in onCreate
         this.preferences = getSharedPreferences(TinyTinyFeedWidget.PREFERENCE_KEY, MODE_PRIVATE);
         this.url = (EditText) findViewById(R.id.setupUrl);
         this.user = (EditText) findViewById(R.id.setupUser);
