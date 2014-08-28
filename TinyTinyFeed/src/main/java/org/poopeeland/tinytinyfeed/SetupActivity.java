@@ -45,6 +45,7 @@ public class SetupActivity extends Activity implements View.OnClickListener, Tex
     private EditText httpPassword;
     private EditText httpUser;
     private EditText numArticle;
+    private View setupOkButton;
 
     @Override
     public void onClick(View view) {
@@ -91,7 +92,8 @@ public class SetupActivity extends Activity implements View.OnClickListener, Tex
         // On annule, comme ça si le user fait "back" sans faire ok avant, on est perché
         setResult(RESULT_CANCELED);
         setContentView(R.layout.activity_setup);
-        findViewById(R.id.setupOkButton).setOnClickListener(this);
+        this.setupOkButton = findViewById(R.id.setupOkButton);
+        this.setupOkButton.setOnClickListener(this);
         findViewById(R.id.setupCheckButton).setOnClickListener(this);
 
         // Find the widget id from the intent.
@@ -105,9 +107,9 @@ public class SetupActivity extends Activity implements View.OnClickListener, Tex
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        //TODO: Put all this in onCreate
+    protected void onStart() {
+        super.onStart();
+
         this.preferences = getSharedPreferences(TinyTinyFeedWidget.PREFERENCE_KEY, MODE_PRIVATE);
         this.url = (EditText) findViewById(R.id.setupUrl);
         this.user = (EditText) findViewById(R.id.setupUser);
@@ -132,7 +134,6 @@ public class SetupActivity extends Activity implements View.OnClickListener, Tex
         this.httpUser.setText(this.preferences.getString(TinyTinyFeedWidget.HTTP_USER_KEY, ""));
         this.httpPassword.setText(this.preferences.getString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, ""));
     }
-
 
     private void save() {
         SharedPreferences.Editor editor = this.preferences.edit();
@@ -179,7 +180,7 @@ public class SetupActivity extends Activity implements View.OnClickListener, Tex
 
     @Override
     public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-        findViewById(R.id.setupOkButton).setEnabled(false);
+        this.setupOkButton.setEnabled(false);
     }
 
     @Override
