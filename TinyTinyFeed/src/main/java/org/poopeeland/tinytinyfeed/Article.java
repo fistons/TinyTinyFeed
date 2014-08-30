@@ -6,6 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -15,7 +16,7 @@ import java.util.Date;
  */
 public class Article implements Serializable {
 
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+    private static final DateFormat sdf = DateFormat.getDateTimeInstance();
 
     private final int id;
     private final String title;
