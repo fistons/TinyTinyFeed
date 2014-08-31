@@ -34,4 +34,5 @@
     <string name="subNoRssFeeds">Aucun flux RSS sur cette page</string>
     <string name="subMultipleFeeds">La page contient plusieurs flux, impossible de choisir à votre place</string>
     <string name="subCouldNotDl">Impossible de télécharger le contenu de la page</string>
+    <string name="setupApiDisabled">Les API semblent désactivées. Veuillez les activer dans les préférences de TTRss.</string>
 </resources>

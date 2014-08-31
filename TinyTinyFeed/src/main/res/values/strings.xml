@@ -35,4 +35,5 @@
     <string name="subNoRssFeeds">No RSS Feeds available on this page</string>
     <string name="subMultipleFeeds">The pages contains multiple RSS feeds, could not choose between them.</string>
     <string name="subCouldNotDl">Couldn\'t download the URL content.</string>
+    <string name="setupApiDisabled">The API seems to be disabled, please enable them on the TTRss preferences.</string>
 </resources>
