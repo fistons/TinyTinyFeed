@@ -215,21 +215,26 @@ public class SetupActivity extends Activity implements View.OnClickListener, Tex
                         case LOGIN_ERROR:
                             Log.e(TAG, response.getJSONObject("content").getString("error"));
                             Toast.makeText(SetupActivity.this, R.string.badLogin, Toast.LENGTH_LONG).show();
+                            break;
                         case CLIENT_PROTOCOL_EXCEPTION:
                         case UNREACHABLE_TTRSS:
                         case IO_EXCEPTION:
                             Log.e(TAG, response.getJSONObject("content").getString("message"));
                             Toast.makeText(SetupActivity.this, R.string.connectionError, Toast.LENGTH_LONG).show();
+                            break;
                         case HTTP_AUTH_REQUIERED:
                             Log.e(TAG, response.getJSONObject("content").getString("message"));
                             Toast.makeText(SetupActivity.this, R.string.connectionAuthError, Toast.LENGTH_LONG).show();
+                            break;
                         case UNSUPPORTED_ENCODING:
                         case JSON_EXCEPTION:
                             Log.e(TAG, response.getJSONObject("content").getString("message"));
                             Toast.makeText(SetupActivity.this, R.string.impossibleError, Toast.LENGTH_LONG).show();
+                            break;
                         default:
                             Log.e(TAG, response.getJSONObject("content").getString("message"));
                             Toast.makeText(SetupActivity.this, R.string.unknownError, Toast.LENGTH_LONG).show();
+                            break;
                     }
                 }
             } catch (JSONException ex) {
