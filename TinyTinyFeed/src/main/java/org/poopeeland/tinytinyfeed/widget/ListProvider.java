@@ -7,6 +7,7 @@ import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.poopeeland.tinytinyfeed.Article;
 import org.poopeeland.tinytinyfeed.R;
@@ -14,7 +15,12 @@ import org.poopeeland.tinytinyfeed.exceptions.CheckException;
 import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
 import org.poopeeland.tinytinyfeed.exceptions.RequiredInfoNotRegistred;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -41,8 +47,9 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public void onCreate() {
         Log.d(TAG, "onCreate");
-        this.articleList = new ArrayList<>();
+        this.articleList = this.loadLastList();
     }
+
 
     @Override
     public void onDataSetChanged() {
@@ -51,12 +58,16 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
             articleList = service.updateFeeds();
         } catch (RequiredInfoNotRegistred ex) {
             Log.e(TAG, "Some informations are missing");
+            this.articleList = this.loadLastList();
         } catch (CheckException e) {
             Log.e(TAG, e.getMessage());
+            this.articleList = this.loadLastList();
         } catch (InterruptedException | ExecutionException | JSONException e) {
+            this.articleList = this.loadLastList();
             Log.e(TAG, e.getLocalizedMessage());
         } catch (NoInternetException ex) {
             Log.e(TAG, context.getText(R.string.noInternetConnection).toString());
+            this.articleList = this.loadLastList();
         }
     }
 
@@ -117,6 +128,41 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public boolean hasStableIds() {
         return true;
+    }
+
+
+    private List<Article> loadLastList() {
+        if (!new File(WidgetService.listFileName).isFile()) {
+            return Collections.EMPTY_LIST;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        try {
+            BufferedReader fis = new BufferedReader(new FileReader(WidgetService.listFileName));
+            String buffer;
+            while ((buffer = fis.readLine()) != null) {
+                sb.append(buffer);
+            }
+            fis.readLine();
+            fis.close();
+        } catch (IOException ex) {
+            Log.e(TAG, String.format("Error while reading the last article list: %s", ex.getLocalizedMessage()));
+        }
+
+        if (sb.toString().isEmpty()) {
+            return Collections.EMPTY_LIST;
+        }
+
+        List<Article> articles = new ArrayList<>();
+        try {
+            JSONArray response = new JSONArray(sb.toString());
+            for (int i = 0; i < response.length(); i++) {
+                articles.add(new Article(response.getJSONObject(i)));
+            }
+        } catch (JSONException ex) {
+            return Collections.EMPTY_LIST;
+        }
+        return articles;
     }
 
 
