@@ -3,11 +3,13 @@ package org.poopeeland.tinytinyfeed;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 /**
  * TTRss Category
  * Created by eric on 04/08/14.
  */
-public class Category {
+public class Category implements Serializable {
 
     public static final int NO_ORDER_ID = -1;
     private final int id;
