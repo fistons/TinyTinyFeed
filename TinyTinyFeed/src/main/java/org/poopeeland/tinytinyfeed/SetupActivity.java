@@ -231,11 +231,16 @@ public class SetupActivity extends Activity implements View.OnClickListener, Tex
                             Log.e(TAG, response.getJSONObject("content").getString("message"));
                             Toast.makeText(SetupActivity.this, R.string.impossibleError, Toast.LENGTH_LONG).show();
                             break;
+                        case API_DISABLED:
+                            Log.e(TAG, "API Disabled....");
+                            Toast.makeText(SetupActivity.this, R.string.setupApiDisabled, Toast.LENGTH_LONG).show();
+                            break;
                         default:
                             Log.e(TAG, response.getJSONObject("content").getString("message"));
                             Toast.makeText(SetupActivity.this, R.string.unknownError, Toast.LENGTH_LONG).show();
                             break;
                     }
+                    return;
                 }
             } catch (JSONException ex) {
                 // This can not happen
