@@ -44,7 +44,7 @@ public class WidgetService extends RemoteViewsService {
 
     public static final String ACTIVITY_FLAG = "Activity";
     private static final String TAG = WidgetService.class.getSimpleName();
-    private final String listFileName = "listArticles.json";
+    public static final String listFileName = "listArticles.json";
     protected IBinder binder = new LocalBinder();
     private boolean started;
     private ConnectivityManager connMgr;
@@ -132,12 +132,9 @@ public class WidgetService extends RemoteViewsService {
      */
     public List<Article> updateFeeds() throws RequiredInfoNotRegistred, CheckException, JSONException, ExecutionException, InterruptedException, NoInternetException {
         this.start();
-        try {
-            this.checkNetwork();
-        } catch (NoInternetException ex) {
-            Log.d(TAG, "No internet right now, load the last list");
-            return this.loadLastList();
-        }
+
+        this.checkNetwork();
+
         List<Article> list = new ArrayList<>();
         if (!isLogged()) {
             login();
@@ -319,6 +316,9 @@ public class WidgetService extends RemoteViewsService {
                     case JSON_EXCEPTION:
                         Log.e(TAG, response.getJSONObject("content").getString("message"));
                         throw new CheckException(String.format(getString(R.string.impossibleError), response.getJSONObject("content").getString("message")));
+                    case API_DISABLED:
+                        Log.e(TAG, "API disabled...");
+                        throw new CheckException(getString(R.string.setupApiDisabled));
                     default:
                         Log.e(TAG, response.getJSONObject("content").getString("message"));
                         throw new CheckException(String.format(getString(R.string.unknownError), response.getJSONObject("content").getString("message")));
