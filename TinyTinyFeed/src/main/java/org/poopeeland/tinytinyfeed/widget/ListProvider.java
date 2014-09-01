@@ -36,11 +36,13 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     private final String unreadSymbol;
     private WidgetService service;
     private List<Article> articleList;
+    private final File lastArticlesList;
 
     public ListProvider(WidgetService service) {
         this.service = service;
         this.context = service.getApplicationContext();
         this.unreadSymbol = context.getString(R.string.unreadSymbol);
+        this.lastArticlesList = new File(context.getApplicationContext().getFilesDir(), WidgetService.listFileName);
     }
 
 
@@ -132,13 +134,14 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
 
     private List<Article> loadLastList() {
-        if (!new File(WidgetService.listFileName).isFile()) {
+        Log.d(TAG, String.format("Loading lastlist from %s", this.lastArticlesList.getAbsolutePath()));
+        if (!this.lastArticlesList.isFile()) {
             return Collections.EMPTY_LIST;
         }
 
         StringBuilder sb = new StringBuilder();
         try {
-            BufferedReader fis = new BufferedReader(new FileReader(WidgetService.listFileName));
+            BufferedReader fis = new BufferedReader(new FileReader(this.lastArticlesList));
             String buffer;
             while ((buffer = fis.readLine()) != null) {
                 sb.append(buffer);
