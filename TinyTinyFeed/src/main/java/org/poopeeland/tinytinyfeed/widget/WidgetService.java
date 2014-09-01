@@ -341,7 +341,7 @@ public class WidgetService extends RemoteViewsService {
             return;
         }
 
-        Log.d(TAG, "Saving the list");
+        Log.d(TAG, String.format("Saving the list to %s", this.lastListFile.getAbsolutePath()));
         try {
             FileOutputStream outputStream = new FileOutputStream(this.lastListFile);
             outputStream.write(json.toString().getBytes());
@@ -350,44 +350,6 @@ public class WidgetService extends RemoteViewsService {
             Log.e(TAG, String.format("Error while saving the last articles list: %s", e.getLocalizedMessage()));
         }
 
-    }
-
-    /**
-     * Load the last saved list from the preference in a file
-     *
-     * @return the last list of articles
-     * @throws JSONException
-     */
-    private List<Article> loadLastList() throws JSONException {
-        if (!this.lastListFile.isFile()) {
-            return Collections.EMPTY_LIST;
-        }
-
-
-        StringBuilder sb = new StringBuilder();
-        try {
-            BufferedReader fis = new BufferedReader(new FileReader(this.lastListFile));
-            String buffer;
-            while ((buffer = fis.readLine()) != null) {
-                sb.append(buffer);
-            }
-            fis.readLine();
-            fis.close();
-        } catch (IOException ex) {
-            Log.e(TAG, String.format("Error while reading the last article list: %s", ex.getLocalizedMessage()));
-        }
-
-        if (sb.toString().isEmpty()) {
-            return Collections.EMPTY_LIST;
-        }
-
-
-        JSONArray response = new JSONArray(sb.toString());
-        List<Article> articles = new ArrayList<>();
-        for (int i = 0; i < response.length(); i++) {
-            articles.add(new Article(response.getJSONObject(i)));
-        }
-        return articles;
     }
 
     /**
