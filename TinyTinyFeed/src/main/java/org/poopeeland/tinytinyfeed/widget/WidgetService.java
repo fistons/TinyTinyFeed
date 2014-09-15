@@ -110,7 +110,10 @@ public class WidgetService extends RemoteViewsService {
         JSONObject response = task.get();
         checkJsonResponse(response);
         this.session = response.getJSONObject("content").getString("session_id");
+        saveSessionId(this.session);
     }
+
+
 
     /**
      * Refresh the feeds et return the list of articles
@@ -383,6 +386,7 @@ public class WidgetService extends RemoteViewsService {
             this.password = preferences.getString(TinyTinyFeedWidget.PASSWORD_KEY, "");
             this.numArticles = preferences.getString(TinyTinyFeedWidget.NUM_ARTICLE_KEY, "");
             this.onlyUnread = preferences.getBoolean(TinyTinyFeedWidget.ONLY_UNREAD_KEY, false);
+            this.session = preferences.getString(TinyTinyFeedWidget.PREFERENCE_KEY, null);
             String httpUser = preferences.getString(TinyTinyFeedWidget.HTTP_USER_KEY, "");
             String httpPassword = preferences.getString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, "");
             this.client = new DefaultHttpClient();
@@ -393,7 +397,13 @@ public class WidgetService extends RemoteViewsService {
             Log.d(TAG, "Preferences loaded");
             started = true;
         }
+    }
 
+    private void saveSessionId(String sessionId) {
+        SharedPreferences preferences = getSharedPreferences(TinyTinyFeedWidget.PREFERENCE_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(TinyTinyFeedWidget.SESSION_KEY, sessionId);
+        editor.apply();
     }
 
 
