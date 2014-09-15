@@ -41,7 +41,7 @@ public class WidgetService extends RemoteViewsService {
     public static final String ACTIVITY_FLAG = "Activity";
     private static final String TAG = WidgetService.class.getSimpleName();
     public static final String LIST_FILENAME = "listArticles.json";
-    protected IBinder binder = new LocalBinder();
+    protected final IBinder binder = new LocalBinder();
     private boolean started;
     private ConnectivityManager connMgr;
     private String session;
@@ -129,7 +129,7 @@ public class WidgetService extends RemoteViewsService {
         this.checkNetwork();
 
         List<Article> list = new ArrayList<>();
-        if (!isLogged()) {
+        if (isNotLogged()) {
             login();
         }
 
@@ -178,7 +178,7 @@ public class WidgetService extends RemoteViewsService {
         this.start();
         this.checkNetwork();
         Log.d(TAG, String.format("Article %s set to read", article.getTitle()));
-        if (!isLogged()) {
+        if (isNotLogged()) {
             login();
         }
         JSONObject jsonObject = new JSONObject();
@@ -208,7 +208,7 @@ public class WidgetService extends RemoteViewsService {
      */
     public List<Category> loadCategories() throws InterruptedException, ExecutionException, CheckException, JSONException, RequiredInfoNotRegistred, NoInternetException {
         this.start();
-        if (!isLogged()) {
+        if (isNotLogged()) {
             login();
         }
         this.checkNetwork();
@@ -256,7 +256,7 @@ public class WidgetService extends RemoteViewsService {
 
         try {
             this.start();
-            if (!isLogged()) {
+            if (isNotLogged()) {
                 login();
             }
             JSONObject jsonObject = new JSONObject();
@@ -276,7 +276,7 @@ public class WidgetService extends RemoteViewsService {
     }
 
 
-    private boolean isLogged() throws RequiredInfoNotRegistred, JSONException, ExecutionException, InterruptedException, CheckException {
+    private boolean isNotLogged() throws RequiredInfoNotRegistred, JSONException, ExecutionException, InterruptedException, CheckException {
         checkRequieredInfoRegistred();
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("sid", session);
@@ -286,7 +286,7 @@ public class WidgetService extends RemoteViewsService {
         task.execute(jsonObject);
         JSONObject response = task.get();
         checkJsonResponse(response);
-        return response.getJSONObject("content").getBoolean("status");
+        return !response.getJSONObject("content").getBoolean("status");
     }
 
     private void checkJsonResponse(JSONObject response) throws CheckException, JSONException {

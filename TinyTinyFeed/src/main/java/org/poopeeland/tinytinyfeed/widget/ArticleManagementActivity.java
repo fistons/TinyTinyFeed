@@ -32,7 +32,7 @@ public class ArticleManagementActivity extends Activity {
     private static final String TAG = "ArticleManagementActivity";
     private boolean bound;
     private Article article;
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private final ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className, IBinder binder) {
             WidgetService.LocalBinder mbinder = (WidgetService.LocalBinder) binder;

@@ -9,7 +9,6 @@
     <string name="httpAuthUserLabel">Login:</string>
     <string name="httpAuthPasswordLabel">Password:</string>
     <string name="urlMalFormed">Malformed url</string>
-    <string name="urlBadSuffix">The url must end by %s</string>
     <string name="badLogin">Check your login/password</string>
     <string name="setupNumArticles">Number of articles to retrieve</string>
     <string name="emptyWidgetListTest">Feed list is empty</string>

@@ -1,6 +1,7 @@
 package org.poopeeland.tinytinyfeed.exceptions;
 
 /**
+ * Enum representing the different kind of Exception
  * Created by setdemr on 26/05/2014.
  */
 public enum TtrssError {

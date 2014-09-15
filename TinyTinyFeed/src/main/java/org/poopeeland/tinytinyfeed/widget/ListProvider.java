@@ -34,7 +34,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     private static final String TAG = ListProvider.class.getSimpleName();
     private final Context context;
     private final String unreadSymbol;
-    private WidgetService service;
+    private final WidgetService service;
     private List<Article> articleList;
     private final File lastArticlesList;
 

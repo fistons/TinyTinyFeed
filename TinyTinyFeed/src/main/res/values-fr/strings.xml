@@ -8,7 +8,6 @@
     <string name="httpAuthUserLabel">Login :</string>
     <string name="httpAuthPasswordLabel">Mot de passe:</string>
     <string name="urlMalFormed">Addresse malformée</string>
-    <string name="urlBadSuffix">L\'url doit se terminer par %s</string>
     <string name="badLogin">Vérifiez votre login/mot de passe</string>
     <string name="setupNumArticles">Nombre d\'articles à récupérer</string>
     <string name="emptyWidgetListTest">Aucun flux a afficher</string>

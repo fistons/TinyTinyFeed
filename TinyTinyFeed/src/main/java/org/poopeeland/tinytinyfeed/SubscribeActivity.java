@@ -36,7 +36,7 @@ public class SubscribeActivity extends Activity implements AdapterView.OnItemSel
     private final String TAG = getClass().getSimpleName();
     private WidgetService service;
     private boolean bound;
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private final ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className, IBinder binder) {
             WidgetService.LocalBinder mbinder = (WidgetService.LocalBinder) binder;

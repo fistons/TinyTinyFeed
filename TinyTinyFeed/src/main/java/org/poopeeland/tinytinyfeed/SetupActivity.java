@@ -25,11 +25,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
 import org.poopeeland.tinytinyfeed.exceptions.TtrssError;
-import org.poopeeland.tinytinyfeed.exceptions.UrlSuffixException;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.concurrent.ExecutionException;
 
 public class SetupActivity extends Activity implements View.OnClickListener, TextWatcher {
 
@@ -69,10 +67,7 @@ public class SetupActivity extends Activity implements View.OnClickListener, Tex
                 } catch (MalformedURLException e) {
                     Toast.makeText(this, R.string.urlMalFormed, Toast.LENGTH_LONG).show();
                     return;
-                } catch (UrlSuffixException e) {
-                    Toast.makeText(this, String.format(getText(R.string.urlBadSuffix).toString(), URL_SUFFIX), Toast.LENGTH_LONG).show();
-                    return;
-                } catch (InterruptedException | JSONException | ExecutionException e) {
+                } catch (JSONException e) {
                     Toast.makeText(this, String.format("%s", e.getMessage()), Toast.LENGTH_LONG).show();
                     return;
                 } catch (NoInternetException ex) {
@@ -155,10 +150,10 @@ public class SetupActivity extends Activity implements View.OnClickListener, Tex
         }
     }
 
-    public void checkSetup(String url, String httpUser, String httpPassword, String user, String password) throws MalformedURLException, UrlSuffixException, JSONException, ExecutionException, InterruptedException, NoInternetException {
+    public void checkSetup(String url, String httpUser, String httpPassword, String user, String password) throws MalformedURLException, JSONException, NoInternetException {
         this.checkNetwork();
         if (!url.endsWith(SetupActivity.URL_SUFFIX)) {
-            throw new UrlSuffixException();
+            url = url + URL_SUFFIX;
         }
         new URL(url); // To check if the URL is a real one
         JSONObject jsonObject = new JSONObject();

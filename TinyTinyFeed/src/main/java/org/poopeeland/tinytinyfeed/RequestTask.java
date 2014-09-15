@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 
 /**
+ * Request send to the TTRss server
  * Created by setdemr on 26/05/2014.
  */
 public class RequestTask extends AsyncTask<JSONObject, Void, JSONObject> {
