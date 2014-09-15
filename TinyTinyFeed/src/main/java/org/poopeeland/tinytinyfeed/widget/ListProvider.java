@@ -42,7 +42,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
         this.service = service;
         this.context = service.getApplicationContext();
         this.unreadSymbol = context.getString(R.string.unreadSymbol);
-        this.lastArticlesList = new File(context.getApplicationContext().getFilesDir(), WidgetService.listFileName);
+        this.lastArticlesList = new File(context.getApplicationContext().getFilesDir(), WidgetService.LIST_FILENAME);
     }
 
 
@@ -133,6 +133,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     }
 
 
+    @SuppressWarnings("unchecked")
     private List<Article> loadLastList() {
         Log.d(TAG, String.format("Loading lastlist from %s", this.lastArticlesList.getAbsolutePath()));
         if (!this.lastArticlesList.isFile()) {

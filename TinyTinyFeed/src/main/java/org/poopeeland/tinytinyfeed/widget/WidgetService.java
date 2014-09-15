@@ -26,13 +26,9 @@ import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
 import org.poopeeland.tinytinyfeed.exceptions.RequiredInfoNotRegistred;
 import org.poopeeland.tinytinyfeed.exceptions.TtrssError;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -44,7 +40,7 @@ public class WidgetService extends RemoteViewsService {
 
     public static final String ACTIVITY_FLAG = "Activity";
     private static final String TAG = WidgetService.class.getSimpleName();
-    public static final String listFileName = "listArticles.json";
+    public static final String LIST_FILENAME = "listArticles.json";
     protected IBinder binder = new LocalBinder();
     private boolean started;
     private ConnectivityManager connMgr;
@@ -56,15 +52,12 @@ public class WidgetService extends RemoteViewsService {
     private boolean onlyUnread;
     private DefaultHttpClient client;
     private File lastListFile;
-    private File catListFile;
 
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate");
-        this.lastListFile = new File(getApplicationContext().getFilesDir(), this.listFileName);
-        String listCatName = "listCat.json";
-        this.catListFile = new File(getApplicationContext().getFilesDir(), listCatName);
+        this.lastListFile = new File(getApplicationContext().getFilesDir(), WidgetService.LIST_FILENAME);
     }
 
     @Override
