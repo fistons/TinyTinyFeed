@@ -42,7 +42,6 @@ public class WidgetService extends RemoteViewsService {
     private static final String TAG = WidgetService.class.getSimpleName();
     public static final String LIST_FILENAME = "listArticles.json";
     protected final IBinder binder = new LocalBinder();
-    private boolean started;
     private ConnectivityManager connMgr;
     private String session;
     private String url;
@@ -58,6 +57,23 @@ public class WidgetService extends RemoteViewsService {
         super.onCreate();
         Log.d(TAG, "onCreate");
         this.lastListFile = new File(getApplicationContext().getFilesDir(), WidgetService.LIST_FILENAME);
+
+        this.connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        SharedPreferences preferences = getSharedPreferences(TinyTinyFeedWidget.PREFERENCE_KEY, Context.MODE_PRIVATE);
+        this.url = preferences.getString(TinyTinyFeedWidget.URL_KEY, "");
+        this.user = preferences.getString(TinyTinyFeedWidget.USER_KEY, "");
+        this.password = preferences.getString(TinyTinyFeedWidget.PASSWORD_KEY, "");
+        this.numArticles = preferences.getString(TinyTinyFeedWidget.NUM_ARTICLE_KEY, "");
+        this.onlyUnread = preferences.getBoolean(TinyTinyFeedWidget.ONLY_UNREAD_KEY, false);
+        this.session = preferences.getString(TinyTinyFeedWidget.PREFERENCE_KEY, null);
+        String httpUser = preferences.getString(TinyTinyFeedWidget.HTTP_USER_KEY, "");
+        String httpPassword = preferences.getString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, "");
+        this.client = new DefaultHttpClient();
+        if (!httpUser.isEmpty()) {
+            this.client.getCredentialsProvider().setCredentials(AuthScope.ANY,
+                    new UsernamePasswordCredentials(httpUser, httpPassword));
+        }
+        Log.d(TAG, "Preferences loaded");
     }
 
     @Override
@@ -127,10 +143,7 @@ public class WidgetService extends RemoteViewsService {
      * @throws NoInternetException      if the is no internet connexion right now
      */
     public List<Article> updateFeeds() throws RequiredInfoNotRegistred, CheckException, JSONException, ExecutionException, InterruptedException, NoInternetException {
-        this.start();
-
         this.checkNetwork();
-
         List<Article> list = new ArrayList<>();
         if (isNotLogged()) {
             login();
@@ -178,7 +191,6 @@ public class WidgetService extends RemoteViewsService {
      * @throws NoInternetException      if the is no internet connexion right now
      */
     public void setArticleToRead(Article article) throws CheckException, ExecutionException, InterruptedException, JSONException, RequiredInfoNotRegistred, NoInternetException {
-        this.start();
         this.checkNetwork();
         Log.d(TAG, String.format("Article %s set to read", article.getTitle()));
         if (isNotLogged()) {
@@ -210,7 +222,6 @@ public class WidgetService extends RemoteViewsService {
      * @throws NoInternetException      if the is no internet connexion right now
      */
     public List<Category> loadCategories() throws InterruptedException, ExecutionException, CheckException, JSONException, RequiredInfoNotRegistred, NoInternetException {
-        this.start();
         if (isNotLogged()) {
             login();
         }
@@ -258,7 +269,6 @@ public class WidgetService extends RemoteViewsService {
     public int subscribe(String url, Category category) {
 
         try {
-            this.start();
             if (isNotLogged()) {
                 login();
             }
@@ -373,33 +383,9 @@ public class WidgetService extends RemoteViewsService {
         }
     }
 
-    /**
-     * Prepare the service
-     * TODO: Ugly, need to change that
-     */
-    private void start() {
-        if (!started) {
-            this.connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-            SharedPreferences preferences = getSharedPreferences(TinyTinyFeedWidget.PREFERENCE_KEY, Context.MODE_PRIVATE);
-            this.url = preferences.getString(TinyTinyFeedWidget.URL_KEY, "");
-            this.user = preferences.getString(TinyTinyFeedWidget.USER_KEY, "");
-            this.password = preferences.getString(TinyTinyFeedWidget.PASSWORD_KEY, "");
-            this.numArticles = preferences.getString(TinyTinyFeedWidget.NUM_ARTICLE_KEY, "");
-            this.onlyUnread = preferences.getBoolean(TinyTinyFeedWidget.ONLY_UNREAD_KEY, false);
-            this.session = preferences.getString(TinyTinyFeedWidget.PREFERENCE_KEY, null);
-            String httpUser = preferences.getString(TinyTinyFeedWidget.HTTP_USER_KEY, "");
-            String httpPassword = preferences.getString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, "");
-            this.client = new DefaultHttpClient();
-            if (!httpUser.isEmpty()) {
-                this.client.getCredentialsProvider().setCredentials(AuthScope.ANY,
-                        new UsernamePasswordCredentials(httpUser, httpPassword));
-            }
-            Log.d(TAG, "Preferences loaded");
-            started = true;
-        }
-    }
 
     private void saveSessionId(String sessionId) {
+        Log.d(TAG, String.format("Saving the sessions id %s", sessionId));
         SharedPreferences preferences = getSharedPreferences(TinyTinyFeedWidget.PREFERENCE_KEY, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(TinyTinyFeedWidget.SESSION_KEY, sessionId);
