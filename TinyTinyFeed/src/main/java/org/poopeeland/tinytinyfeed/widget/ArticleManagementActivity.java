@@ -24,19 +24,19 @@ import java.util.concurrent.ExecutionException;
 
 
 /**
+ * Invisible Activity that set the Article as read
  * Created by eric on 11/06/14.
  */
 public class ArticleManagementActivity extends Activity {
 
     private static final String TAG = "ArticleManagementActivity";
-    private WidgetService service;
     private boolean bound;
     private Article article;
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className, IBinder binder) {
             WidgetService.LocalBinder mbinder = (WidgetService.LocalBinder) binder;
-            service = mbinder.getService();
+            WidgetService service = mbinder.getService();
             bound = true;
             Log.d(TAG, "bounded!");
             try {
