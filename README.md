@@ -18,6 +18,12 @@ If you want, you can send me a [gift](https://www.paypal.com/cgi-bin/webscr?cmd=
 
 ## Release notes
 
+* V1.4
+
+    * Check the avaibility of the API in the setup Activity
+    * Lock screen widget
+    * Various bugfixes and optimisations
+
 * V1.3:
 
     * Add an option to retrieve only unread feeds
