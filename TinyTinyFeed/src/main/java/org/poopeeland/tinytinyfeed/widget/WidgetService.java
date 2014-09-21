@@ -39,8 +39,8 @@ import java.util.concurrent.ExecutionException;
 public class WidgetService extends RemoteViewsService {
 
     public static final String ACTIVITY_FLAG = "Activity";
-    private static final String TAG = WidgetService.class.getSimpleName();
     public static final String LIST_FILENAME = "listArticles.json";
+    private static final String TAG = WidgetService.class.getSimpleName();
     protected final IBinder binder = new LocalBinder();
     private ConnectivityManager connMgr;
     private String session;
@@ -51,13 +51,14 @@ public class WidgetService extends RemoteViewsService {
     private boolean onlyUnread;
     private DefaultHttpClient client;
     private File lastListFile;
+    private ListProvider listProvider;
 
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate");
         this.lastListFile = new File(getApplicationContext().getFilesDir(), WidgetService.LIST_FILENAME);
-
+        this.listProvider = new ListProvider(this);
         this.connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         SharedPreferences preferences = getSharedPreferences(TinyTinyFeedWidget.PREFERENCE_KEY, Context.MODE_PRIVATE);
         this.url = preferences.getString(TinyTinyFeedWidget.URL_KEY, "");
@@ -78,7 +79,7 @@ public class WidgetService extends RemoteViewsService {
 
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
-        return (new ListProvider(this));
+        return this.listProvider;
     }
 
     @Override
@@ -128,7 +129,6 @@ public class WidgetService extends RemoteViewsService {
         this.session = response.getJSONObject("content").getString("session_id");
         saveSessionId(this.session);
     }
-
 
 
     /**
