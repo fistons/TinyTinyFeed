@@ -18,6 +18,10 @@ If you want, you can send me a [gift](https://www.paypal.com/cgi-bin/webscr?cmd=
 
 ## Release notes
 
+* V1.5
+
+    * Add a black transparent background so the font is more visible now
+
 * V1.4
 
     * Check the avaibility of the API in the setup Activity
