@@ -11,7 +11,7 @@ import java.io.Serializable;
  */
 public class Category implements Serializable {
 
-    public static final int NO_ORDER_ID = -1;
+    private static final int NO_ORDER_ID = -1;
     private final int id;
     private final int orderId;
     private final String name;
@@ -24,7 +24,7 @@ public class Category implements Serializable {
         this.orderId = json.has("order_id") ? json.getInt("order_id") : NO_ORDER_ID;
     }
 
-    public Category() {
+    private Category() {
         this.id = 0;
         this.name = "";
         this.orderId = Category.NO_ORDER_ID;

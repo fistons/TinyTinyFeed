@@ -54,7 +54,7 @@ public class WidgetService extends RemoteViewsService {
     public static final String ACTIVITY_FLAG = "Activity";
     public static final String LIST_FILENAME = "listArticles.json";
     private static final String TAG = WidgetService.class.getSimpleName();
-    protected final IBinder binder = new LocalBinder();
+    private final IBinder binder = new LocalBinder();
     private ConnectivityManager connMgr;
     private String session;
     private String url;
@@ -401,14 +401,7 @@ public class WidgetService extends RemoteViewsService {
         editor.apply();
     }
 
-
-    public class LocalBinder extends Binder {
-        public WidgetService getService() {
-            return WidgetService.this;
-        }
-    }
-
-    public HttpClient getNewHttpClient(String httpUser, String httpPassword) {
+    private HttpClient getNewHttpClient(String httpUser, String httpPassword) {
         DefaultHttpClient client;
         try {
             KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -440,6 +433,12 @@ public class WidgetService extends RemoteViewsService {
         }
 
         return client;
+    }
+
+    public class LocalBinder extends Binder {
+        public WidgetService getService() {
+            return WidgetService.this;
+        }
     }
 
 }

@@ -44,7 +44,7 @@ import java.security.KeyStore;
 
 public class SetupActivity extends Activity implements View.OnClickListener, TextWatcher {
 
-    public static final String URL_SUFFIX = "/api/";
+    private static final String URL_SUFFIX = "/api/";
     private static final String TAG = "TinyTinyFeedSetup";
     private int widgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     private ConnectivityManager connMgr;
@@ -163,7 +163,7 @@ public class SetupActivity extends Activity implements View.OnClickListener, Tex
         }
     }
 
-    public void checkSetup(String url, String httpUser, String httpPassword, String user, String password) throws MalformedURLException, JSONException, NoInternetException {
+    private void checkSetup(String url, String httpUser, String httpPassword, String user, String password) throws MalformedURLException, JSONException, NoInternetException {
         this.checkNetwork();
         if (!url.endsWith(SetupActivity.URL_SUFFIX)) {
             url = url + URL_SUFFIX;
@@ -257,7 +257,7 @@ public class SetupActivity extends Activity implements View.OnClickListener, Tex
         }
     }
 
-    public HttpClient getNewHttpClient(String httpUser, String httpPassword) {
+    private HttpClient getNewHttpClient(String httpUser, String httpPassword) {
         DefaultHttpClient client;
         try {
             KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
