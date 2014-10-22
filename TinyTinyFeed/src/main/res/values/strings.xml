@@ -2,9 +2,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <string name="app_name" tools:ignore="Typos">Tiny Tiny Feed</string>
-    <string name="setupUrlLabel">TTRss url:</string>
-    <string name="setupUserLabel">TTRss Login:</string>
-    <string name="setupPasswordLabel">TTrss Password:</string>
+    <string name="setupUrlLabel">tt-rss url:</string>
+    <string name="setupUserLabel">tt-rss Login:</string>
+    <string name="setupPasswordLabel">tt-rss Password:</string>
     <string name="setupRetrieveOnlyUnread">Retrieve only unread article</string>
     <string name="httpAuthUserLabel">Login:</string>
     <string name="httpAuthPasswordLabel">Password:</string>
@@ -16,7 +16,7 @@
     <string name="setupCheckButtonText">Check</string>
     <string name="defaultLastUpdateText">Never updated</string>
     <string name="lastUpdateText">Last update: %s</string>
-    <string name="unreadSymbol">[*]</string>
+    <string name="unreadSymbol" translatable="false">[*]</string>
     <string name="connectionError">Connection issue - Check if the server is online and if the url is the good one</string>
     <string name="connectionAuthError">HTTP auth - Please check your credentials</string>
     <string name="impossibleError">LOLWUT?! Diz iz not pozible! LOOK AT ZAT!: %s</string>
@@ -34,5 +34,22 @@
     <string name="subNoRssFeeds">No RSS Feeds available on this page</string>
     <string name="subMultipleFeeds">The pages contains multiple RSS feeds, could not choose between them.</string>
     <string name="subCouldNotDl">Couldn\'t download the URL content.</string>
-    <string name="setupApiDisabled">The API seems to be disabled, please enable them on the TTRss preferences.</string>
+    <string name="setupApiDisabled">The API seems to be disabled, please enable them on the tt-rss preferences.</string>
+    <string name="preference_activity_title" tools:ignore="Typos">Tiny Tiny Feed - Setup</string>
+    <string name="preference_category_ttrss_settings">tt-rss settings</string>
+    <string name="preference_category_ssl_settings">SSL settings</string>
+    <string name="preference_category_http_auth_settings">HTTP Authentification (optional)</string>
+    <string name="preference_category_interface_settings">Interface</string>
+    <string name="preference_ttrss_url_summary">The URL of your tt-rss server (i.e. http://tt-rss.example.org)</string>
+    <string name="preference_ttrss_user_summary">Username to connect on tt-rss</string>
+    <string name="preference_ttrss_password_summary">Password to connect on tt-rss</string>
+    <string name="preference_ssl_acccept_self_signed_certificate">Accept all certificates</string>
+    <string name="preference_ssl_acccept_self_signed_certificate_summary">Do not validate certificates</string>
+    <string name="preference_ssl_check_hostname">Allow unmatching hostnames</string>
+    <string name="preference_ssl_check_hostname_summary">Do not check if hostnames are matching</string>
+    <string name="preference_httpauth_user_summary">Fill this if your tt-rss setup is protected by an HTTP Authentification</string>
+    <string name="preference_httpauth_password_summary">Your HTTP Authentification password</string>
+    <string name="preference_article_number_summary">The number of article you wish to retrieve</string>
+    <string name="preference_article_number_default_value" translatable="false">20</string>
+    <string name="preference_unread_only_summary">Check this if you want to retrieve only the unread articles</string>
 </resources>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/preference_category_ttrss_settings">
+        <EditTextPreference
+            android:key="org.poopeeland.tinytinyfeed.PREFERENCE_URL"
+            android:summary="@string/preference_ttrss_url_summary"
+            android:title="@string/setupUrlLabel"
+            android:inputType="textUri"/>
+        <EditTextPreference
+            android:key="org.poopeeland.tinytinyfeed.PREFERENCE_USER"
+            android:summary="@string/preference_ttrss_user_summary"
+            android:title="@string/setupUserLabel" />
+        <EditTextPreference
+            android:key="org.poopeeland.tinytinyfeed.PREFERENCE_PASSWORD"
+            android:summary="@string/preference_ttrss_password_summary"
+            android:title="@string/setupPasswordLabel"
+            android:inputType="textPassword"/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/preference_category_ssl_settings">
+        <CheckBoxPreference
+            android:key="org.poopeeland.tinytinyfeed.PREFERENCE_SSL_SELF"
+            android:summary="@string/preference_ssl_acccept_self_signed_certificate_summary"
+            android:title="@string/preference_ssl_acccept_self_signed_certificate"/>
+        <CheckBoxPreference
+            android:key="org.poopeeland.tinytinyfeed.PREFERENCE_SSL_HOSTNAME"
+            android:summary="@string/preference_ssl_check_hostname"
+            android:title="@string/preference_ssl_check_hostname_summary"/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/preference_category_http_auth_settings">
+        <EditTextPreference
+            android:key="org.poopeeland.tinytinyfeed.PREFERENCE_HTTP_USER"
+            android:summary="@string/preference_httpauth_user_summary"
+            android:title="@string/httpAuthUserLabel" />
+        <EditTextPreference
+            android:key="org.poopeeland.tinytinyfeed.PREFERENCE_HTTP_PASSWORD"
+            android:summary="@string/preference_httpauth_password_summary"
+            android:title="@string/httpAuthPasswordLabel"
+            android:inputType="textPassword"/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/preference_category_interface_settings">
+        <CheckBoxPreference
+            android:key="org.poopeeland.tinytinyfeed.ONLY_UNREAD"
+            android:title="@string/setupRetrieveOnlyUnread"
+            android:summary="@string/preference_unread_only_summary"/>
+        <EditTextPreference
+            android:key="org.poopeeland.tinytinyfeed.NUM_ARTICLE_KEY"
+            android:title="@string/setupNumArticles"
+            android:summary="@string/preference_article_number_summary"
+            android:inputType="numberDecimal"
+            android:defaultValue="@string/preference_article_number_default_value"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>
