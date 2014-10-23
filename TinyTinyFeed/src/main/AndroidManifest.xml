@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="org.poopeeland.tinytinyfeed"
-    android:versionName="1.6" >
+    android:versionName="1.6">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -10,24 +9,17 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
-        android:supportsRtl="true"
-        tools:ignore="UnusedAttribute">
+        android:label="@string/app_name">
 
         <activity
-            android:name=".SetupActivity"
-            android:label="@string/preference_activity_title">
+            android:name="org.poopeeland.tinytinyfeed.settings.SettingsActivity"
+            android:label="@string/preference_activity_title" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
 
-        <activity
-            android:name="org.poopeeland.tinytinyfeed.settings.SettingsActivity"
-            android:exported="false"
-            android:label="@string/preference_activity_title" >
             <intent-filter>
                 <action android:name="android.intent.action.MANAGE_NETWORK_USAGE" />
                 <category android:name="android.intent.category.DEFAULT" />

@@ -5,7 +5,8 @@
             android:key="org.poopeeland.tinytinyfeed.PREFERENCE_URL"
             android:summary="@string/preference_ttrss_url_summary"
             android:title="@string/setupUrlLabel"
-            android:inputType="textUri"/>
+            android:inputType="textUri"
+            android:defaultValue="@string/preference_ttrss_url_default_value"/>
         <EditTextPreference
             android:key="org.poopeeland.tinytinyfeed.PREFERENCE_USER"
             android:summary="@string/preference_ttrss_user_summary"

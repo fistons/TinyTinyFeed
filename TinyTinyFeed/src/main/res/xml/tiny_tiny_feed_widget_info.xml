@@ -5,9 +5,9 @@
     android:minWidth="300dp"
     android:minHeight="40dp"
     android:updatePeriodMillis="1800000"
-    android:initialLayout="@layout/tiny_tiny_feed_widget"
-    android:configure="org.poopeeland.tinytinyfeed.SetupActivity"
+    android:initialLayout="@layout/configure_widget_layout"
+    android:configure="org.poopeeland.tinytinyfeed.settings.SettingsActivity"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="keyguard|home_screen"
-    android:initialKeyguardLayout="@layout/tiny_tiny_feed_widget"
+    android:initialKeyguardLayout="@layout/configure_widget_layout"
     android:previewImage="@drawable/ic_launcher" />

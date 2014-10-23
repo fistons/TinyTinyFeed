@@ -49,4 +49,5 @@
     <string name="preference_ssl_check_hostname">Acceptez les noms d\'hôtes incorrects</string>
     <string name="preference_ssl_check_hostname_summary">Ne vérifie pas si les noms d\'hôtes correspondent</string>
     <string name="preference_unread_only_summary">Cochez ceci si vous voulez récupérer uniquement les articles non lus</string>
+    <string name="widget_no_setup">Veuillez appuyer ici pour configurer votre widget</string>
 </resources>

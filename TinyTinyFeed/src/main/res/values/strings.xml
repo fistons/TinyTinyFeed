@@ -51,5 +51,7 @@
     <string name="preference_httpauth_password_summary">Your HTTP Authentification password</string>
     <string name="preference_article_number_summary">The number of article you wish to retrieve</string>
     <string name="preference_article_number_default_value" translatable="false">20</string>
+    <string name="preference_ttrss_url_default_value" translatable="false">http://</string>
     <string name="preference_unread_only_summary">Check this if you want to retrieve only the unread articles</string>
+    <string name="widget_no_setup">Please tap here to configure your widget</string>
 </resources>
