@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Binder;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.RemoteViewsService;
 
@@ -37,6 +38,7 @@ import org.poopeeland.tinytinyfeed.exceptions.CheckException;
 import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
 import org.poopeeland.tinytinyfeed.exceptions.RequiredInfoNotRegistred;
 import org.poopeeland.tinytinyfeed.exceptions.TtrssError;
+import org.poopeeland.tinytinyfeed.utils.MySSLSocketFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -73,13 +75,14 @@ public class WidgetService extends RemoteViewsService {
         this.lastListFile = new File(getApplicationContext().getFilesDir(), WidgetService.LIST_FILENAME);
         this.listProvider = new ListProvider(this);
         this.connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        SharedPreferences preferences = getSharedPreferences(TinyTinyFeedWidget.PREFERENCE_KEY, Context.MODE_PRIVATE);
+//        SharedPreferences preferences = getSharedPreferences(TinyTinyFeedWidget.PREFERENCE_KEY, Context.MODE_PRIVATE);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         this.url = preferences.getString(TinyTinyFeedWidget.URL_KEY, "");
         this.user = preferences.getString(TinyTinyFeedWidget.USER_KEY, "");
         this.password = preferences.getString(TinyTinyFeedWidget.PASSWORD_KEY, "");
         this.numArticles = preferences.getString(TinyTinyFeedWidget.NUM_ARTICLE_KEY, "");
         this.onlyUnread = preferences.getBoolean(TinyTinyFeedWidget.ONLY_UNREAD_KEY, false);
-        this.session = preferences.getString(TinyTinyFeedWidget.PREFERENCE_KEY, null);
+        this.session = preferences.getString(TinyTinyFeedWidget.SESSION_KEY, null);
         String httpUser = preferences.getString(TinyTinyFeedWidget.HTTP_USER_KEY, "");
         String httpPassword = preferences.getString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, "");
         this.client = this.getNewHttpClient(httpUser, httpPassword);
@@ -373,11 +376,8 @@ public class WidgetService extends RemoteViewsService {
      * @throws RequiredInfoNotRegistred if it is not the case
      */
     private void checkRequieredInfoRegistred() throws RequiredInfoNotRegistred {
-        SharedPreferences preferences = getSharedPreferences(TinyTinyFeedWidget.PREFERENCE_KEY, Context.MODE_PRIVATE);
-        if (!(preferences.contains(TinyTinyFeedWidget.URL_KEY) &&
-                preferences.contains(TinyTinyFeedWidget.USER_KEY) &&
-                preferences.contains(TinyTinyFeedWidget.PASSWORD_KEY) &&
-                preferences.contains(TinyTinyFeedWidget.NUM_ARTICLE_KEY))) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
+        if (!preferences.getBoolean(TinyTinyFeedWidget.CHECKED, false)) {
             throw new RequiredInfoNotRegistred();
         }
     }
@@ -395,7 +395,7 @@ public class WidgetService extends RemoteViewsService {
 
     private void saveSessionId(String sessionId) {
         Log.d(TAG, String.format("Saving the sessions id %s", sessionId));
-        SharedPreferences preferences = getSharedPreferences(TinyTinyFeedWidget.PREFERENCE_KEY, Context.MODE_PRIVATE);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(TinyTinyFeedWidget.SESSION_KEY, sessionId);
         editor.apply();

@@ -1,4 +1,4 @@
-package org.poopeeland.tinytinyfeed.widget;
+package org.poopeeland.tinytinyfeed.utils;
 
 import org.apache.http.conn.ssl.SSLSocketFactory;
 
