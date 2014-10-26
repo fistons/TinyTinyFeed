@@ -73,26 +73,6 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
             Toast.makeText(this, R.string.noInternetConnection, Toast.LENGTH_SHORT).show();
             return;
         }
-
-        SharedPreferences.Editor editor = this.preferences.edit();
-        editor.putBoolean(TinyTinyFeedWidget.CHECKED, this.checked);
-        editor.apply();
-
-        if (widgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
-            Intent resultValue = new Intent();
-            resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
-            setResult(RESULT_OK, resultValue);
-        } else {
-            setResult(RESULT_OK);
-        }
-
-        int ids[] = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), TinyTinyFeedWidget.class));
-        Intent updateIntent = new Intent(this, TinyTinyFeedWidget.class);
-        updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-        updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-        sendBroadcast(updateIntent);
-
-        finish();
     }
 
     private void checkSetup() throws MalformedURLException, JSONException, NoInternetException {
@@ -178,7 +158,29 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
                 return;
             }
 
+
+
             SettingsActivity.this.checked = true;
+
+
+            SharedPreferences.Editor editor = SettingsActivity.this.preferences.edit();
+            editor.putBoolean(TinyTinyFeedWidget.CHECKED, SettingsActivity.this.checked);
+            editor.apply();
+
+            if (widgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+                Intent resultValue = new Intent();
+                resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
+                setResult(RESULT_OK, resultValue);
+            } else {
+                setResult(RESULT_OK);
+            }
+
+            int ids[] = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), TinyTinyFeedWidget.class));
+            Intent updateIntent = new Intent(SettingsActivity.this, TinyTinyFeedWidget.class);
+            updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+            updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+            sendBroadcast(updateIntent);
+            SettingsActivity.this.finish();
         }
     }
 
