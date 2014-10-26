@@ -33,7 +33,7 @@ public abstract class Utils {
 
     private static final String TAG = Utils.class.getSimpleName();
 
-    public static final HttpClient getNewHttpClient(SharedPreferences preferences, String httpUser, String httpPassword) {
+    public static HttpClient getNewHttpClient(SharedPreferences preferences, String httpUser, String httpPassword) {
         DefaultHttpClient client;
         try {
             KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());

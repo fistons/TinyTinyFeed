@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:text="@string/setupCheckButtonText"
             android:id="@+id/setup_check_button"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             style="?android:attr/buttonBarStyle"
             android:layout_weight="10" />
     </LinearLayout>
