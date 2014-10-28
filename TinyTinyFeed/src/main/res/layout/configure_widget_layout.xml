@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:id="@+id/no_settings_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     android:background="#80000000">
 
     <TextView
@@ -11,5 +11,6 @@
         android:layout_height="fill_parent"
         android:text="@string/widget_no_setup"
         android:id="@+id/no_settings_label"
-        android:layout_gravity="center_vertical|center" />
+        android:layout_gravity="center"
+        android:gravity="center_vertical|center_horizontal" />
 </LinearLayout>
