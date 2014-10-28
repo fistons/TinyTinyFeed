@@ -75,7 +75,10 @@ public class WidgetService extends RemoteViewsService {
         this.lastListFile = new File(getApplicationContext().getFilesDir(), WidgetService.LIST_FILENAME);
         this.listProvider = new ListProvider(this);
         this.connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-//        SharedPreferences preferences = getSharedPreferences(TinyTinyFeedWidget.PREFERENCE_KEY, Context.MODE_PRIVATE);
+        Log.d(TAG, "Preferences loaded");
+    }
+
+    private void refreshParams() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         this.url = preferences.getString(TinyTinyFeedWidget.URL_KEY, "");
         this.user = preferences.getString(TinyTinyFeedWidget.USER_KEY, "");
@@ -86,7 +89,6 @@ public class WidgetService extends RemoteViewsService {
         String httpUser = preferences.getString(TinyTinyFeedWidget.HTTP_USER_KEY, "");
         String httpPassword = preferences.getString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, "");
         this.client = this.getNewHttpClient(httpUser, httpPassword);
-        Log.d(TAG, "Preferences loaded");
     }
 
     @Override
@@ -96,6 +98,7 @@ public class WidgetService extends RemoteViewsService {
 
     @Override
     public IBinder onBind(Intent intent) {
+        this.refreshParams();
         Log.d(TAG, "onBind");
         if (intent.getExtras().containsKey(ACTIVITY_FLAG)) {
             return binder;
