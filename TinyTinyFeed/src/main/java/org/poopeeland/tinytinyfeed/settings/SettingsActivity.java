@@ -29,7 +29,6 @@ import java.net.URL;
 
 public class SettingsActivity extends Activity implements View.OnClickListener {
 
-    private static final String URL_SUFFIX = "/api/";
     private final String TAG = SettingsActivity.class.getSimpleName();
     private int widgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     private ConnectivityManager connectivityManager;
@@ -65,13 +64,10 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
             this.checkSetup();
         } catch (MalformedURLException e) {
             Toast.makeText(this, R.string.urlMalFormed, Toast.LENGTH_LONG).show();
-            return;
         } catch (JSONException e) {
             Toast.makeText(this, String.format("%s", e.getMessage()), Toast.LENGTH_LONG).show();
-            return;
         } catch (NoInternetException ex) {
             Toast.makeText(this, R.string.noInternetConnection, Toast.LENGTH_SHORT).show();
-            return;
         }
     }
 
@@ -83,10 +79,6 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
         String password = this.preferences.getString(TinyTinyFeedWidget.PASSWORD_KEY, "");
         String httpUser = this.preferences.getString(TinyTinyFeedWidget.HTTP_USER_KEY, "");
         String httpPassword = this.preferences.getString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, "");
-
-        if (!url.endsWith(SettingsActivity.URL_SUFFIX)) {
-            url = url + URL_SUFFIX;
-        }
         new URL(url); // To check if the URL is a real one
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("user", user);
@@ -157,7 +149,6 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
                 Log.e(TAG, ex.getMessage());
                 return;
             }
-
 
 
             SettingsActivity.this.checked = true;

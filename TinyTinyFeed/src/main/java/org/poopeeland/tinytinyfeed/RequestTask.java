@@ -23,12 +23,13 @@ import java.io.UnsupportedEncodingException;
  */
 public class RequestTask extends AsyncTask<JSONObject, Void, JSONObject> {
 
+    private static final String URL_SUFFIX = "/api/";
     private final HttpClient client;
     private final String url;
 
     public RequestTask(HttpClient client, String url) {
         this.client = client;
-        this.url = url;
+        this.url = url + RequestTask.URL_SUFFIX;
     }
 
     private JSONObject createError(TtrssError error, String message) throws JSONException {
