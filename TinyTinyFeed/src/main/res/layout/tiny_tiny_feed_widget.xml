@@ -13,7 +13,7 @@
         android:fastScrollAlwaysVisible="false"
         android:fastScrollEnabled="true"
         android:layout_above="@+id/lastUpdateText"
-        android:dividerHeight="5px"
+        android:dividerHeight="10px"
         android:divider="@null" />
 
     <TextView
