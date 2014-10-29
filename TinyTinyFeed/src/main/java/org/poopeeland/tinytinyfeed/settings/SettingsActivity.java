@@ -11,6 +11,7 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
 
@@ -25,7 +26,6 @@ import org.poopeeland.tinytinyfeed.exceptions.TtrssError;
 import org.poopeeland.tinytinyfeed.utils.Utils;
 
 import java.net.MalformedURLException;
-import java.net.URL;
 
 public class SettingsActivity extends Activity implements View.OnClickListener {
 
@@ -63,7 +63,7 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
         try {
             this.checkSetup();
         } catch (MalformedURLException e) {
-            Toast.makeText(this, R.string.urlMalFormed, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.preference_ttrss_url_not_null_or_default, Toast.LENGTH_LONG).show();
         } catch (JSONException e) {
             Toast.makeText(this, String.format("%s", e.getMessage()), Toast.LENGTH_LONG).show();
         } catch (NoInternetException ex) {
@@ -71,7 +71,7 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    private void checkSetup() throws MalformedURLException, JSONException, NoInternetException {
+    private void checkSetup() throws JSONException, NoInternetException, MalformedURLException {
         Utils.checkNetwork(this.connectivityManager);
 
         String url = this.preferences.getString(TinyTinyFeedWidget.URL_KEY, "");
@@ -79,7 +79,11 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
         String password = this.preferences.getString(TinyTinyFeedWidget.PASSWORD_KEY, "");
         String httpUser = this.preferences.getString(TinyTinyFeedWidget.HTTP_USER_KEY, "");
         String httpPassword = this.preferences.getString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, "");
-        new URL(url); // To check if the URL is a real one
+
+        if (!Patterns.WEB_URL.matcher(url).matches()) {
+            throw new MalformedURLException();
+        }
+
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("user", user);
         jsonObject.put("password", password);

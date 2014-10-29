@@ -6,12 +6,10 @@
     <string name="setupPasswordLabel">Mot de passe tt-rss:</string>
     <string name="setupRetrieveOnlyUnread">Récuperer uniquement les articles non lus</string>
     <string name="httpAuthUserLabel">Login :</string>
-    <string name="httpAuthPasswordLabel">Mot de passe:</string>
-    <string name="urlMalFormed">Addresse malformée</string>
+    <string name="httpAuthPasswordLabel">Mot de passe:</string>>
     <string name="badLogin">Vérifiez votre login/mot de passe</string>
     <string name="setupNumArticles">Nombre d\'articles à récupérer</string>
     <string name="emptyWidgetListTest">Aucun flux a afficher</string>
-    <string name="setupOkButtonText">Enregistrer</string>
     <string name="setupCheckButtonText">Vérifier</string>
     <string name="defaultLastUpdateText">Jamais mis à jour</string>
     <string name="lastUpdateText">Dernière mise à jour: %s</string>
@@ -19,7 +17,6 @@
     <string name="connectionAuthError">HTTP auth - Veuillez vérifier vos identifiant</string>
     <string name="impossibleError">LOLWUT?! Comment c\'est possible? Erreur à la con: %s</string>
     <string name="unknownError">Erreur inconnue: %s</string>
-    <string name="httpAuthHeader">Authentification HTTP (optionel)</string>
     <string name="noInternetConnection">Aucune connexion internet disponible pour le moment</string>
     <string name="waitTitle">Veuillez patienter</string>
     <string name="waitCheck">Vérification de votre configuration</string>
@@ -50,4 +47,5 @@
     <string name="preference_ssl_check_hostname_summary">Ne vérifie pas si les noms d\'hôtes correspondent</string>
     <string name="preference_unread_only_summary">Cochez ceci si vous voulez récupérer uniquement les articles non lus</string>
     <string name="widget_no_setup">Veuillez appuyer ici pour configurer votre widget</string>
+    <string name="preference_ttrss_url_not_null_or_default">Veuillez entrer une adresse valide</string>
 </resources>

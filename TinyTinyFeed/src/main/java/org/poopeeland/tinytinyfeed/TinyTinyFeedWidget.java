@@ -21,7 +21,7 @@ import java.util.Date;
 
 /**
  * Implementation of App Widget functionality.
- * App Widget Configuration implemented in {@link org.poopeeland.tinytinyfeed.SetupActivity TinyTinyFeedWidgetConfigureActivity}
+ * App Widget Configuration implemented in {@link org.poopeeland.tinytinyfeed.settings.SettingsActivity TinyTinyFeedWidgetConfigureActivity}
  */
 public class TinyTinyFeedWidget extends AppWidgetProvider {
 
