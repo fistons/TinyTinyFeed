@@ -52,4 +52,5 @@
     <string name="preference_ttrss_url_not_null_or_default">Please enter a valid url</string>
     <string name="preference_unread_only_summary">Check this if you want to retrieve only the unread articles</string>
     <string name="widget_no_setup">Please tap here to configure your widget</string>
+    <string name="ssl_exception_message">SSL problem: please check your settings</string>
 </resources>

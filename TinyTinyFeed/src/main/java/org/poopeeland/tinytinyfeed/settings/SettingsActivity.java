@@ -128,6 +128,10 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
                             Log.e(TAG, response.getJSONObject("content").getString("message"));
                             Toast.makeText(SettingsActivity.this, R.string.connectionError, Toast.LENGTH_LONG).show();
                             break;
+                        case SSL_EXCEPTION:
+                            Log.e(TAG, response.getJSONObject("content").getString("message"));
+                            Toast.makeText(SettingsActivity.this, R.string.ssl_exception_message, Toast.LENGTH_LONG).show();
+                            break;
                         case HTTP_AUTH_REQUIERED:
                             Log.e(TAG, response.getJSONObject("content").getString("message"));
                             Toast.makeText(SettingsActivity.this, R.string.connectionAuthError, Toast.LENGTH_LONG).show();

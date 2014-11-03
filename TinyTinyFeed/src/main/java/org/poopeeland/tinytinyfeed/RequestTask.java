@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 
+import javax.net.ssl.SSLException;
+
 /**
  * Request send to the TTRss server
  * Created by setdemr on 26/05/2014.
@@ -75,10 +77,12 @@ public class RequestTask extends AsyncTask<JSONObject, Void, JSONObject> {
                 return createError(TtrssError.UNSUPPORTED_ENCODING, e.getMessage());
             } catch (ClientProtocolException e) {
                 return createError(TtrssError.CLIENT_PROTOCOL_EXCEPTION, e.getMessage());
-            } catch (IOException e) {
-                return createError(TtrssError.IO_EXCEPTION, e.getMessage());
             } catch (JSONException e) {
                 return createError(TtrssError.JSON_EXCEPTION, e.getMessage());
+            } catch (SSLException ex) {
+                return createError(TtrssError.SSL_EXCEPTION, ex.getMessage());
+            } catch (IOException ex) {
+                return createError(TtrssError.IO_EXCEPTION, ex.getMessage());
             }
         } catch (JSONException ex) {
             return null;

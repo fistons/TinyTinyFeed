@@ -48,4 +48,5 @@
     <string name="preference_unread_only_summary">Cochez ceci si vous voulez récupérer uniquement les articles non lus</string>
     <string name="widget_no_setup">Veuillez appuyer ici pour configurer votre widget</string>
     <string name="preference_ttrss_url_not_null_or_default">Veuillez entrer une adresse valide</string>
+    <string name="ssl_exception_message">Problème SSL: veuillez vérifier vos paramètres</string>
 </resources>

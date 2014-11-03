@@ -330,6 +330,9 @@ public class WidgetService extends RemoteViewsService {
                     case IO_EXCEPTION:
                         Log.e(TAG, response.getJSONObject("content").getString("message"));
                         throw new CheckException(getString(R.string.connectionError));
+                    case SSL_EXCEPTION:
+                        Log.e(TAG, response.getJSONObject("content").getString("message"));
+                        throw new CheckException(getString(R.string.ssl_exception_message));
                     case HTTP_AUTH_REQUIERED:
                         Log.e(TAG, response.getJSONObject("content").getString("message"));
                         throw new CheckException(getString(R.string.connectionAuthError));

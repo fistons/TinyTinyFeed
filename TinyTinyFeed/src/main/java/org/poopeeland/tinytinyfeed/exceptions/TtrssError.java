@@ -13,5 +13,6 @@ public enum TtrssError {
     LOGIN_ERROR,
     UNREACHABLE_TTRSS,
     HTTP_AUTH_REQUIERED,
-    API_DISABLED
+    API_DISABLED,
+    SSL_EXCEPTION
 }
