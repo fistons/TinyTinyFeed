@@ -18,6 +18,11 @@ If you want, you can send me a [gift](https://www.paypal.com/cgi-bin/webscr?cmd=
 
 ## Release notes
 
+* V1.7 -- Users of older versions, you need to re-enter your setting. Sorry about that.
+    * New Setup Activity
+    * Better SSL integration
+    * Various bug fixes and optimisation
+
 * V1.6
 
     * Now accepts https connection
@@ -50,6 +55,7 @@ If you want, you can send me a [gift](https://www.paypal.com/cgi-bin/webscr?cmd=
     * Change minimum version of android to 4.0 (issue #5)
     * Change the default language to english (issue #3)
     * Change the widget preview image (issue #4)
+
 * V1.0:
 
     Initial release.
