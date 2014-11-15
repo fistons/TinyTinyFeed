@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Binder;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -39,6 +38,7 @@ import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
 import org.poopeeland.tinytinyfeed.exceptions.RequiredInfoNotRegistred;
 import org.poopeeland.tinytinyfeed.exceptions.TtrssError;
 import org.poopeeland.tinytinyfeed.utils.MySSLSocketFactory;
+import org.poopeeland.tinytinyfeed.utils.Utils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -158,7 +158,7 @@ public class WidgetService extends RemoteViewsService {
      * @throws NoInternetException      if the is no internet connexion right now
      */
     public List<Article> updateFeeds() throws RequiredInfoNotRegistred, CheckException, JSONException, ExecutionException, InterruptedException, NoInternetException {
-        this.checkNetwork();
+        Utils.checkNetwork(this.connMgr);
         List<Article> list = new ArrayList<>();
         if (isNotLogged()) {
             login();
@@ -206,7 +206,7 @@ public class WidgetService extends RemoteViewsService {
      * @throws NoInternetException      if the is no internet connexion right now
      */
     public void setArticleToRead(Article article) throws CheckException, ExecutionException, InterruptedException, JSONException, RequiredInfoNotRegistred, NoInternetException {
-        this.checkNetwork();
+        Utils.checkNetwork(this.connMgr);
         Log.d(TAG, String.format("Article %s set to read", article.getTitle()));
         if (isNotLogged()) {
             login();
@@ -240,7 +240,7 @@ public class WidgetService extends RemoteViewsService {
         if (isNotLogged()) {
             login();
         }
-        this.checkNetwork();
+        Utils.checkNetwork(this.connMgr);
         List<Category> categories = new ArrayList<>();
         Log.d(TAG, "Retrieve the list of category");
         JSONObject jsonObject = new JSONObject();
@@ -387,17 +387,6 @@ public class WidgetService extends RemoteViewsService {
             throw new RequiredInfoNotRegistred();
         }
     }
-
-    /**
-     * Check if a data connection is available
-     */
-    private void checkNetwork() throws NoInternetException {
-        NetworkInfo networkInfo = this.connMgr.getActiveNetworkInfo();
-        if (networkInfo == null || !networkInfo.isConnected()) {
-            throw new NoInternetException();
-        }
-    }
-
 
     private void saveSessionId(String sessionId) {
         Log.d(TAG, String.format("Saving the sessions id %s", sessionId));
