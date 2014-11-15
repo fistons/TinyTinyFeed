@@ -6,6 +6,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -19,6 +20,7 @@ import org.poopeeland.tinytinyfeed.TinyTinyFeedWidget;
 import org.poopeeland.tinytinyfeed.exceptions.CheckException;
 import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
 import org.poopeeland.tinytinyfeed.exceptions.RequiredInfoNotRegistred;
+import org.poopeeland.tinytinyfeed.utils.Utils;
 
 import java.util.concurrent.ExecutionException;
 
@@ -69,6 +71,14 @@ public class ArticleManagementActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Creation");
+
+        try {
+            Utils.checkNetwork((ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE));
+        } catch (NoInternetException e) {
+            Log.e(TAG, e.getMessage());
+            Toast.makeText(getApplicationContext(), R.string.noInternetConnection, Toast.LENGTH_LONG).show();
+            finish();
+        }
 
         // Bound to service
         Intent intentBound = new Intent(this, WidgetService.class);
