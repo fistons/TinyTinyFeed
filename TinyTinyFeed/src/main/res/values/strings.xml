@@ -37,7 +37,7 @@
     <string name="preference_category_ssl_settings">SSL settings</string>
     <string name="preference_category_http_auth_settings">HTTP Authentification (optional)</string>
     <string name="preference_category_interface_settings">Interface</string>
-    <string name="preference_ttrss_url_summary">The URL of your tt-rss server (i.e. http://tt-rss.example.org)</string>
+    <string name="preference_ttrss_url_summary">The URL of your tt-rss server (i.e. http://tt-rss.example.org without /api/ at the end)</string>
     <string name="preference_ttrss_user_summary">Username to connect on tt-rss</string>
     <string name="preference_ttrss_password_summary">Password to connect on tt-rss</string>
     <string name="preference_ssl_acccept_self_signed_certificate">Accept all certificates</string>

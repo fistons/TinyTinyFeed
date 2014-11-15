@@ -34,7 +34,7 @@
     <string name="preference_category_ssl_settings">Configuration SSL</string>
     <string name="preference_category_ttrss_settings">Configuration tt-rss</string>
     <string name="preference_category_http_auth_settings">Authentification HTTP (Optionelle)</string>
-    <string name="preference_ttrss_url_summary">L\'adresse de votre serveur tt-rss (par exemple: http://ttrss.exemple.org)</string>
+    <string name="preference_ttrss_url_summary">L\'adresse de votre serveur tt-rss (par exemple: http://ttrss.exemple.org sans /api/ à la fin)</string>
     <string name="preference_ttrss_password_summary">Mot de passe pour se connecter à votre tt-rss</string>
     <string name="preference_ttrss_user_summary">Nom d\'utilisateur pour se connecter à tt-rss</string>
     <string name="preference_activity_title">Tiny Tiny Feed - Configuration</string>
