@@ -1,31 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:layout_gravity="start|center_vertical" >
+    android:layout_gravity="start|center_vertical">
 
-    <fragment android:name="org.poopeeland.tinytinyfeed.settings.SettingsFragment"
+    <fragment
+        android:name="org.poopeeland.tinytinyfeed.settings.SettingsFragment"
         android:id="@+id/settingFragment"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="30" />
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
+
+    <Button
+        android:text="@string/setupCheckButtonText"
+        android:id="@+id/setup_check_button"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        style="?android:attr/buttonBarStyle"
-        android:weightSum="10">
+        android:layout_weight="1" />
 
-        <Button
-            android:layout_height="wrap_content"
-            android:text="@string/setupCheckButtonText"
-            android:id="@+id/setup_check_button"
-            android:layout_width="0dp"
-            style="?android:attr/buttonBarStyle"
-            android:layout_weight="10" />
-    </LinearLayout>
 
 </LinearLayout>
