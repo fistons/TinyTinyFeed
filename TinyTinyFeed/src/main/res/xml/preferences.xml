@@ -49,6 +49,12 @@
             android:summary="@string/preference_article_number_summary"
             android:inputType="numberDecimal"
             android:defaultValue="@string/preference_article_number_default_value"/>
+        <EditTextPreference
+            android:key="org.poopeeland.tinytinyfeed.EXCERPT_LENGHT_KEY"
+            android:title="@string/preference_article_excerpt_lenght"
+            android:summary="@string/preference_article_excerpt_lenght_summary"
+            android:inputType="numberDecimal"
+            android:defaultValue="@string/preference_excerpt_lenght_default_value" />
     </PreferenceCategory>
 
 </PreferenceScreen>

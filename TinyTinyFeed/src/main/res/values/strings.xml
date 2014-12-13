@@ -46,8 +46,11 @@
     <string name="preference_ssl_check_hostname_summary">Do not check if hostnames are matching</string>
     <string name="preference_httpauth_user_summary">Fill this if your tt-rss setup is protected by an HTTP Authentification</string>
     <string name="preference_httpauth_password_summary">Your HTTP Authentification password</string>
+    <string name="preference_article_excerpt_lenght">Exceprt lenght</string>
+    <string name="preference_article_excerpt_lenght_summary">Number of characters to retrieve for the excerpt</string>
     <string name="preference_article_number_summary">The number of article you wish to retrieve</string>
     <string name="preference_article_number_default_value" translatable="false">20</string>
+    <string name="preference_excerpt_lenght_default_value" translatable="false">200</string>
     <string name="preference_ttrss_url_default_value" translatable="false">http://</string>
     <string name="preference_ttrss_url_not_null_or_default">Please enter a valid url</string>
     <string name="preference_unread_only_summary">Check this if you want to retrieve only the unread articles</string>
