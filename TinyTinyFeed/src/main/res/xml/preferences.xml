@@ -39,6 +39,11 @@
             android:inputType="textPassword"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/preference_category_interface_settings">
+        <PreferenceScreen
+            android:title="@string/preference_background_color_title"
+            android:summary="@string/preference_background_color_summary"
+            android:key="org.poopeeland.tinytinyfeed.BACKGROUND_COLOR">
+        </PreferenceScreen>
         <CheckBoxPreference
             android:key="org.poopeeland.tinytinyfeed.ONLY_UNREAD"
             android:title="@string/setupRetrieveOnlyUnread"
