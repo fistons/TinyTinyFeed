@@ -51,4 +51,6 @@
     <string name="ssl_exception_message">Problème SSL: veuillez vérifier vos paramètres</string>
     <string name="preference_article_excerpt_lenght">Taille de l\'extrait</string>
     <string name="preference_article_excerpt_lenght_summary">Nombre de caractères a récuper pour l\'extrait</string>
+    <string name="preference_background_color_title">Couleur de fond</string>
+    <string name="preference_background_color_summary">Couleur de fond du widget</string>
 </resources>

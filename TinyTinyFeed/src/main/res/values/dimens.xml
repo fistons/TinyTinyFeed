@@ -4,4 +4,8 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="widget_margin">3dp</dimen>
+    <dimen name="ambilwarna_hsvHeight">240dp</dimen>
+	<dimen name="ambilwarna_hsvWidth">240dp</dimen>
+	<dimen name="ambilwarna_hueWidth">30dp</dimen>
+	<dimen name="ambilwarna_spacer">8dp</dimen>
 </resources>

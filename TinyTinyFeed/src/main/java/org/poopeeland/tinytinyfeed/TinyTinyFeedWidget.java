@@ -73,6 +73,7 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
                 rv.setEmptyView(R.id.listViewWidget, R.id.widgetEmptyList);
                 rv.setOnClickPendingIntent(R.id.lastUpdateText, refreshIntent);
                 rv.setOnClickPendingIntent(R.id.widgetEmptyList, refreshIntent);
+                rv.setInt(R.id.widgetLayoutId, "setBackgroundColor", preferences.getInt(BG_COLOR_KEY, 0x80000000));
 
                 Intent startActivityIntent = new Intent(context, ArticleManagementActivity.class);
                 PendingIntent startActivityPendingIntent = PendingIntent.getActivity(context, 0, startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
