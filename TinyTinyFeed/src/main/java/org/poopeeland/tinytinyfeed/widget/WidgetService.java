@@ -63,7 +63,6 @@ public class WidgetService extends RemoteViewsService {
     private String password;
     private String user;
     private String numArticles;
-    private String excerptLenght;
     private boolean onlyUnread;
     private HttpClient client;
     private File lastListFile;
@@ -87,7 +86,6 @@ public class WidgetService extends RemoteViewsService {
         this.numArticles = preferences.getString(TinyTinyFeedWidget.NUM_ARTICLE_KEY, "");
         this.onlyUnread = preferences.getBoolean(TinyTinyFeedWidget.ONLY_UNREAD_KEY, false);
         this.session = preferences.getString(TinyTinyFeedWidget.SESSION_KEY, null);
-        this.excerptLenght = preferences.getString(TinyTinyFeedWidget.EXCERPT_LENGHT_KEY, getText(R.string.preference_excerpt_lenght_default_value).toString());
         String httpUser = preferences.getString(TinyTinyFeedWidget.HTTP_USER_KEY, "");
         String httpPassword = preferences.getString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, "");
         this.client = this.getNewHttpClient(httpUser, httpPassword);
@@ -166,6 +164,7 @@ public class WidgetService extends RemoteViewsService {
             login();
         }
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String feedId;
         if (onlyUnread) {
             Log.d(TAG, "Retrieve only unread articles");
@@ -180,7 +179,7 @@ public class WidgetService extends RemoteViewsService {
         jsonObject.put("feed_id", feedId);
         jsonObject.put("limit", this.numArticles);
         jsonObject.put("show_excerpt", "true");
-        jsonObject.put("excerpt_length", this.excerptLenght);
+        jsonObject.put("excerpt_length", preferences.getString(TinyTinyFeedWidget.EXCERPT_LENGHT_KEY, getText(R.string.preference_excerpt_lenght_default_value).toString()));
 
         RequestTask task = new RequestTask(this.client, this.url);
         task.execute(jsonObject);

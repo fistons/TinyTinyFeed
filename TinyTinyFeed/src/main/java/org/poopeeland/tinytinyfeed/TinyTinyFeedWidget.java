@@ -82,8 +82,6 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
                 rv.setInt(R.id.lastUpdateText, "setTextColor", textColor);
                 rv.setInt(R.id.widgetEmptyList, "setTextColor", textColor);
                 rv.setInt(R.id.widgetLayoutId, "setBackgroundColor", preferences.getInt(BG_COLOR_KEY, 0x80000000));
-
-                rv.setScrollPosition(R.id.listViewWidget, scrollbarPostion);
 //                rv.setInt(R.id.listViewWidget, "setVerticalScrollbarPosition", preferences.getBoolean(SCROLLBAR_KEY, true) ? View.SCROLLBAR_POSITION_RIGHT : View.SCROLLBAR_POSITION_LEFT);
                 Intent startActivityIntent = new Intent(context, ArticleManagementActivity.class);
                 PendingIntent startActivityPendingIntent = PendingIntent.getActivity(context, 0, startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
