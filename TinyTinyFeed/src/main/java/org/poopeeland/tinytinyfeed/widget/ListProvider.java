@@ -2,7 +2,9 @@ package org.poopeeland.tinytinyfeed.widget;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -11,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.poopeeland.tinytinyfeed.Article;
 import org.poopeeland.tinytinyfeed.R;
+import org.poopeeland.tinytinyfeed.TinyTinyFeedWidget;
 import org.poopeeland.tinytinyfeed.exceptions.CheckException;
 import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
 import org.poopeeland.tinytinyfeed.exceptions.RequiredInfoNotRegistred;
@@ -35,14 +38,16 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     private final Context context;
     private final String unreadSymbol;
     private final WidgetService service;
-    private List<Article> articleList;
     private final File lastArticlesList;
+    private final SharedPreferences pref;
+    private List<Article> articleList;
 
     public ListProvider(WidgetService service) {
         this.service = service;
         this.context = service.getApplicationContext();
         this.unreadSymbol = context.getString(R.string.unreadSymbol);
         this.lastArticlesList = new File(context.getApplicationContext().getFilesDir(), WidgetService.LIST_FILENAME);
+        this.pref = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
 
@@ -88,28 +93,33 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public RemoteViews getViewAt(int position) {
         Article listItem = articleList.get(position);
+        int color = pref.getInt(TinyTinyFeedWidget.TEXT_COLOR_KEY, 0xffffff);
 
-        final RemoteViews remoteView;
+        final RemoteViews rv;
         Intent fillInIntent = new Intent();
         fillInIntent.setData(Uri.parse(listItem.getUrl()));
         fillInIntent.putExtra("article", listItem);
-
-        // TODO: should use a theme or a style or something like that
         String feedNameAndDate = String.format("%s - %s", listItem.getFeeTitle(), listItem.getDate());
         if (listItem.isRead()) {
-            remoteView = new RemoteViews(context.getPackageName(), R.layout.read_article_layout);
-            remoteView.setTextViewText(R.id.readTitle, listItem.getTitle());
-            remoteView.setTextViewText(R.id.readFeedNameAndDate, feedNameAndDate);
-            remoteView.setTextViewText(R.id.readResume, listItem.getContent());
-            remoteView.setOnClickFillInIntent(R.id.readArticleLayout, fillInIntent);
+            rv = new RemoteViews(context.getPackageName(), R.layout.read_article_layout);
+            rv.setTextViewText(R.id.readTitle, listItem.getTitle());
+            rv.setInt(R.id.readTitle, "setTextColor", color);
+            rv.setTextViewText(R.id.readFeedNameAndDate, feedNameAndDate);
+            rv.setInt(R.id.readFeedNameAndDate, "setTextColor", color);
+            rv.setTextViewText(R.id.readResume, listItem.getContent());
+            rv.setInt(R.id.readResume, "setTextColor", color);
+            rv.setOnClickFillInIntent(R.id.readArticleLayout, fillInIntent);
         } else {
-            remoteView = new RemoteViews(context.getPackageName(), R.layout.article_layout);
-            remoteView.setTextViewText(R.id.title, String.format("%s %s", unreadSymbol, listItem.getTitle()));
-            remoteView.setTextViewText(R.id.feedNameAndDate, feedNameAndDate);
-            remoteView.setTextViewText(R.id.resume, listItem.getContent());
-            remoteView.setOnClickFillInIntent(R.id.articleLayout, fillInIntent);
+            rv = new RemoteViews(context.getPackageName(), R.layout.article_layout);
+            rv.setTextViewText(R.id.title, String.format("%s %s", unreadSymbol, listItem.getTitle()));
+            rv.setInt(R.id.title, "setTextColor", color);
+            rv.setTextViewText(R.id.feedNameAndDate, feedNameAndDate);
+            rv.setInt(R.id.feedNameAndDate, "setTextColor", color);
+            rv.setTextViewText(R.id.resume, listItem.getContent());
+            rv.setInt(R.id.resume, "setTextColor", color);
+            rv.setOnClickFillInIntent(R.id.articleLayout, fillInIntent);
         }
-        return remoteView;
+        return rv;
     }
 
     @Override

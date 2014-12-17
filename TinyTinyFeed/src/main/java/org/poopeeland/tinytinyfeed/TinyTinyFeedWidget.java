@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.View;
 import android.widget.RemoteViews;
 
 import org.poopeeland.tinytinyfeed.settings.SettingsActivity;
@@ -32,6 +33,8 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
     public static final String HTTP_USER_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_HTTP_USER";
     public static final String HTTP_PASSWORD_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_HTTP_PASSWORD";
     public static final String BG_COLOR_KEY = "org.poopeeland.tinytinyfeed.BACKGROUND_COLOR";
+    public static final String TEXT_COLOR_KEY = "org.poopeeland.tinytinyfeed.TEXT_COLOR";
+    public static final String SCROLLBAR_KEY = "org.poopeeland.tinytinyfeed.SCROLLBAR";
     public static final String EXCERPT_LENGHT_KEY = "org.poopeeland.tinytinyfeed.EXCERPT_LENGHT_KEY";
     public static final String NUM_ARTICLE_KEY = "org.poopeeland.tinytinyfeed.NUM_ARTICLE_KEY";
     public static final String SESSION_KEY = "org.poopeeland.tinytinyfeed.SESSION_KEY";
@@ -60,6 +63,8 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
 
         Log.d(TAG, "Widget update");
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        int textColor = preferences.getInt(TEXT_COLOR_KEY, 0xffffff);
+        int scrollbarPostion = preferences.getBoolean(SCROLLBAR_KEY, true) ? View.SCROLLBAR_POSITION_RIGHT : View.SCROLLBAR_POSITION_LEFT;
         if (preferences.getBoolean(CHECKED, false)) {
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.listViewWidget);
             PendingIntent refreshIntent = actionPendingIntent(context, appWidgetIds);
@@ -73,8 +78,13 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
                 rv.setEmptyView(R.id.listViewWidget, R.id.widgetEmptyList);
                 rv.setOnClickPendingIntent(R.id.lastUpdateText, refreshIntent);
                 rv.setOnClickPendingIntent(R.id.widgetEmptyList, refreshIntent);
+
+                rv.setInt(R.id.lastUpdateText, "setTextColor", textColor);
+                rv.setInt(R.id.widgetEmptyList, "setTextColor", textColor);
                 rv.setInt(R.id.widgetLayoutId, "setBackgroundColor", preferences.getInt(BG_COLOR_KEY, 0x80000000));
 
+                rv.setScrollPosition(R.id.listViewWidget, scrollbarPostion);
+//                rv.setInt(R.id.listViewWidget, "setVerticalScrollbarPosition", preferences.getBoolean(SCROLLBAR_KEY, true) ? View.SCROLLBAR_POSITION_RIGHT : View.SCROLLBAR_POSITION_LEFT);
                 Intent startActivityIntent = new Intent(context, ArticleManagementActivity.class);
                 PendingIntent startActivityPendingIntent = PendingIntent.getActivity(context, 0, startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                 rv.setPendingIntentTemplate(R.id.listViewWidget, startActivityPendingIntent);
@@ -94,7 +104,7 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, new Intent(context, SettingsActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
             rv.setOnClickPendingIntent(R.id.no_settings_layout, pendingIntent);
-
+            rv.setInt(R.id.no_settings_layout, "setTextColor", textColor);
             appWidgetManager.updateAppWidget(appWidgetIds, rv);
         }
         super.onUpdate(context, appWidgetManager, appWidgetIds);

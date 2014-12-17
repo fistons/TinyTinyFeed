@@ -57,6 +57,14 @@
     <string name="preference_background_color_title">Backgroung color</string>
     <string name="preference_background_color_summary">Color of the background of the widget</string>
     <string name="preference_background_color_default_value" translatable="false">#80000000</string>
+    <string name="preference_text_color_title">Text color</string>
+    <string name="preference_text_color_summary">Color of the widget\'s text</string>
     <string name="widget_no_setup">Please tap here to configure your widget</string>
     <string name="ssl_exception_message">SSL problem: please check your settings</string>
+
+    <string name="preference_scrollbar_left_text">Scrollbar position</string>
+    <string name="preference_scrollbar_left_summary">Scrollbar is on the left</string>
+    <string name="preference_scrollbar_right_text">Scrollbar position</string>
+    <string name="preference_scrollbar_right_summary">Scrollbar is on the right</string>
+    <string name="preference_scrollbar_title">Scrollbar position</string>
 </resources>

@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/title"
         android:layout_gravity="start|center_vertical"
-        android:textColor="#ffffff"
         android:textStyle="bold" />
 
     <TextView
@@ -20,8 +19,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/feedNameAndDate"
         android:layout_gravity="start|center_vertical"
-        android:textStyle="italic"
-        android:textColor="#ffffff" />
+        android:textStyle="italic" />
 
     <TextView
         android:layout_width="wrap_content"
