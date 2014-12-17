@@ -18,6 +18,10 @@ If you want, you can send me a [gift](https://www.paypal.com/cgi-bin/webscr?cmd=
 
 ## Release notes
 
+* V1.8
+    * Correct a bug that appear with version 1.15.3: the excerpt of the articles was empty. Now, you can choose the lenght of characters of the exceprt in the setting
+    * Now you can choose background and text color, thanks to [AmbilWarna color chooser](https://code.google.com/p/android-color-picker/)
+
 * V1.7 -- Users of older versions, you need to re-enter your setting. Sorry about that.
     * New Setup Activity
     * Better SSL integration
