@@ -42,7 +42,7 @@
     <PreferenceCategory android:title="@string/preference_category_interface_settings">
         <yuku.ambilwarna.widget.AmbilWarnaPreference
             android:key="org.poopeeland.tinytinyfeed.TEXT_COLOR"
-            android:defaultValue="0xffffff"
+            android:defaultValue="0xffffffff"
             android:summary="@string/preference_text_color_summary"
             android:title="@string/preference_text_color_title" />
         <yuku.ambilwarna.widget.AmbilWarnaPreference
