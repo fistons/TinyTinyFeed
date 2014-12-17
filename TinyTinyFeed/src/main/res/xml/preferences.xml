@@ -51,14 +51,14 @@
             app:supportsAlpha="true"
             android:summary="@string/preference_background_color_summary"
             android:title="@string/preference_background_color_title" />
-        <SwitchPreference
-            android:key="org.poopeeland.tinytinyfeed.SCROLLBAR"
-            android:title="@string/preference_scrollbar_title"
-            android:summaryOff="@string/preference_scrollbar_left_summary"
-            android:summaryOn="@string/preference_scrollbar_right_summary"
-            android:switchTextOff="@string/preference_scrollbar_left_text"
-            android:switchTextOn="@string/preference_scrollbar_right_text"
-            android:defaultValue="true"/>
+        <!--<SwitchPreference-->
+            <!--android:key="org.poopeeland.tinytinyfeed.SCROLLBAR"-->
+            <!--android:title="@string/preference_scrollbar_title"-->
+            <!--android:summaryOff="@string/preference_scrollbar_left_summary"-->
+            <!--android:summaryOn="@string/preference_scrollbar_right_summary"-->
+            <!--android:switchTextOff="@string/preference_scrollbar_left_text"-->
+            <!--android:switchTextOn="@string/preference_scrollbar_right_text"-->
+            <!--android:defaultValue="true"/>-->
         <CheckBoxPreference
             android:key="org.poopeeland.tinytinyfeed.ONLY_UNREAD"
             android:title="@string/setupRetrieveOnlyUnread"
