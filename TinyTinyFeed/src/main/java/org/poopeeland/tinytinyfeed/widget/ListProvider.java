@@ -93,7 +93,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public RemoteViews getViewAt(int position) {
         Article listItem = articleList.get(position);
-        int color = pref.getInt(TinyTinyFeedWidget.TEXT_COLOR_KEY, 0xffffff);
+        int color = pref.getInt(TinyTinyFeedWidget.TEXT_COLOR_KEY, 0xffffffff);
 
         final RemoteViews rv;
         Intent fillInIntent = new Intent();
