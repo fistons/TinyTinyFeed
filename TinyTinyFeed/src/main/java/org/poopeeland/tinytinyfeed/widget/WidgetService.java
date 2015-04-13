@@ -55,10 +55,12 @@ public class WidgetService extends RemoteViewsService {
 
     public static final String ACTIVITY_FLAG = "Activity";
     public static final String LIST_FILENAME = "listArticles.json";
+    private static final String ARTICLE_ALL = "-4";
+    private static final String ARTICLE_ONLY_UNREAD = "-3";
     private static final String TAG = WidgetService.class.getSimpleName();
     private final IBinder binder = new LocalBinder();
     private ConnectivityManager connMgr;
-    private String session;
+    //    private String session;
     private String url;
     private String password;
     private String user;
@@ -85,7 +87,7 @@ public class WidgetService extends RemoteViewsService {
         this.password = preferences.getString(TinyTinyFeedWidget.PASSWORD_KEY, "");
         this.numArticles = preferences.getString(TinyTinyFeedWidget.NUM_ARTICLE_KEY, "");
         this.onlyUnread = preferences.getBoolean(TinyTinyFeedWidget.ONLY_UNREAD_KEY, false);
-        this.session = preferences.getString(TinyTinyFeedWidget.SESSION_KEY, null);
+//        this.session = preferences.getString(TinyTinyFeedWidget.SESSION_KEY, null);
         String httpUser = preferences.getString(TinyTinyFeedWidget.HTTP_USER_KEY, "");
         String httpPassword = preferences.getString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, "");
         this.client = this.getNewHttpClient(httpUser, httpPassword);
@@ -128,7 +130,7 @@ public class WidgetService extends RemoteViewsService {
      * @throws InterruptedException
      * @throws org.poopeeland.tinytinyfeed.exceptions.CheckException           When something wrong happened with the server
      */
-    private void login() throws RequiredInfoNotRegistred, JSONException, ExecutionException, InterruptedException, CheckException {
+    private String login() throws RequiredInfoNotRegistred, JSONException, ExecutionException, InterruptedException, CheckException {
 
         checkRequieredInfoRegistred();
 
@@ -141,8 +143,19 @@ public class WidgetService extends RemoteViewsService {
         task.execute(jsonObject);
         JSONObject response = task.get();
         checkJsonResponse(response);
-        this.session = response.getJSONObject("content").getString("session_id");
-        saveSessionId(this.session);
+//        this.session = response.getJSONObject("content").getString("session_id");
+//        saveSessionId(this.session);
+        return response.getJSONObject("content").getString("session_id");
+    }
+
+    private void logout(String session) throws JSONException, ExecutionException, InterruptedException, CheckException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("op", "logout");
+        jsonObject.put("sid", session);
+        RequestTask task = new RequestTask(this.client, this.url);
+        task.execute(jsonObject);
+        JSONObject response = task.get();
+        checkJsonResponse(response);
     }
 
 
@@ -160,19 +173,11 @@ public class WidgetService extends RemoteViewsService {
     public List<Article> updateFeeds() throws RequiredInfoNotRegistred, CheckException, JSONException, ExecutionException, InterruptedException, NoInternetException {
         Utils.checkNetwork(this.connMgr);
         List<Article> list = new ArrayList<>();
-        if (isNotLogged()) {
-            login();
-        }
+
+        String session = login();
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String feedId;
-        if (onlyUnread) {
-            Log.d(TAG, "Retrieve only unread articles");
-            feedId = "-3";
-        } else {
-            Log.d(TAG, "Retrieve all articles");
-            feedId = "-4";
-        }
+        String feedId = this.onlyUnread ? ARTICLE_ONLY_UNREAD : ARTICLE_ALL;
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("sid", session);
         jsonObject.put("op", "getHeadlines");
@@ -184,6 +189,8 @@ public class WidgetService extends RemoteViewsService {
         RequestTask task = new RequestTask(this.client, this.url);
         task.execute(jsonObject);
         JSONObject response = task.get();
+
+        logout(session);
 
         checkJsonResponse(response);
         this.saveList(response.getJSONArray("content"));
@@ -210,9 +217,9 @@ public class WidgetService extends RemoteViewsService {
     public void setArticleToRead(Article article) throws CheckException, ExecutionException, InterruptedException, JSONException, RequiredInfoNotRegistred, NoInternetException {
         Utils.checkNetwork(this.connMgr);
         Log.d(TAG, String.format("Article %s set to read", article.getTitle()));
-        if (isNotLogged()) {
-            login();
-        }
+
+        String session = login();
+
         JSONObject jsonObject = new JSONObject();
 
         jsonObject.put("sid", session);
@@ -225,6 +232,7 @@ public class WidgetService extends RemoteViewsService {
         task.execute(jsonObject);
         JSONObject response = task.get();
         checkJsonResponse(response);
+        logout(session);
     }
 
     /**
@@ -239,9 +247,9 @@ public class WidgetService extends RemoteViewsService {
      * @throws NoInternetException      if the is no internet connexion right now
      */
     public List<Category> loadCategories() throws InterruptedException, ExecutionException, CheckException, JSONException, RequiredInfoNotRegistred, NoInternetException {
-        if (isNotLogged()) {
-            login();
-        }
+
+        String session = login();
+
         Utils.checkNetwork(this.connMgr);
         List<Category> categories = new ArrayList<>();
         Log.d(TAG, "Retrieve the list of category");
@@ -256,6 +264,7 @@ public class WidgetService extends RemoteViewsService {
         task.execute(jsonObject);
         JSONObject response = task.get();
         checkJsonResponse(response);
+        logout(session);
         Log.d(TAG, response.toString());
 
         for (int i = 0; i < response.getJSONArray("content").length(); i++) {
@@ -286,9 +295,7 @@ public class WidgetService extends RemoteViewsService {
     public int subscribe(String url, Category category) {
 
         try {
-            if (isNotLogged()) {
-                login();
-            }
+            String session = login();
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("op", "subscribeToFeed");
             jsonObject.put("feed_url", url);
@@ -297,6 +304,7 @@ public class WidgetService extends RemoteViewsService {
             RequestTask task = new RequestTask(this.client, this.url);
             task.execute(jsonObject);
             JSONObject response = task.get();
+            logout(session);
             checkJsonResponse(response);
             return response.getJSONObject("content").getJSONObject("status").getInt("code");
         } catch (InterruptedException | ExecutionException | JSONException | CheckException | RequiredInfoNotRegistred ex) {
@@ -306,7 +314,7 @@ public class WidgetService extends RemoteViewsService {
     }
 
 
-    private boolean isNotLogged() throws RequiredInfoNotRegistred, JSONException, ExecutionException, InterruptedException, CheckException {
+    private boolean isNotLogged(String session) throws RequiredInfoNotRegistred, JSONException, ExecutionException, InterruptedException, CheckException {
         checkRequieredInfoRegistred();
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("sid", session);
@@ -439,3 +447,4 @@ public class WidgetService extends RemoteViewsService {
     }
 
 }
+
