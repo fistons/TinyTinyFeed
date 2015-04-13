@@ -30,7 +30,7 @@
         </activity>
 
         <activity
-            android:name=".widget.ArticleManagementActivity"
+            android:name=".widget.ArticleReadActivity"
             android:excludeFromRecents="true"
             android:noHistory="true"
             android:theme="@android:style/Theme.NoDisplay" />

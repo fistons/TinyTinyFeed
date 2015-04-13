@@ -12,7 +12,7 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 import org.poopeeland.tinytinyfeed.settings.SettingsActivity;
-import org.poopeeland.tinytinyfeed.widget.ArticleManagementActivity;
+import org.poopeeland.tinytinyfeed.widget.ArticleReadActivity;
 import org.poopeeland.tinytinyfeed.widget.WidgetService;
 
 import java.text.DateFormat;
@@ -79,7 +79,7 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
                 rv.setInt(R.id.lastUpdateText, "setTextColor", textColor);
                 rv.setInt(R.id.widgetEmptyList, "setTextColor", textColor);
                 rv.setInt(R.id.widgetLayoutId, "setBackgroundColor", preferences.getInt(BG_COLOR_KEY, 0x80000000));
-                Intent startActivityIntent = new Intent(context, ArticleManagementActivity.class);
+                Intent startActivityIntent = new Intent(context, ArticleReadActivity.class);
                 PendingIntent startActivityPendingIntent = PendingIntent.getActivity(context, 0, startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                 rv.setPendingIntentTemplate(R.id.listViewWidget, startActivityPendingIntent);
 

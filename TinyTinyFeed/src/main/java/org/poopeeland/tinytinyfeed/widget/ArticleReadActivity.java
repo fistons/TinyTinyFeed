@@ -29,9 +29,9 @@ import java.util.concurrent.ExecutionException;
  * Invisible Activity that set the Article as read
  * Created by eric on 11/06/14.
  */
-public class ArticleManagementActivity extends Activity {
+public class ArticleReadActivity extends Activity {
 
-    private static final String TAG = "ArticleManagementActivity";
+    private static final String TAG = "ArticleReadActivity";
     private boolean bound;
     private Article article;
     private final ServiceConnection mConnection = new ServiceConnection() {
@@ -55,7 +55,7 @@ public class ArticleManagementActivity extends Activity {
 
             // Retrieve the widgets Ids
             int ids[] = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), TinyTinyFeedWidget.class));
-            Intent updateIntent = new Intent(ArticleManagementActivity.this, TinyTinyFeedWidget.class);
+            Intent updateIntent = new Intent(ArticleReadActivity.this, TinyTinyFeedWidget.class);
             updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
             updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
             sendBroadcast(updateIntent);
