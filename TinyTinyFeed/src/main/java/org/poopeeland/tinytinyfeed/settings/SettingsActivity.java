@@ -11,7 +11,6 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
 
@@ -26,6 +25,7 @@ import org.poopeeland.tinytinyfeed.exceptions.TtrssError;
 import org.poopeeland.tinytinyfeed.utils.Utils;
 
 import java.net.MalformedURLException;
+import java.net.URL;
 
 public class SettingsActivity extends Activity implements View.OnClickListener {
 
@@ -80,9 +80,7 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
         String httpUser = this.preferences.getString(TinyTinyFeedWidget.HTTP_USER_KEY, "");
         String httpPassword = this.preferences.getString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, "");
 
-        if (!Patterns.WEB_URL.matcher(url).matches()) {
-            throw new MalformedURLException();
-        }
+        new URL(url); // Check the url (with the scheme)
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("user", user);
