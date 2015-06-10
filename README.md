@@ -1,6 +1,8 @@
 TinyTinyFeed
 ============
 
+**Ok, so it's been a while since I work on this project but I will try something new, from scratch, soon! Stay tune!**
+
 ## Introduction
 
 
