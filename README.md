@@ -3,7 +3,7 @@ TinyTinyFeed
 
 **Ok, so it's been a while since I work on this project but I will try something new, from scratch, soon! Stay tune!**
 
-**You can get it from the Play Store [here](https://play.google.com/store/apps/details?id=org.poopeeland.tinytinyfeed)
+**You can get it from the Play Store [here](https://play.google.com/store/apps/details?id=org.poopeeland.tinytinyfeed)**
 
 ## Introduction
 
