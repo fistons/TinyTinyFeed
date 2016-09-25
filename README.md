@@ -3,6 +3,8 @@ TinyTinyFeed
 
 **Ok, so it's been a while since I work on this project but I will try something new, from scratch, soon! Stay tune!**
 
+**You can get it from the Play Store [here](https://play.google.com/store/apps/details?id=org.poopeeland.tinytinyfeed)**
+
 ## Introduction
 
 
@@ -14,7 +16,7 @@ The widget updates itself every 30 minutes and shows you the last 20 articles (y
 
 Be aware that the widget update isn't in sync with the TTRss update.
 
-Artworks from [Namida](https://www.facebook.com/NamidaArt) (or [here](http://boulangermaude.wix.com/namidaart)) - Kuddos to her
+Artworks from my wife [Namida](https://www.facebook.com/NamidaArt) (or [here](http://namida-art.com)) - Kuddos to her
 
 If you want, you can send me a [gift](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=TPHRD64MV2B5U)
 
