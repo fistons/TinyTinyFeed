@@ -73,8 +73,8 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
                 RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.tiny_tiny_feed_widget);
                 rv.setRemoteAdapter(R.id.listViewWidget, intent);
                 rv.setEmptyView(R.id.listViewWidget, R.id.widgetEmptyList);
-                rv.setOnClickPendingIntent(R.id.lastUpdateText, refreshIntent);
                 rv.setOnClickPendingIntent(R.id.widgetEmptyList, refreshIntent);
+                rv.setOnClickPendingIntent(R.id.refreshButton, refreshIntent);
 
                 rv.setInt(R.id.lastUpdateText, "setTextColor", textColor);
                 rv.setInt(R.id.widgetEmptyList, "setTextColor", textColor);

@@ -32,7 +32,18 @@
         android:textStyle="bold|italic"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/refreshButton"
+        android:layout_toStartOf="@+id/refreshButton" />
+
+    <Button
+        android:text="@string/widget_refresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/refreshButton"
+        android:layout_alignBottom="@+id/lastUpdateText"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 
 </RelativeLayout>

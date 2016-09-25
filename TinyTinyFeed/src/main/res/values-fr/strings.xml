@@ -55,4 +55,5 @@
     <string name="preference_background_color_summary">Couleur de fond du widget</string>
     <string name="preference_text_color_summary">Couleur des textes du widget</string>
     <string name="preference_text_color_title">Couleur du texte </string>
+    <string name="widget_refresh">Raffraichir</string>
 </resources>

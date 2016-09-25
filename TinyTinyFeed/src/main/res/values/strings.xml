@@ -67,4 +67,5 @@
     <string name="preference_scrollbar_right_text">Scrollbar position</string>
     <string name="preference_scrollbar_right_summary">Scrollbar is on the right</string>
     <string name="preference_scrollbar_title">Scrollbar position</string>
+    <string name="widget_refresh">Refresh</string>
 </resources>
