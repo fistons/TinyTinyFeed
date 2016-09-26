@@ -21,6 +21,7 @@ If you want, you can send me a [gift](https://www.paypal.com/cgi-bin/webscr?cmd=
 ## Release notes
 
 * V1.9
+   * Add a nice refresh button, more useless friendly than the "click on the status bar to refresh" thing.
    * Fix the null url issue
    * Fix the non-trimmed preference settings
    * Refactorisation and cleaning
