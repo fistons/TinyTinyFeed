@@ -1,8 +1,6 @@
 TinyTinyFeed
 ============
 
-**Ok, so it's been a while since I work on this project but I will try something new, from scratch, soon! Stay tune!**
-
 **You can get it from the Play Store [here](https://play.google.com/store/apps/details?id=org.poopeeland.tinytinyfeed)**
 
 ## Introduction
@@ -21,6 +19,11 @@ Artworks from my wife [Namida](https://www.facebook.com/NamidaArt) (or [here](ht
 If you want, you can send me a [gift](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=TPHRD64MV2B5U)
 
 ## Release notes
+
+* V1.9
+   * Fix the null url issue
+   * Fix the non-trimmed preference settings
+   * Refactorisation and cleaning
 
 * V1.8
     * Correct a bug that appear with version 1.15.3: the excerpt of the articles was empty. Now, you can choose the lenght of characters of the exceprt in the setting
