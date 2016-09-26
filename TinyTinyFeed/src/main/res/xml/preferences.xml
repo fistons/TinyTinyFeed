@@ -2,21 +2,21 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory android:title="@string/preference_category_ttrss_settings">
-        <EditTextPreference
+        <org.poopeeland.tinytinyfeed.settings.TrimmedEditTextPreference
+            android:defaultValue="@string/preference_ttrss_url_default_value"
+            android:inputType="textUri"
             android:key="org.poopeeland.tinytinyfeed.PREFERENCE_URL"
             android:summary="@string/preference_ttrss_url_summary"
-            android:title="@string/setupUrlLabel"
-            android:inputType="textUri"
-            android:defaultValue="@string/preference_ttrss_url_default_value" />
-        <EditTextPreference
+            android:title="@string/setupUrlLabel" />
+        <org.poopeeland.tinytinyfeed.settings.TrimmedEditTextPreference
             android:key="org.poopeeland.tinytinyfeed.PREFERENCE_USER"
             android:summary="@string/preference_ttrss_user_summary"
             android:title="@string/setupUserLabel" />
-        <EditTextPreference
+        <org.poopeeland.tinytinyfeed.settings.TrimmedEditTextPreference
+            android:inputType="textPassword"
             android:key="org.poopeeland.tinytinyfeed.PREFERENCE_PASSWORD"
             android:summary="@string/preference_ttrss_password_summary"
-            android:title="@string/setupPasswordLabel"
-            android:inputType="textPassword"/>
+            android:title="@string/setupPasswordLabel" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/preference_category_ssl_settings">
         <CheckBoxPreference
@@ -29,44 +29,44 @@
             android:title="@string/preference_ssl_check_hostname_summary"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/preference_category_http_auth_settings">
-        <EditTextPreference
+        <org.poopeeland.tinytinyfeed.settings.TrimmedEditTextPreference
             android:key="org.poopeeland.tinytinyfeed.PREFERENCE_HTTP_USER"
             android:summary="@string/preference_httpauth_user_summary"
             android:title="@string/httpAuthUserLabel" />
-        <EditTextPreference
+        <org.poopeeland.tinytinyfeed.settings.TrimmedEditTextPreference
+            android:inputType="textPassword"
             android:key="org.poopeeland.tinytinyfeed.PREFERENCE_HTTP_PASSWORD"
             android:summary="@string/preference_httpauth_password_summary"
-            android:title="@string/httpAuthPasswordLabel"
-            android:inputType="textPassword"/>
+            android:title="@string/httpAuthPasswordLabel" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/preference_category_interface_settings">
         <yuku.ambilwarna.widget.AmbilWarnaPreference
-            android:key="org.poopeeland.tinytinyfeed.TEXT_COLOR"
             android:defaultValue="0xffffffff"
+            android:key="org.poopeeland.tinytinyfeed.TEXT_COLOR"
             android:summary="@string/preference_text_color_summary"
             android:title="@string/preference_text_color_title" />
         <yuku.ambilwarna.widget.AmbilWarnaPreference
-            android:key="org.poopeeland.tinytinyfeed.BACKGROUND_COLOR"
             android:defaultValue="0x80000000"
-            app:supportsAlpha="true"
+            android:key="org.poopeeland.tinytinyfeed.BACKGROUND_COLOR"
             android:summary="@string/preference_background_color_summary"
-            android:title="@string/preference_background_color_title" />
+            android:title="@string/preference_background_color_title"
+            app:supportsAlpha="true" />
         <CheckBoxPreference
             android:key="org.poopeeland.tinytinyfeed.ONLY_UNREAD"
-            android:title="@string/setupRetrieveOnlyUnread"
-            android:summary="@string/preference_unread_only_summary"/>
-        <EditTextPreference
+            android:summary="@string/preference_unread_only_summary"
+            android:title="@string/setupRetrieveOnlyUnread" />
+        <org.poopeeland.tinytinyfeed.settings.TrimmedEditTextPreference
+            android:defaultValue="@string/preference_article_number_default_value"
+            android:inputType="numberDecimal"
             android:key="org.poopeeland.tinytinyfeed.NUM_ARTICLE_KEY"
-            android:title="@string/setupNumArticles"
             android:summary="@string/preference_article_number_summary"
+            android:title="@string/setupNumArticles" />
+        <org.poopeeland.tinytinyfeed.settings.TrimmedEditTextPreference
+            android:defaultValue="@string/preference_excerpt_lenght_default_value"
             android:inputType="numberDecimal"
-            android:defaultValue="@string/preference_article_number_default_value"/>
-        <EditTextPreference
             android:key="org.poopeeland.tinytinyfeed.EXCERPT_LENGHT_KEY"
-            android:title="@string/preference_article_excerpt_lenght"
             android:summary="@string/preference_article_excerpt_lenght_summary"
-            android:inputType="numberDecimal"
-            android:defaultValue="@string/preference_excerpt_lenght_default_value" />
+            android:title="@string/preference_article_excerpt_lenght" />
     </PreferenceCategory>
 
 </PreferenceScreen>
