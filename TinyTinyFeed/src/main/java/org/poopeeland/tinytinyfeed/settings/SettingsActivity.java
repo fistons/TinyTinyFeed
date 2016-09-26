@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import org.apache.commons.validator.routines.UrlValidator;
 import org.apache.http.client.HttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -79,6 +80,12 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
         String password = this.preferences.getString(TinyTinyFeedWidget.PASSWORD_KEY, "");
         String httpUser = this.preferences.getString(TinyTinyFeedWidget.HTTP_USER_KEY, "");
         String httpPassword = this.preferences.getString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, "");
+
+        String[] schemes = {"http", "https"};
+        UrlValidator urlValidator = new UrlValidator(schemes);
+        if (!urlValidator.isValid(url)) {
+            throw new MalformedURLException();
+        }
 
         new URL(url); // Check the url (with the scheme)
 
