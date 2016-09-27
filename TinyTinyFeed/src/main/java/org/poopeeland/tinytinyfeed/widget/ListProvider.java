@@ -11,12 +11,13 @@ import android.widget.RemoteViewsService;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.poopeeland.tinytinyfeed.Article;
 import org.poopeeland.tinytinyfeed.R;
 import org.poopeeland.tinytinyfeed.TinyTinyFeedWidget;
 import org.poopeeland.tinytinyfeed.exceptions.CheckException;
 import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
 import org.poopeeland.tinytinyfeed.exceptions.RequiredInfoNotRegistred;
+import org.poopeeland.tinytinyfeed.model.ArticleWrapper;
+import org.poopeeland.tinytinyfeed.model.NewArticle;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -40,7 +41,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     private final WidgetService service;
     private final File lastArticlesList;
     private final SharedPreferences pref;
-    private List<Article> articleList;
+    private List<NewArticle> articleList;
 
     public ListProvider(WidgetService service) {
         this.service = service;
@@ -92,21 +93,21 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public RemoteViews getViewAt(int position) {
-        Article listItem = articleList.get(position);
+        NewArticle listItem = articleList.get(position);
         int color = pref.getInt(TinyTinyFeedWidget.TEXT_COLOR_KEY, 0xffffffff);
 
         final RemoteViews rv;
         Intent fillInIntent = new Intent();
-        fillInIntent.setData(Uri.parse(listItem.getUrl()));
+        fillInIntent.setData(Uri.parse(listItem.getLink()));
         fillInIntent.putExtra("article", listItem);
-        String feedNameAndDate = String.format("%s - %s", listItem.getFeeTitle(), listItem.getDate());
-        if (listItem.isRead()) {
+        String feedNameAndDate = String.format("%s - %s", listItem.getFeedTitle(), listItem.getDate());
+        if (!listItem.isUnread()) {
             rv = new RemoteViews(context.getPackageName(), R.layout.read_article_layout);
             rv.setTextViewText(R.id.readTitle, listItem.getTitle());
             rv.setInt(R.id.readTitle, "setTextColor", color);
             rv.setTextViewText(R.id.readFeedNameAndDate, feedNameAndDate);
             rv.setInt(R.id.readFeedNameAndDate, "setTextColor", color);
-            rv.setTextViewText(R.id.readResume, listItem.getContent());
+            rv.setTextViewText(R.id.readResume, listItem.getExcerpt());
             rv.setInt(R.id.readResume, "setTextColor", color);
             rv.setOnClickFillInIntent(R.id.readArticleLayout, fillInIntent);
         } else {
@@ -115,7 +116,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
             rv.setInt(R.id.title, "setTextColor", color);
             rv.setTextViewText(R.id.feedNameAndDate, feedNameAndDate);
             rv.setInt(R.id.feedNameAndDate, "setTextColor", color);
-            rv.setTextViewText(R.id.resume, listItem.getContent());
+            rv.setTextViewText(R.id.resume, listItem.getExcerpt());
             rv.setInt(R.id.resume, "setTextColor", color);
             rv.setOnClickFillInIntent(R.id.articleLayout, fillInIntent);
         }
@@ -144,7 +145,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
 
     @SuppressWarnings("unchecked")
-    private List<Article> loadLastList() {
+    private List<NewArticle> loadLastList() {
         Log.d(TAG, String.format("Loading lastlist from %s", this.lastArticlesList.getAbsolutePath()));
         if (!this.lastArticlesList.isFile()) {
             return Collections.EMPTY_LIST;
@@ -167,11 +168,12 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
             return Collections.EMPTY_LIST;
         }
 
-        List<Article> articles = new ArrayList<>();
+        List<NewArticle> articles = new ArrayList<>();
         try {
             JSONArray response = new JSONArray(sb.toString());
             for (int i = 0; i < response.length(); i++) {
-                articles.add(new Article(response.getJSONObject(i)));
+//                articles.add(new Article(response.getJSONObject(i)));
+                articles.add(ArticleWrapper.fromJson(response.getJSONObject(i).toString()));
             }
         } catch (JSONException ex) {
             return Collections.EMPTY_LIST;

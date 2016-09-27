@@ -21,6 +21,7 @@ android {
         compile('commons-validator:commons-validator:1.4.0') {
             exclude group: 'commons-logging', module: 'commons-logging'
         }
+        compile 'com.google.code.gson:gson:2.2.4'
     }
 
     useLibrary 'org.apache.http.legacy'

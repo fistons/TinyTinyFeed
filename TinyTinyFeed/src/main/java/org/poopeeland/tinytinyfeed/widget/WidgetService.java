@@ -37,6 +37,8 @@ import org.poopeeland.tinytinyfeed.exceptions.CheckException;
 import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
 import org.poopeeland.tinytinyfeed.exceptions.RequiredInfoNotRegistred;
 import org.poopeeland.tinytinyfeed.exceptions.TtrssError;
+import org.poopeeland.tinytinyfeed.model.ArticleWrapper;
+import org.poopeeland.tinytinyfeed.model.NewArticle;
 import org.poopeeland.tinytinyfeed.utils.MySSLSocketFactory;
 import org.poopeeland.tinytinyfeed.utils.Utils;
 
@@ -60,7 +62,6 @@ public class WidgetService extends RemoteViewsService {
     private static final String TAG = WidgetService.class.getSimpleName();
     private final IBinder binder = new LocalBinder();
     private ConnectivityManager connMgr;
-    //    private String session;
     private String url;
     private String password;
     private String user;
@@ -87,7 +88,6 @@ public class WidgetService extends RemoteViewsService {
         this.password = preferences.getString(TinyTinyFeedWidget.PASSWORD_KEY, "");
         this.numArticles = preferences.getString(TinyTinyFeedWidget.NUM_ARTICLE_KEY, "");
         this.onlyUnread = preferences.getBoolean(TinyTinyFeedWidget.ONLY_UNREAD_KEY, false);
-//        this.session = preferences.getString(TinyTinyFeedWidget.SESSION_KEY, null);
         String httpUser = preferences.getString(TinyTinyFeedWidget.HTTP_USER_KEY, "");
         String httpPassword = preferences.getString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, "");
         this.client = this.getNewHttpClient(httpUser, httpPassword);
@@ -143,8 +143,6 @@ public class WidgetService extends RemoteViewsService {
         task.execute(jsonObject);
         JSONObject response = task.get();
         checkJsonResponse(response);
-//        this.session = response.getJSONObject("content").getString("session_id");
-//        saveSessionId(this.session);
         return response.getJSONObject("content").getString("session_id");
     }
 
@@ -170,9 +168,9 @@ public class WidgetService extends RemoteViewsService {
      * @throws InterruptedException
      * @throws NoInternetException      if the is no internet connexion right now
      */
-    public List<Article> updateFeeds() throws RequiredInfoNotRegistred, CheckException, JSONException, ExecutionException, InterruptedException, NoInternetException {
+    public List<NewArticle> updateFeeds() throws RequiredInfoNotRegistred, CheckException, JSONException, ExecutionException, InterruptedException, NoInternetException {
         Utils.checkNetwork(this.connMgr);
-        List<Article> list = new ArrayList<>();
+        List<NewArticle> list = new ArrayList<>();
 
         String session = login();
 
@@ -196,7 +194,8 @@ public class WidgetService extends RemoteViewsService {
         this.saveList(response.getJSONArray("content"));
 
         for (int i = 0; i < response.getJSONArray("content").length(); i++) {
-            list.add(new Article(response.getJSONArray("content").getJSONObject(i)));
+//            list.add(new Article(response.getJSONArray("content").getJSONObject(i)));
+            list.add(ArticleWrapper.fromJson(response.getJSONArray("content").getJSONObject(i).toString()));
         }
 
 
