@@ -15,7 +15,7 @@ import java.util.Date;
  */
 public class Article implements Serializable {
 
-    private static final DateFormat sdf = DateFormat.getDateTimeInstance();
+    private static final DateFormat SDF = DateFormat.getDateTimeInstance();
 
     private final int id;
     private final String title;
@@ -38,8 +38,7 @@ public class Article implements Serializable {
         this.url = json.getString("link");
 
         long timestamp = Long.parseLong(json.getString("updated")) * 1000;
-        Date date1 = new Date(timestamp);
-        this.date = Article.sdf.format(date1);
+        this.date = Article.SDF.format(new Date(timestamp));
         this.feedTitle = json.getString("feed_title");
         this.read = !json.getBoolean("unread");
     }
