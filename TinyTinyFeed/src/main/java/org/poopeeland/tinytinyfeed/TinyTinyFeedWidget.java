@@ -75,7 +75,7 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
                 rv.setEmptyView(R.id.listViewWidget, R.id.widgetEmptyList);
                 rv.setOnClickPendingIntent(R.id.widgetEmptyList, refreshIntent);
                 rv.setOnClickPendingIntent(R.id.refreshButton, refreshIntent);
-
+                rv.setInt(R.id.refreshButton, "setColorFilter", textColor);
                 rv.setInt(R.id.lastUpdateText, "setTextColor", textColor);
                 rv.setInt(R.id.widgetEmptyList, "setTextColor", textColor);
                 rv.setInt(R.id.widgetLayoutId, "setBackgroundColor", preferences.getInt(BG_COLOR_KEY, 0x80000000));
