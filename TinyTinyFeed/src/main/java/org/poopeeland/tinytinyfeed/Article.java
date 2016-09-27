@@ -29,7 +29,12 @@ public class Article implements Serializable {
     public Article(JSONObject json) throws JSONException {
         this.id = json.getInt("id");
         this.title = json.getString("title");
-        this.content = Html.fromHtml(json.getString("excerpt")).toString();
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            this.content = Html.fromHtml(json.getString("excerpt"), Html.FROM_HTML_MODE_LEGACY).toString();
+        } else {
+            this.content = Html.fromHtml(json.getString("excerpt")).toString();
+        }
         this.url = json.getString("link");
 
         long timestamp = Long.parseLong(json.getString("updated")) * 1000;
