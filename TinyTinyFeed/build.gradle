@@ -18,7 +18,9 @@ android {
 
     dependencies {
         compile 'com.github.yukuku:ambilwarna:2.0.1'
-        compile group: 'commons-validator', name: 'commons-validator', version: '1.4.0'
+        compile('commons-validator:commons-validator:1.4.0') {
+            exclude group: 'commons-logging', module: 'commons-logging'
+        }
     }
 
     useLibrary 'org.apache.http.legacy'
