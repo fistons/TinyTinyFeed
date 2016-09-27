@@ -16,8 +16,8 @@ import org.poopeeland.tinytinyfeed.TinyTinyFeedWidget;
 import org.poopeeland.tinytinyfeed.exceptions.CheckException;
 import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
 import org.poopeeland.tinytinyfeed.exceptions.RequiredInfoNotRegistred;
+import org.poopeeland.tinytinyfeed.model.Article;
 import org.poopeeland.tinytinyfeed.model.ArticleWrapper;
-import org.poopeeland.tinytinyfeed.model.NewArticle;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -41,7 +41,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     private final WidgetService service;
     private final File lastArticlesList;
     private final SharedPreferences pref;
-    private List<NewArticle> articleList;
+    private List<Article> articleList;
 
     public ListProvider(WidgetService service) {
         this.service = service;
@@ -93,7 +93,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public RemoteViews getViewAt(int position) {
-        NewArticle listItem = articleList.get(position);
+        Article listItem = articleList.get(position);
         int color = pref.getInt(TinyTinyFeedWidget.TEXT_COLOR_KEY, 0xffffffff);
 
         final RemoteViews rv;
@@ -145,7 +145,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
 
     @SuppressWarnings("unchecked")
-    private List<NewArticle> loadLastList() {
+    private List<Article> loadLastList() {
         Log.d(TAG, String.format("Loading lastlist from %s", this.lastArticlesList.getAbsolutePath()));
         if (!this.lastArticlesList.isFile()) {
             return Collections.EMPTY_LIST;
@@ -168,11 +168,10 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
             return Collections.EMPTY_LIST;
         }
 
-        List<NewArticle> articles = new ArrayList<>();
+        List<Article> articles = new ArrayList<>();
         try {
             JSONArray response = new JSONArray(sb.toString());
             for (int i = 0; i < response.length(); i++) {
-//                articles.add(new Article(response.getJSONObject(i)));
                 articles.add(ArticleWrapper.fromJson(response.getJSONObject(i).toString()));
             }
         } catch (JSONException ex) {

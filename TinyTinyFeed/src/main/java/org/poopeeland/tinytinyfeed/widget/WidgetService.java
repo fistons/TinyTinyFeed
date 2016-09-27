@@ -28,8 +28,6 @@ import org.apache.http.protocol.HTTP;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.poopeeland.tinytinyfeed.Article;
-import org.poopeeland.tinytinyfeed.Category;
 import org.poopeeland.tinytinyfeed.R;
 import org.poopeeland.tinytinyfeed.RequestTask;
 import org.poopeeland.tinytinyfeed.TinyTinyFeedWidget;
@@ -37,8 +35,8 @@ import org.poopeeland.tinytinyfeed.exceptions.CheckException;
 import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
 import org.poopeeland.tinytinyfeed.exceptions.RequiredInfoNotRegistred;
 import org.poopeeland.tinytinyfeed.exceptions.TtrssError;
+import org.poopeeland.tinytinyfeed.model.Article;
 import org.poopeeland.tinytinyfeed.model.ArticleWrapper;
-import org.poopeeland.tinytinyfeed.model.NewArticle;
 import org.poopeeland.tinytinyfeed.utils.MySSLSocketFactory;
 import org.poopeeland.tinytinyfeed.utils.Utils;
 
@@ -117,7 +115,7 @@ public class WidgetService extends RemoteViewsService {
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "Don't! stop! me! noooooow...");
+        Log.d(TAG, "onDestroy called");
         super.onDestroy();
     }
 
@@ -168,9 +166,9 @@ public class WidgetService extends RemoteViewsService {
      * @throws InterruptedException
      * @throws NoInternetException      if the is no internet connexion right now
      */
-    public List<NewArticle> updateFeeds() throws RequiredInfoNotRegistred, CheckException, JSONException, ExecutionException, InterruptedException, NoInternetException {
+    public List<Article> updateFeeds() throws RequiredInfoNotRegistred, CheckException, JSONException, ExecutionException, InterruptedException, NoInternetException {
         Utils.checkNetwork(this.connMgr);
-        List<NewArticle> list = new ArrayList<>();
+        List<Article> list = new ArrayList<>();
 
         String session = login();
 
@@ -194,10 +192,8 @@ public class WidgetService extends RemoteViewsService {
         this.saveList(response.getJSONArray("content"));
 
         for (int i = 0; i < response.getJSONArray("content").length(); i++) {
-//            list.add(new Article(response.getJSONArray("content").getJSONObject(i)));
             list.add(ArticleWrapper.fromJson(response.getJSONArray("content").getJSONObject(i).toString()));
         }
-
 
         return list;
     }
@@ -215,7 +211,6 @@ public class WidgetService extends RemoteViewsService {
      */
     public void setArticleToRead(Article article) throws CheckException, ExecutionException, InterruptedException, JSONException, RequiredInfoNotRegistred, NoInternetException {
         Utils.checkNetwork(this.connMgr);
-        Log.d(TAG, String.format("Article %s set to read", article.getTitle()));
 
         String session = login();
 
@@ -232,98 +227,6 @@ public class WidgetService extends RemoteViewsService {
         JSONObject response = task.get();
         checkJsonResponse(response);
         logout(session);
-    }
-
-    /**
-     * Load all the category from TTRss Server
-     *
-     * @return a List of Category
-     * @throws RequiredInfoNotRegistred if the requiered info (login, password, url, etc) are not registred
-     * @throws CheckException           if the json response is not correct
-     * @throws JSONException            if there is a probleme with json parsing
-     * @throws ExecutionException
-     * @throws InterruptedException
-     * @throws NoInternetException      if the is no internet connexion right now
-     */
-    public List<Category> loadCategories() throws InterruptedException, ExecutionException, CheckException, JSONException, RequiredInfoNotRegistred, NoInternetException {
-
-        String session = login();
-
-        Utils.checkNetwork(this.connMgr);
-        List<Category> categories = new ArrayList<>();
-        Log.d(TAG, "Retrieve the list of category");
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("sid", session);
-        jsonObject.put("op", "getCategories");
-        jsonObject.put("unread_only", false);
-        jsonObject.put("enable_nested", false);
-        jsonObject.put("include_empty", true);
-
-        RequestTask task = new RequestTask(this.client, this.url);
-        task.execute(jsonObject);
-        JSONObject response = task.get();
-        checkJsonResponse(response);
-        logout(session);
-        Log.d(TAG, response.toString());
-
-        for (int i = 0; i < response.getJSONArray("content").length(); i++) {
-            categories.add(new Category(response.getJSONArray("content").getJSONObject(i)));
-        }
-
-        return categories;
-    }
-
-    /**
-     * Try to subscribe to a feed
-     *
-     * @param url      the url of the feed
-     * @param category the caterogy for the
-     * @return From TTrss source code: <ul>
-     * <li>-1 - Unknown error</li>
-     * <li>0 - OK, Feed already exists</li>
-     * <li>1 - OK, Feed added</li>
-     * <li>2 - Invalid URL</li>
-     * <li>3 - URL content is HTML, no feeds available</li>
-     * <li>4 - URL content is HTML which contains multiple feeds.
-     * Here you should call extractfeedurls in rpc-backend
-     * to get all possible feeds.</li>
-     * <li>5 - Couldn't download the URL content.</li>
-     * </ul>
-     * TODO: refactor this shit
-     */
-    public int subscribe(String url, Category category) {
-
-        try {
-            String session = login();
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("op", "subscribeToFeed");
-            jsonObject.put("feed_url", url);
-            jsonObject.put("category_id", category.getId());
-            jsonObject.put("sid", session);
-            RequestTask task = new RequestTask(this.client, this.url);
-            task.execute(jsonObject);
-            JSONObject response = task.get();
-            logout(session);
-            checkJsonResponse(response);
-            return response.getJSONObject("content").getJSONObject("status").getInt("code");
-        } catch (InterruptedException | ExecutionException | JSONException | CheckException | RequiredInfoNotRegistred ex) {
-            Log.e(TAG, String.format("Error while subscribing to a stream: %s", ex.getMessage()));
-            return -1;
-        }
-    }
-
-
-    private boolean isNotLogged(String session) throws RequiredInfoNotRegistred, JSONException, ExecutionException, InterruptedException, CheckException {
-        checkRequieredInfoRegistred();
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("sid", session);
-        jsonObject.put("op", "isLoggedIn");
-
-        RequestTask task = new RequestTask(this.client, this.url);
-        task.execute(jsonObject);
-        JSONObject response = task.get();
-        checkJsonResponse(response);
-        return !response.getJSONObject("content").getBoolean("status");
     }
 
     private void checkJsonResponse(JSONObject response) throws CheckException, JSONException {

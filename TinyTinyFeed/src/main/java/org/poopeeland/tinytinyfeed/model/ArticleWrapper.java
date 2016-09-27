@@ -10,9 +10,11 @@ import com.google.gson.GsonBuilder;
 
 public class ArticleWrapper {
 
-    private static final Gson GSON = new GsonBuilder().setFieldNamingStrategy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+    private static final Gson GSON = new GsonBuilder()
+            .setFieldNamingStrategy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+            .create();
 
-    public static NewArticle fromJson(final String jason) {
-        return GSON.fromJson(jason, NewArticle.class);
+    public static Article fromJson(final String jason) {
+        return GSON.fromJson(jason, Article.class);
     }
 }

@@ -1,16 +1,15 @@
 package org.poopeeland.tinytinyfeed.model;
 
-import android.util.Log;
-
 import java.io.Serializable;
 import java.text.DateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
  * Created by setdemr on 27/09/2016.
  */
 
-public class NewArticle implements Serializable {
+public class Article implements Serializable {
 
     private static final DateFormat SDF = DateFormat.getDateTimeInstance();
 
@@ -201,21 +200,46 @@ public class NewArticle implements Serializable {
     }
 
     public void setUpdated(long updated) {
-        this.updated = updated * 1000;
-        Log.d("NewArticle", String.valueOf(this.updated));
+        this.updated = updated;
     }
 
     public String getDate() {
-        return SDF.format(new Date(this.updated));
+        return SDF.format(new Date(this.updated * 1000));
     }
 
+    @Override
+    public String toString() {
+        return "NewArticle{" +
+                "alwaysDisplayAttachments='" + alwaysDisplayAttachments + '\'' +
+                ", author='" + author + '\'' +
+                ", commentsCount=" + commentsCount +
+                ", commentsLink='" + commentsLink + '\'' +
+                ", excerpt='" + excerpt + '\'' +
+                ", feedId=" + feedId +
+                ", feedTitle='" + feedTitle + '\'' +
+                ", guid='" + guid + '\'' +
+                ", id=" + id +
+                ", isUpdated=" + isUpdated +
+                ", lang='" + lang + '\'' +
+                ", link='" + link + '\'' +
+                ", marked=" + marked +
+                ", note='" + note + '\'' +
+                ", published=" + published +
+                ", score=" + score +
+                ", tags=" + Arrays.toString(tags) +
+                ", title='" + title + '\'' +
+                ", unread=" + unread +
+                ", updated=" + updated +
+                ", getDate=" + getDate().toString() +
+                '}';
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        NewArticle that = (NewArticle) o;
+        Article that = (Article) o;
 
         return id == that.id;
 

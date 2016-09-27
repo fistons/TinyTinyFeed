@@ -14,19 +14,19 @@ import android.util.Log;
 import android.widget.Toast;
 
 import org.json.JSONException;
-import org.poopeeland.tinytinyfeed.Article;
 import org.poopeeland.tinytinyfeed.R;
 import org.poopeeland.tinytinyfeed.TinyTinyFeedWidget;
 import org.poopeeland.tinytinyfeed.exceptions.CheckException;
 import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
 import org.poopeeland.tinytinyfeed.exceptions.RequiredInfoNotRegistred;
+import org.poopeeland.tinytinyfeed.model.Article;
 import org.poopeeland.tinytinyfeed.utils.Utils;
 
 import java.util.concurrent.ExecutionException;
 
 
 /**
- * Invisible Activity that set the Article as read
+ * Invisible Activity that set the {@link Article} as read
  * Created by eric on 11/06/14.
  */
 public class ArticleReadActivity extends Activity {
@@ -88,7 +88,7 @@ public class ArticleReadActivity extends Activity {
         // Retrieve the article
         this.article = (Article) getIntent().getExtras().getSerializable("article");
 
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(article.getUrl()));
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(article.getLink()));
         startActivity(intent);
 
         finish();
