@@ -15,18 +15,17 @@ import android.view.View;
 import android.widget.Toast;
 
 import org.apache.commons.validator.routines.UrlValidator;
-import org.apache.http.client.HttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.poopeeland.tinytinyfeed.R;
 import org.poopeeland.tinytinyfeed.RequestTask;
 import org.poopeeland.tinytinyfeed.TinyTinyFeedWidget;
+import org.poopeeland.tinytinyfeed.exceptions.HttpConnectionException;
 import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
 import org.poopeeland.tinytinyfeed.exceptions.TtrssError;
 import org.poopeeland.tinytinyfeed.utils.Utils;
 
 import java.net.MalformedURLException;
-import java.net.URL;
 
 public class SettingsActivity extends Activity implements View.OnClickListener {
 
@@ -69,17 +68,17 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
             Toast.makeText(this, String.format("%s", e.getMessage()), Toast.LENGTH_LONG).show();
         } catch (NoInternetException ex) {
             Toast.makeText(this, R.string.noInternetConnection, Toast.LENGTH_SHORT).show();
+        } catch (HttpConnectionException e) {
+            Toast.makeText(this, "oops " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void checkSetup() throws JSONException, NoInternetException, MalformedURLException {
+    private void checkSetup() throws JSONException, NoInternetException, MalformedURLException, HttpConnectionException {
         Utils.checkNetwork(this.connectivityManager);
 
         String url = this.preferences.getString(TinyTinyFeedWidget.URL_KEY, "");
         String user = this.preferences.getString(TinyTinyFeedWidget.USER_KEY, "");
         String password = this.preferences.getString(TinyTinyFeedWidget.PASSWORD_KEY, "");
-        String httpUser = this.preferences.getString(TinyTinyFeedWidget.HTTP_USER_KEY, "");
-        String httpPassword = this.preferences.getString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, "");
 
         String[] schemes = {"http", "https"};
         UrlValidator urlValidator = new UrlValidator(schemes);
@@ -87,15 +86,12 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
             throw new MalformedURLException();
         }
 
-        new URL(url); // Check the url (with the scheme)
-
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("user", user);
         jsonObject.put("password", password);
         jsonObject.put("op", "login");
-        HttpClient client = Utils.getNewHttpClient(this.preferences, httpUser, httpPassword);
 
-        CheckSetupTask task = new CheckSetupTask(client, url);
+        CheckSetupTask task = new CheckSetupTask(preferences);
         task.execute(jsonObject);
     }
 
@@ -104,8 +100,8 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
 
         private ProgressDialog dialog;
 
-        public CheckSetupTask(HttpClient client, String url) {
-            super(client, url);
+        public CheckSetupTask(final SharedPreferences preferences) {
+            super(preferences);
         }
 
         @Override
@@ -115,7 +111,7 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
         }
 
         @Override
-        protected void onPostExecute(JSONObject response) {
+        protected void onPostExecute(final JSONObject response) {
             super.onPostExecute(response);
             this.dialog.dismiss();
 

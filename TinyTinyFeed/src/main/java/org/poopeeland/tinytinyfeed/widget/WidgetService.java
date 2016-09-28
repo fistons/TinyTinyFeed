@@ -10,21 +10,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.RemoteViewsService;
 
-import org.apache.http.HttpVersion;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.HttpClient;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
-import org.apache.http.params.HttpProtocolParams;
-import org.apache.http.protocol.HTTP;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,17 +17,17 @@ import org.poopeeland.tinytinyfeed.R;
 import org.poopeeland.tinytinyfeed.RequestTask;
 import org.poopeeland.tinytinyfeed.TinyTinyFeedWidget;
 import org.poopeeland.tinytinyfeed.exceptions.CheckException;
+import org.poopeeland.tinytinyfeed.exceptions.HttpConnectionException;
 import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
 import org.poopeeland.tinytinyfeed.exceptions.RequiredInfoNotRegistred;
 import org.poopeeland.tinytinyfeed.exceptions.TtrssError;
 import org.poopeeland.tinytinyfeed.model.Article;
 import org.poopeeland.tinytinyfeed.model.ArticleWrapper;
-import org.poopeeland.tinytinyfeed.utils.MySSLSocketFactory;
 import org.poopeeland.tinytinyfeed.utils.Utils;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.security.KeyStore;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -65,9 +50,9 @@ public class WidgetService extends RemoteViewsService {
     private String user;
     private String numArticles;
     private boolean onlyUnread;
-    private HttpClient client;
     private File lastListFile;
     private ListProvider listProvider;
+    private HttpURLConnection urlConnection;
 
     @Override
     public void onCreate() {
@@ -79,16 +64,14 @@ public class WidgetService extends RemoteViewsService {
         Log.d(TAG, "Preferences loaded");
     }
 
-    private void refreshParams() {
+    private void refreshParams() throws HttpConnectionException {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         this.url = preferences.getString(TinyTinyFeedWidget.URL_KEY, "");
         this.user = preferences.getString(TinyTinyFeedWidget.USER_KEY, "");
         this.password = preferences.getString(TinyTinyFeedWidget.PASSWORD_KEY, "");
         this.numArticles = preferences.getString(TinyTinyFeedWidget.NUM_ARTICLE_KEY, "");
         this.onlyUnread = preferences.getBoolean(TinyTinyFeedWidget.ONLY_UNREAD_KEY, false);
-        String httpUser = preferences.getString(TinyTinyFeedWidget.HTTP_USER_KEY, "");
-        String httpPassword = preferences.getString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, "");
-        this.client = this.getNewHttpClient(httpUser, httpPassword);
+        this.urlConnection = Utils.getHttpURLConnection(preferences);
     }
 
     @Override
@@ -98,7 +81,11 @@ public class WidgetService extends RemoteViewsService {
 
     @Override
     public IBinder onBind(Intent intent) {
-        this.refreshParams();
+        try {
+            this.refreshParams();
+        } catch (HttpConnectionException e) {
+            e.printStackTrace();
+        }
         Log.d(TAG, "onBind");
         if (intent.getExtras().containsKey(ACTIVITY_FLAG)) {
             return binder;
@@ -129,7 +116,7 @@ public class WidgetService extends RemoteViewsService {
      * @throws org.poopeeland.tinytinyfeed.exceptions.CheckException           When something wrong happened with the server
      */
     private String login() throws RequiredInfoNotRegistred, JSONException, ExecutionException, InterruptedException, CheckException {
-
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         checkRequieredInfoRegistred();
 
         JSONObject jsonObject = new JSONObject();
@@ -137,7 +124,7 @@ public class WidgetService extends RemoteViewsService {
         jsonObject.put("password", password);
         jsonObject.put("op", "login");
 
-        RequestTask task = new RequestTask(this.client, this.url);
+        RequestTask task = new RequestTask(preferences);
         task.execute(jsonObject);
         JSONObject response = task.get();
         checkJsonResponse(response);
@@ -145,10 +132,12 @@ public class WidgetService extends RemoteViewsService {
     }
 
     private void logout(String session) throws JSONException, ExecutionException, InterruptedException, CheckException {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("op", "logout");
         jsonObject.put("sid", session);
-        RequestTask task = new RequestTask(this.client, this.url);
+        RequestTask task = new RequestTask(preferences);
         task.execute(jsonObject);
         JSONObject response = task.get();
         checkJsonResponse(response);
@@ -182,7 +171,7 @@ public class WidgetService extends RemoteViewsService {
         jsonObject.put("show_excerpt", "true");
         jsonObject.put("excerpt_length", preferences.getString(TinyTinyFeedWidget.EXCERPT_LENGHT_KEY, getText(R.string.preference_excerpt_lenght_default_value).toString()));
 
-        RequestTask task = new RequestTask(this.client, this.url);
+        RequestTask task = new RequestTask(preferences);
         task.execute(jsonObject);
         JSONObject response = task.get();
 
@@ -210,6 +199,7 @@ public class WidgetService extends RemoteViewsService {
      * @throws NoInternetException      if the is no internet connexion right now
      */
     public void setArticleToRead(Article article) throws CheckException, ExecutionException, InterruptedException, JSONException, RequiredInfoNotRegistred, NoInternetException {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         Utils.checkNetwork(this.connMgr);
 
         String session = login();
@@ -222,7 +212,7 @@ public class WidgetService extends RemoteViewsService {
         jsonObject.put("mode", "0");
         jsonObject.put("field", "2");
 
-        RequestTask task = new RequestTask(this.client, this.url);
+        RequestTask task = new RequestTask(preferences);
         task.execute(jsonObject);
         JSONObject response = task.get();
         checkJsonResponse(response);
@@ -298,48 +288,6 @@ public class WidgetService extends RemoteViewsService {
         if (!preferences.getBoolean(TinyTinyFeedWidget.CHECKED, false)) {
             throw new RequiredInfoNotRegistred();
         }
-    }
-
-    private void saveSessionId(String sessionId) {
-        Log.d(TAG, String.format("Saving the sessions id %s", sessionId));
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(TinyTinyFeedWidget.SESSION_KEY, sessionId);
-        editor.apply();
-    }
-
-    private HttpClient getNewHttpClient(String httpUser, String httpPassword) {
-        DefaultHttpClient client;
-        try {
-            KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            trustStore.load(null, null);
-
-            SSLSocketFactory sf = new MySSLSocketFactory(trustStore);
-            sf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-
-            HttpParams params = new BasicHttpParams();
-            HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
-            HttpProtocolParams.setContentCharset(params, HTTP.UTF_8);
-
-            SchemeRegistry registry = new SchemeRegistry();
-            registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-            registry.register(new Scheme("https", sf, 443));
-
-            ClientConnectionManager ccm = new ThreadSafeClientConnManager(params, registry);
-
-            client = new DefaultHttpClient(ccm, params);
-        } catch (Exception e) {
-            Log.e(TAG, "Problem creating the ssl client", e);
-            client = new DefaultHttpClient();
-        }
-
-
-        if (!httpUser.isEmpty()) {
-            client.getCredentialsProvider().setCredentials(AuthScope.ANY,
-                    new UsernamePasswordCredentials(httpUser, httpPassword));
-        }
-
-        return client;
     }
 
     public class LocalBinder extends Binder {

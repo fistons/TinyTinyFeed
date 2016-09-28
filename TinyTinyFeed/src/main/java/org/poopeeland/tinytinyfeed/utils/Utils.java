@@ -3,27 +3,24 @@ package org.poopeeland.tinytinyfeed.utils;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Base64;
 import android.util.Log;
 
-import org.apache.http.HttpVersion;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.HttpClient;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
-import org.apache.http.params.HttpProtocolParams;
-import org.apache.http.protocol.HTTP;
 import org.poopeeland.tinytinyfeed.TinyTinyFeedWidget;
+import org.poopeeland.tinytinyfeed.exceptions.HttpConnectionException;
 import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
 
-import java.security.KeyStore;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 /**
  * Collections of usefull methods
@@ -32,46 +29,71 @@ import java.security.KeyStore;
 public abstract class Utils {
 
     private static final String TAG = Utils.class.getSimpleName();
-
-    public static HttpClient getNewHttpClient(SharedPreferences preferences, String httpUser, String httpPassword) {
-        DefaultHttpClient client;
-        try {
-            KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            trustStore.load(null, null);
-
-            SSLSocketFactory sf;
-            if (preferences.getBoolean(TinyTinyFeedWidget.ALL_SLL_KEY, false)) {
-                sf = new MySSLSocketFactory(trustStore);
-            } else {
-                sf = SSLSocketFactory.getSocketFactory();
-            }
-
-            if (preferences.getBoolean(TinyTinyFeedWidget.ALL_HOST_KEY, false)) {
-                sf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-            }
-
-            HttpParams params = new BasicHttpParams();
-            HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
-            HttpProtocolParams.setContentCharset(params, HTTP.UTF_8);
-
-            SchemeRegistry registry = new SchemeRegistry();
-            registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-            registry.register(new Scheme("https", sf, 443));
-
-            ClientConnectionManager ccm = new ThreadSafeClientConnManager(params, registry);
-            client = new DefaultHttpClient(ccm, params);
-        } catch (Exception e) {
-            Log.e(TAG, "Problem creating the ssl client", e);
-            client = new DefaultHttpClient();
+    private static final String URL_SUFFIX = "/api/";
+    private static TrustManager[] TRUST_ALL_CERTS = new TrustManager[]{new X509TrustManager() {
+        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+            return null;
         }
 
-        if (!httpUser.isEmpty()) {
-            client.getCredentialsProvider().setCredentials(AuthScope.ANY,
-                    new UsernamePasswordCredentials(httpUser, httpPassword));
+        public void checkClientTrusted(X509Certificate[] certs, String authType) {
         }
 
-        return client;
+        public void checkServerTrusted(X509Certificate[] certs, String authType) {
+        }
+    }};
+
+
+    private static String createBasicAuth(final String user, final String password) {
+        String userPassword = String.format("%s:%s", user, password);
+        return Base64.encodeToString(userPassword.getBytes(), Base64.DEFAULT);
     }
+
+    public static HttpURLConnection getHttpURLConnection(final SharedPreferences preferences) throws HttpConnectionException {
+        boolean needHttpAuth = !preferences.getString(TinyTinyFeedWidget.HTTP_USER_KEY, "").trim().isEmpty();
+        String urlString = preferences.getString(TinyTinyFeedWidget.URL_KEY, "") + URL_SUFFIX;
+
+        HttpURLConnection connection;
+        if (preferences.getBoolean(TinyTinyFeedWidget.ALL_HOST_KEY, false)) {
+            HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
+            Log.d(TAG, "All hostname allowed");
+        }
+
+        try {
+            final SSLContext sc = SSLContext.getInstance("SSL");
+            if (preferences.getBoolean(TinyTinyFeedWidget.ALL_SLL_KEY, false)) {
+                sc.init(null, TRUST_ALL_CERTS, null);
+                Log.d(TAG, "Trust all certs");
+            } else {
+                sc.init(null, null, null);
+                Log.d(TAG, "Does not trust all certs");
+            }
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+        } catch (NoSuchAlgorithmException | KeyManagementException ex) {
+            throw new HttpConnectionException(ex);
+        }
+
+
+        try {
+            URL url = new URL(urlString);
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
+            connection.setRequestProperty("Accept", "*/*");
+            connection.setRequestProperty("charset", "utf-8");
+            connection.setDoOutput(true);
+            connection.setUseCaches(false);
+            if (needHttpAuth) {
+                String user = preferences.getString(TinyTinyFeedWidget.HTTP_USER_KEY, "");
+                String password = preferences.getString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, "");
+                connection.setRequestProperty("Authorization", String.format("Basic %s", createBasicAuth(user, password)));
+                Log.d(TAG, String.format("Http basic auth with user %s", user));
+            }
+            return connection;
+        } catch (IOException ex) {
+            throw new HttpConnectionException(ex);
+        }
+    }
+
 
     public static void checkNetwork(ConnectivityManager connectivityManager) throws NoInternetException {
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();

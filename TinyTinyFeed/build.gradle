@@ -22,10 +22,7 @@ android {
             exclude group: 'commons-logging', module: 'commons-logging'
         }
         compile 'com.google.code.gson:gson:2.7'
-        compile('commons-io:commons-io:2.5')
     }
-
-    useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
         minSdkVersion 14

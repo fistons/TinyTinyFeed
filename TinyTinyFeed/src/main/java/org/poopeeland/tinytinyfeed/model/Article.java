@@ -230,7 +230,7 @@ public class Article implements Serializable {
                 ", title='" + title + '\'' +
                 ", unread=" + unread +
                 ", updated=" + updated +
-                ", getDate=" + getDate().toString() +
+                ", getDate=" + getDate() +
                 '}';
     }
 
