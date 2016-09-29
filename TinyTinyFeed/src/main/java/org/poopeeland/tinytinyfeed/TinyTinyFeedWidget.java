@@ -31,15 +31,14 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
     public static final String ONLY_UNREAD_KEY = "org.poopeeland.tinytinyfeed.ONLY_UNREAD";
     public static final String HTTP_USER_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_HTTP_USER";
     public static final String HTTP_PASSWORD_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_HTTP_PASSWORD";
-    public static final String BG_COLOR_KEY = "org.poopeeland.tinytinyfeed.BACKGROUND_COLOR";
     public static final String TEXT_COLOR_KEY = "org.poopeeland.tinytinyfeed.TEXT_COLOR";
     public static final String EXCERPT_LENGHT_KEY = "org.poopeeland.tinytinyfeed.EXCERPT_LENGHT_KEY";
     public static final String NUM_ARTICLE_KEY = "org.poopeeland.tinytinyfeed.NUM_ARTICLE_KEY";
-    public static final String SESSION_KEY = "org.poopeeland.tinytinyfeed.SESSION_KEY";
     public static final String ALL_SLL_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_SSL_SELF";
     public static final String ALL_HOST_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_SSL_HOSTNAME";
     public static final String CHECKED = "org.poopeeland.tinytinyfeed.CHECKED";
     private static final String TAG = "TinyTinyFeedWidget";
+    private static final String BG_COLOR_KEY = "org.poopeeland.tinytinyfeed.BACKGROUND_COLOR";
 
     /**
      * Return a Pending Intent asking the refresh of the widget

@@ -8,7 +8,6 @@ import java.util.Date;
 /**
  * Created by setdemr on 27/09/2016.
  */
-
 public class Article implements Serializable {
 
     private static final DateFormat SDF = DateFormat.getDateTimeInstance();
@@ -114,14 +113,6 @@ public class Article implements Serializable {
     public void setUpdated(boolean updated) {
         isUpdated = updated;
     }
-//
-//    public String[] getLabels() {
-//        return labels;
-//    }
-//
-//    public void setLabels(String[] labels) {
-//        this.labels = labels;
-//    }
 
     public String getLang() {
         return lang;

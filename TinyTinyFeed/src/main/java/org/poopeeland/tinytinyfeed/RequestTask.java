@@ -51,9 +51,7 @@ public class RequestTask extends AsyncTask<JSONObject, Void, JSONObject> {
                 writer = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
                 writer.write(json.toString());
             } finally {
-                if (writer != null) {
-                    writer.close();
-                }
+                Utils.closeQuietly(writer);
             }
             switch (connection.getResponseCode()) {
                 case 200:
@@ -74,9 +72,7 @@ public class RequestTask extends AsyncTask<JSONObject, Void, JSONObject> {
                     httpResponse.append(buffer);
                 }
             } finally {
-                if (reader != null) {
-                    reader.close();
-                }
+                Utils.closeQuietly(reader);
             }
 
             return new JSONObject(httpResponse.toString());

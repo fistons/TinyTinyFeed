@@ -17,7 +17,6 @@ import org.poopeeland.tinytinyfeed.R;
 import org.poopeeland.tinytinyfeed.RequestTask;
 import org.poopeeland.tinytinyfeed.TinyTinyFeedWidget;
 import org.poopeeland.tinytinyfeed.exceptions.CheckException;
-import org.poopeeland.tinytinyfeed.exceptions.HttpConnectionException;
 import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
 import org.poopeeland.tinytinyfeed.exceptions.RequiredInfoNotRegistred;
 import org.poopeeland.tinytinyfeed.exceptions.TtrssError;
@@ -27,7 +26,6 @@ import org.poopeeland.tinytinyfeed.utils.Utils;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -40,38 +38,37 @@ public class WidgetService extends RemoteViewsService {
 
     public static final String ACTIVITY_FLAG = "Activity";
     public static final String LIST_FILENAME = "listArticles.json";
+    private static final String TAG = WidgetService.class.getSimpleName();
     private static final String ARTICLE_ALL = "-4";
     private static final String ARTICLE_ONLY_UNREAD = "-3";
-    private static final String TAG = WidgetService.class.getSimpleName();
     private final IBinder binder = new LocalBinder();
+
     private ConnectivityManager connMgr;
-    private String url;
+    private SharedPreferences preferences;
+    private ListProvider listProvider;
+    private File lastListFile;
     private String password;
     private String user;
     private String numArticles;
     private boolean onlyUnread;
-    private File lastListFile;
-    private ListProvider listProvider;
-    private HttpURLConnection urlConnection;
+
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG, "onCreate");
+        Log.v(TAG, "onCreate");
         this.lastListFile = new File(getApplicationContext().getFilesDir(), WidgetService.LIST_FILENAME);
         this.listProvider = new ListProvider(this);
         this.connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        Log.d(TAG, "Preferences loaded");
+        this.preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        Log.v(TAG, "Preferences loaded");
     }
 
-    private void refreshParams() throws HttpConnectionException {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        this.url = preferences.getString(TinyTinyFeedWidget.URL_KEY, "");
+    private void refreshParams() {
         this.user = preferences.getString(TinyTinyFeedWidget.USER_KEY, "");
         this.password = preferences.getString(TinyTinyFeedWidget.PASSWORD_KEY, "");
         this.numArticles = preferences.getString(TinyTinyFeedWidget.NUM_ARTICLE_KEY, "");
         this.onlyUnread = preferences.getBoolean(TinyTinyFeedWidget.ONLY_UNREAD_KEY, false);
-        this.urlConnection = Utils.getHttpURLConnection(preferences);
     }
 
     @Override
@@ -81,12 +78,8 @@ public class WidgetService extends RemoteViewsService {
 
     @Override
     public IBinder onBind(Intent intent) {
-        try {
-            this.refreshParams();
-        } catch (HttpConnectionException e) {
-            e.printStackTrace();
-        }
-        Log.d(TAG, "onBind");
+        this.refreshParams();
+        Log.v(TAG, "onBind");
         if (intent.getExtras().containsKey(ACTIVITY_FLAG)) {
             return binder;
         } else {
@@ -96,13 +89,13 @@ public class WidgetService extends RemoteViewsService {
 
     @Override
     public boolean onUnbind(Intent intent) {
-        Log.d(TAG, "Unbinded");
+        Log.v(TAG, "Unbinded");
         return super.onUnbind(intent);
     }
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "onDestroy called");
+        Log.v(TAG, "onDestroy called");
         super.onDestroy();
     }
 
@@ -116,7 +109,6 @@ public class WidgetService extends RemoteViewsService {
      * @throws org.poopeeland.tinytinyfeed.exceptions.CheckException           When something wrong happened with the server
      */
     private String login() throws RequiredInfoNotRegistred, JSONException, ExecutionException, InterruptedException, CheckException {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         checkRequieredInfoRegistred();
 
         JSONObject jsonObject = new JSONObject();
@@ -132,8 +124,6 @@ public class WidgetService extends RemoteViewsService {
     }
 
     private void logout(String session) throws JSONException, ExecutionException, InterruptedException, CheckException {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("op", "logout");
         jsonObject.put("sid", session);
@@ -161,7 +151,6 @@ public class WidgetService extends RemoteViewsService {
 
         String session = login();
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String feedId = this.onlyUnread ? ARTICLE_ONLY_UNREAD : ARTICLE_ALL;
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("sid", session);
@@ -199,7 +188,6 @@ public class WidgetService extends RemoteViewsService {
      * @throws NoInternetException      if the is no internet connexion right now
      */
     public void setArticleToRead(Article article) throws CheckException, ExecutionException, InterruptedException, JSONException, RequiredInfoNotRegistred, NoInternetException {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         Utils.checkNetwork(this.connMgr);
 
         String session = login();
@@ -273,7 +261,7 @@ public class WidgetService extends RemoteViewsService {
             outputStream.write(json.toString().getBytes());
             outputStream.close();
         } catch (Exception e) {
-            Log.e(TAG, String.format("Error while saving the last articles list: %s", e.getLocalizedMessage()));
+            Log.e(TAG, "Error while saving the last articles list", e);
         }
 
     }
@@ -284,7 +272,6 @@ public class WidgetService extends RemoteViewsService {
      * @throws RequiredInfoNotRegistred if it is not the case
      */
     private void checkRequieredInfoRegistred() throws RequiredInfoNotRegistred {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
         if (!preferences.getBoolean(TinyTinyFeedWidget.CHECKED, false)) {
             throw new RequiredInfoNotRegistred();
         }

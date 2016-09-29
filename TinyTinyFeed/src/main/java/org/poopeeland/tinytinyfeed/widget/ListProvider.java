@@ -33,7 +33,7 @@ import java.util.concurrent.ExecutionException;
  * ListProvider
  * Created by eric on 11/05/14.
  */
-public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
+class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
     private static final String TAG = ListProvider.class.getSimpleName();
     private final Context context;
@@ -54,7 +54,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public void onCreate() {
-        Log.d(TAG, "onCreate");
+        Log.v(TAG, "onCreate");
         this.articleList = this.loadLastList();
     }
 
@@ -81,7 +81,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "onDestroy");
+        Log.v(TAG, "onDestroy");
         this.articleList.clear();
     }
 
@@ -144,11 +144,10 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     }
 
 
-    @SuppressWarnings("unchecked")
     private List<Article> loadLastList() {
-        Log.d(TAG, String.format("Loading lastlist from %s", this.lastArticlesList.getAbsolutePath()));
+        Log.v(TAG, String.format("Loading lastlist from %s", this.lastArticlesList.getAbsolutePath()));
         if (!this.lastArticlesList.isFile()) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         StringBuilder sb = new StringBuilder();
@@ -161,11 +160,11 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
             fis.readLine();
             fis.close();
         } catch (IOException ex) {
-            Log.e(TAG, String.format("Error while reading the last article list: %s", ex.getLocalizedMessage()));
+            Log.wtf(TAG, "Error while reading the last article list", ex);
         }
 
         if (sb.toString().isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         List<Article> articles = new ArrayList<>();
@@ -175,7 +174,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
                 articles.add(ArticleWrapper.fromJson(response.getJSONObject(i).toString()));
             }
         } catch (JSONException ex) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
         return articles;
     }

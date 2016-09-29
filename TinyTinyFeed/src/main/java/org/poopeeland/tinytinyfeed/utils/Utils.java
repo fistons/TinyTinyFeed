@@ -1,5 +1,6 @@
 package org.poopeeland.tinytinyfeed.utils;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -10,6 +11,7 @@ import org.poopeeland.tinytinyfeed.TinyTinyFeedWidget;
 import org.poopeeland.tinytinyfeed.exceptions.HttpConnectionException;
 import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -30,14 +32,16 @@ public abstract class Utils {
 
     private static final String TAG = Utils.class.getSimpleName();
     private static final String URL_SUFFIX = "/api/";
-    private static TrustManager[] TRUST_ALL_CERTS = new TrustManager[]{new X509TrustManager() {
+    private static final TrustManager[] TRUST_ALL_CERTS = new TrustManager[]{new X509TrustManager() {
         public java.security.cert.X509Certificate[] getAcceptedIssuers() {
             return null;
         }
 
+        @SuppressLint("TrustAllX509TrustManager")
         public void checkClientTrusted(X509Certificate[] certs, String authType) {
         }
 
+        @SuppressLint("TrustAllX509TrustManager")
         public void checkServerTrusted(X509Certificate[] certs, String authType) {
         }
     }};
@@ -99,6 +103,17 @@ public abstract class Utils {
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         if (networkInfo == null || !networkInfo.isConnected()) {
             throw new NoInternetException();
+        }
+    }
+
+    public static void closeQuietly(final Closeable closeable) {
+        try {
+            if (closeable != null) {
+                closeable.close();
+            }
+        } catch (IOException ex) {
+            // Ignore
+            Log.e(TAG, ex.getMessage());
         }
     }
 }

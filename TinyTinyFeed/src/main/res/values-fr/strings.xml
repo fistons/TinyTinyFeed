@@ -20,15 +20,6 @@
     <string name="noInternetConnection">Aucune connexion internet disponible pour le moment</string>
     <string name="waitTitle">Veuillez patienter</string>
     <string name="waitCheck">Vérification de votre configuration</string>
-    <string name="title_activity_subscribe">S\'inscrire au flux RSS</string>
-    <string name="subActSubButton">S\'inscrire</string>
-    <string name="subUnknownError">Erreur inconnue</string>
-    <string name="subAlreadyExist">Vous êtes déjà abonné à ce flux</string>
-    <string name="subOk">Abonnement réussi!</string>
-    <string name="subInvalidUrl">URL non valide</string>
-    <string name="subNoRssFeeds">Aucun flux RSS sur cette page</string>
-    <string name="subMultipleFeeds">La page contient plusieurs flux, impossible de choisir à votre place</string>
-    <string name="subCouldNotDl">Impossible de télécharger le contenu de la page</string>
     <string name="setupApiDisabled">Les API semblent désactivées. Veuillez les activer dans les préférences de tt-rss.</string>
     <string name="preference_category_interface_settings">Interface</string>
     <string name="preference_category_ssl_settings">Configuration SSL</string>
@@ -56,4 +47,5 @@
     <string name="preference_text_color_summary">Couleur des textes du widget</string>
     <string name="preference_text_color_title">Couleur du texte </string>
     <string name="widget_refresh">Raffraichir</string>
+    <string name="nullArticle">Impossible de récupérer l\'adresse de l\'article</string>
 </resources>

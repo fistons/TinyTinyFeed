@@ -20,7 +20,6 @@ import org.json.JSONObject;
 import org.poopeeland.tinytinyfeed.R;
 import org.poopeeland.tinytinyfeed.RequestTask;
 import org.poopeeland.tinytinyfeed.TinyTinyFeedWidget;
-import org.poopeeland.tinytinyfeed.exceptions.HttpConnectionException;
 import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
 import org.poopeeland.tinytinyfeed.exceptions.TtrssError;
 import org.poopeeland.tinytinyfeed.utils.Utils;
@@ -68,12 +67,10 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
             Toast.makeText(this, String.format("%s", e.getMessage()), Toast.LENGTH_LONG).show();
         } catch (NoInternetException ex) {
             Toast.makeText(this, R.string.noInternetConnection, Toast.LENGTH_SHORT).show();
-        } catch (HttpConnectionException e) {
-            Toast.makeText(this, "oops " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void checkSetup() throws JSONException, NoInternetException, MalformedURLException, HttpConnectionException {
+    private void checkSetup() throws JSONException, NoInternetException, MalformedURLException {
         Utils.checkNetwork(this.connectivityManager);
 
         String url = this.preferences.getString(TinyTinyFeedWidget.URL_KEY, "");

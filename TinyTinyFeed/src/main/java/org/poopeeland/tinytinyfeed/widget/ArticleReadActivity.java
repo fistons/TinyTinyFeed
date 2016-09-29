@@ -87,9 +87,12 @@ public class ArticleReadActivity extends Activity {
 
         // Retrieve the article
         this.article = (Article) getIntent().getExtras().getSerializable("article");
-
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(article.getLink()));
-        startActivity(intent);
+        if (article != null) {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(article.getLink()));
+            startActivity(intent);
+        } else {
+            Toast.makeText(getApplicationContext(), R.string.nullArticle, Toast.LENGTH_SHORT).show();
+        }
 
         finish();
     }

@@ -22,15 +22,6 @@
     <string name="noInternetConnection">No Internet connection available right now</string>
     <string name="waitTitle">Please wait</string>
     <string name="waitCheck">Checking your configuration</string>
-    <string name="title_activity_subscribe">Subscribe to the RSS feed</string>
-    <string name="subActSubButton">Subscribe</string>
-    <string name="subUnknownError">Unknown issue</string>
-    <string name="subAlreadyExist">You already have subscrided to this feed</string>
-    <string name="subOk">Subscription successful!</string>
-    <string name="subInvalidUrl">Invalid URL</string>
-    <string name="subNoRssFeeds">No RSS Feeds available on this page</string>
-    <string name="subMultipleFeeds">The pages contains multiple RSS feeds, could not choose between them.</string>
-    <string name="subCouldNotDl">Couldn\'t download the URL content.</string>
     <string name="setupApiDisabled">The API seems to be disabled, please enable them on the tt-rss preferences.</string>
     <string name="preference_activity_title" tools:ignore="Typos">Tiny Tiny Feed - Setup</string>
     <string name="preference_category_ttrss_settings">tt-rss settings</string>
@@ -56,16 +47,10 @@
     <string name="preference_unread_only_summary">Check this if you want to retrieve only the unread articles</string>
     <string name="preference_background_color_title">Backgroung color</string>
     <string name="preference_background_color_summary">Color of the background of the widget</string>
-    <string name="preference_background_color_default_value" translatable="false">#80000000</string>
     <string name="preference_text_color_title">Text color</string>
     <string name="preference_text_color_summary">Color of the widget\'s text</string>
     <string name="widget_no_setup">Please tap here to configure your widget</string>
     <string name="ssl_exception_message">SSL problem: please check your settings</string>
-
-    <string name="preference_scrollbar_left_text">Scrollbar position</string>
-    <string name="preference_scrollbar_left_summary">Scrollbar is on the left</string>
-    <string name="preference_scrollbar_right_text">Scrollbar position</string>
-    <string name="preference_scrollbar_right_summary">Scrollbar is on the right</string>
-    <string name="preference_scrollbar_title">Scrollbar position</string>
     <string name="widget_refresh">Refresh</string>
+    <string name="nullArticle">Unable to get the article URL</string>
 </resources>
