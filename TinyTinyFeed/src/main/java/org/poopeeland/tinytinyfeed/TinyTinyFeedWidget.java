@@ -57,7 +57,6 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
 
     @Override
     public void onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
-
         Log.d(TAG, "Widget update");
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         int textColor = preferences.getInt(TEXT_COLOR_KEY, 0xffffff);

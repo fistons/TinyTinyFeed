@@ -19,7 +19,7 @@ import java.net.HttpURLConnection;
 
 /**
  * {@link AsyncTask} calls the request the server.
- *
+ * <p>
  * Created by setdemr on 28/09/2016.
  */
 public class RequestTask extends AsyncTask<JSONObject, Void, JSONObject> {
@@ -45,6 +45,7 @@ public class RequestTask extends AsyncTask<JSONObject, Void, JSONObject> {
     @Override
     protected JSONObject doInBackground(final JSONObject... params) {
         JSONObject json = params[0];
+        Log.d(TAG, String.format("Requesting server with %s", json.toString()));
         HttpURLConnection connection;
         try {
             connection = Utils.getHttpURLConnection(preferences);
@@ -80,26 +81,26 @@ public class RequestTask extends AsyncTask<JSONObject, Void, JSONObject> {
             return new JSONObject(httpResponse.toString());
         } catch (IOException e) {
             try {
-                Log.e(TAG, e.getLocalizedMessage());
+                Log.e(TAG, "IOException while trying to fetch data", e);
                 return createError(TtrssError.IO_EXCEPTION, e.getMessage());
             } catch (JSONException e1) {
-                Log.e(TAG, e1.getLocalizedMessage());
+                Log.e(TAG, "JSONException Exception while trying to retrieve error", e1);
                 return null;
             }
         } catch (JSONException e) {
             try {
-                Log.e(TAG, e.getLocalizedMessage());
+                Log.e(TAG, "JSONException while trying to fetch data", e);
                 return createError(TtrssError.JSON_EXCEPTION, e.getMessage());
             } catch (JSONException e1) {
-                Log.e(TAG, e1.getLocalizedMessage());
+                Log.e(TAG, "JSONException Exception while trying to retrieve error", e1);
                 return null;
             }
         } catch (HttpConnectionException e) {
             try {
-                Log.e(TAG, e.getLocalizedMessage());
+                Log.e(TAG, "HttpConnectionException while trying to fetch data", e);
                 return createError(TtrssError.HTTP_CONNECTION_EXCEPTION, e.getMessage());
             } catch (JSONException e1) {
-                Log.e(TAG, e1.getLocalizedMessage());
+                Log.e(TAG, "JSONException Exception while trying to retrieve error", e1);
                 return null;
             }
         }

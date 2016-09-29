@@ -6,6 +6,8 @@ package org.poopeeland.tinytinyfeed.exceptions;
  */
 public class CheckException extends Exception {
 
+    public static final long serialVersionUID = 1L;
+
     public CheckException(final String message) {
         super(message);
     }

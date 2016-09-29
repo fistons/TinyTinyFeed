@@ -40,15 +40,15 @@ public class ArticleReadActivity extends Activity {
             WidgetService.LocalBinder mbinder = (WidgetService.LocalBinder) binder;
             WidgetService service = mbinder.getService();
             bound = true;
-            Log.d(TAG, "bounded!");
+            Log.d(TAG, "Bounded");
             try {
                 service.setArticleToRead(article);
             } catch (CheckException | InterruptedException | ExecutionException | JSONException | RequiredInfoNotRegistred e) {
-                Log.e(TAG, e.getMessage());
+                Log.e(TAG, "Error while trying to set the article to read", e);
                 Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                 return;
             } catch (NoInternetException e) {
-                Log.e(TAG, e.getMessage());
+                Log.e(TAG, "Internet unavailable", e);
                 Toast.makeText(getApplicationContext(), R.string.noInternetConnection, Toast.LENGTH_LONG).show();
                 return;
             }
@@ -102,7 +102,7 @@ public class ArticleReadActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         if (bound) {
-            Log.d(TAG, "unbound!");
+            Log.d(TAG, "Unbound");
             unbindService(mConnection);
             bound = false;
         }

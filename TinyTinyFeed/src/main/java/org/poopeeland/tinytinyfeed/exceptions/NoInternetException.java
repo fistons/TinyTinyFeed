@@ -6,6 +6,8 @@ package org.poopeeland.tinytinyfeed.exceptions;
  */
 public class NoInternetException extends Exception {
 
+    public static final long serialVersionUID = 1L;
+
     public NoInternetException() {
         super("No Internet connection right now");
     }

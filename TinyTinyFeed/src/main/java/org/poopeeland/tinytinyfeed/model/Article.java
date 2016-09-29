@@ -11,7 +11,7 @@ import java.util.Date;
  */
 @SuppressWarnings("unused")
 public class Article implements Serializable {
-
+    public static final long serialVersionUID = 1L;
     private static final DateFormat SDF = DateFormat.getDateTimeInstance();
 
     private String excerpt;

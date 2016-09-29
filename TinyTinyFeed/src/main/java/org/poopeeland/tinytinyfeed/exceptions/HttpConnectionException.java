@@ -8,6 +8,8 @@ package org.poopeeland.tinytinyfeed.exceptions;
 
 public class HttpConnectionException extends Exception {
 
+    public static final long serialVersionUID = 1L;
+
     public HttpConnectionException(final Throwable cause) {
         super(cause);
     }

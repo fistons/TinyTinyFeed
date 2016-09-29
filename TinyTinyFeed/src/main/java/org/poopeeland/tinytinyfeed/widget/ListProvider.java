@@ -43,7 +43,7 @@ class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     private final SharedPreferences pref;
     private List<Article> articleList;
 
-    public ListProvider(WidgetService service) {
+    ListProvider(WidgetService service) {
         this.service = service;
         this.context = service.getApplicationContext();
         this.unreadSymbol = context.getString(R.string.unreadSymbol);
@@ -54,7 +54,7 @@ class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public void onCreate() {
-        Log.v(TAG, "onCreate");
+        Log.d(TAG, "onCreate");
         this.articleList = this.loadLastList();
     }
 
@@ -81,7 +81,7 @@ class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public void onDestroy() {
-        Log.v(TAG, "onDestroy");
+        Log.d(TAG, "onDestroy");
         this.articleList.clear();
     }
 
@@ -145,7 +145,7 @@ class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
 
     private List<Article> loadLastList() {
-        Log.v(TAG, String.format("Loading lastlist from %s", this.lastArticlesList.getAbsolutePath()));
+        Log.d(TAG, String.format("Loading lastlist from %s", this.lastArticlesList.getAbsolutePath()));
         if (!this.lastArticlesList.isFile()) {
             return Collections.emptyList();
         }

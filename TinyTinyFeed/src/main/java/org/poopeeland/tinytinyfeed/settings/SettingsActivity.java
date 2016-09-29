@@ -28,7 +28,8 @@ import java.net.MalformedURLException;
 
 public class SettingsActivity extends Activity implements View.OnClickListener {
 
-    private final String TAG = SettingsActivity.class.getSimpleName();
+    private static final String TAG = SettingsActivity.class.getSimpleName();
+
     private int widgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     private ConnectivityManager connectivityManager;
     private SharedPreferences preferences;
@@ -37,6 +38,7 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
 
         setContentView(R.layout.activity_settings);
         Bundle extras = getIntent().getExtras();
@@ -52,13 +54,15 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onStart() {
         super.onStart();
+        Log.d(TAG, "onStart");
+
         this.checked = false;
         setResult(RESULT_CANCELED);
     }
 
     @Override
     public void onClick(final View view) {
-
+        Log.d(TAG, "onClick");
         try {
             this.checkSetup();
         } catch (MalformedURLException e) {
@@ -71,6 +75,7 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
     }
 
     private void checkSetup() throws JSONException, NoInternetException, MalformedURLException {
+        Log.d(TAG, "checkSetup");
         Utils.checkNetwork(this.connectivityManager);
 
         String url = this.preferences.getString(TinyTinyFeedWidget.URL_KEY, "");
@@ -95,6 +100,8 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
 
     private class CheckSetupTask extends RequestTask {
 
+        private final String TAG = CheckSetupTask.class.getSimpleName();
+
         private ProgressDialog dialog;
 
         CheckSetupTask(final SharedPreferences preferences) {
@@ -104,12 +111,17 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+
+            Log.d(TAG, "onPreExcecute");
             this.dialog = ProgressDialog.show(SettingsActivity.this, getText(R.string.waitTitle), getText(R.string.waitCheck));
         }
 
         @Override
         protected void onPostExecute(final JSONObject response) {
             super.onPostExecute(response);
+
+
+            Log.d(TAG, "onPostExcecute");
             this.dialog.dismiss();
 
             try {

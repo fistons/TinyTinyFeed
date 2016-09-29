@@ -56,12 +56,12 @@ public class WidgetService extends RemoteViewsService {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.v(TAG, "onCreate");
+        Log.d(TAG, "onCreate");
         this.lastListFile = new File(getApplicationContext().getFilesDir(), WidgetService.LIST_FILENAME);
         this.listProvider = new ListProvider(this);
         this.connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         this.preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        Log.v(TAG, "Preferences loaded");
+        Log.d(TAG, "Preferences loaded");
     }
 
     private void refreshParams() {
@@ -79,7 +79,7 @@ public class WidgetService extends RemoteViewsService {
     @Override
     public IBinder onBind(Intent intent) {
         this.refreshParams();
-        Log.v(TAG, "onBind");
+        Log.d(TAG, "onBind");
         if (intent.getExtras().containsKey(ACTIVITY_FLAG)) {
             return binder;
         } else {
@@ -89,13 +89,13 @@ public class WidgetService extends RemoteViewsService {
 
     @Override
     public boolean onUnbind(Intent intent) {
-        Log.v(TAG, "Unbinded");
+        Log.d(TAG, "Unbinded");
         return super.onUnbind(intent);
     }
 
     @Override
     public void onDestroy() {
-        Log.v(TAG, "onDestroy called");
+        Log.d(TAG, "onDestroy called");
         super.onDestroy();
     }
 
@@ -109,6 +109,7 @@ public class WidgetService extends RemoteViewsService {
      * @throws org.poopeeland.tinytinyfeed.exceptions.CheckException           When something wrong happened with the server
      */
     private String login() throws RequiredInfoNotRegistred, JSONException, ExecutionException, InterruptedException, CheckException {
+        Log.d(TAG, "Login");
         checkRequieredInfoRegistred();
 
         JSONObject jsonObject = new JSONObject();
@@ -124,6 +125,7 @@ public class WidgetService extends RemoteViewsService {
     }
 
     private void logout(String session) throws JSONException, ExecutionException, InterruptedException, CheckException {
+        Log.d(TAG, "Logout");
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("op", "logout");
         jsonObject.put("sid", session);
@@ -146,6 +148,7 @@ public class WidgetService extends RemoteViewsService {
      * @throws NoInternetException      if the is no internet connexion right now
      */
     public List<Article> updateFeeds() throws RequiredInfoNotRegistred, CheckException, JSONException, ExecutionException, InterruptedException, NoInternetException {
+        Log.d(TAG, "updateFeeds");
         Utils.checkNetwork(this.connMgr);
         List<Article> list = new ArrayList<>();
 
@@ -187,11 +190,11 @@ public class WidgetService extends RemoteViewsService {
      * @throws InterruptedException
      * @throws NoInternetException      if the is no internet connexion right now
      */
-    public void setArticleToRead(Article article) throws CheckException, ExecutionException, InterruptedException, JSONException, RequiredInfoNotRegistred, NoInternetException {
+    public void setArticleToRead(final Article article) throws CheckException, ExecutionException, InterruptedException, JSONException, RequiredInfoNotRegistred, NoInternetException {
+        Log.d(TAG, String.format("Article %s set to read", article.getId()));
         Utils.checkNetwork(this.connMgr);
 
         String session = login();
-
         JSONObject jsonObject = new JSONObject();
 
         jsonObject.put("sid", session);
@@ -278,7 +281,7 @@ public class WidgetService extends RemoteViewsService {
     }
 
     public class LocalBinder extends Binder {
-        public WidgetService getService() {
+        WidgetService getService() {
             return WidgetService.this;
         }
     }

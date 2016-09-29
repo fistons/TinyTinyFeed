@@ -39,10 +39,12 @@ public abstract class Utils {
 
         @SuppressLint("TrustAllX509TrustManager")
         public void checkClientTrusted(final X509Certificate[] certs, final String authType) {
+            // Placeholder
         }
 
         @SuppressLint("TrustAllX509TrustManager")
         public void checkServerTrusted(final X509Certificate[] certs, final String authType) {
+            // Placeholder
         }
     }};
 
