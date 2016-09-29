@@ -12,7 +12,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        tools:ignore="UnusedAttribute">
+        tools:ignore="GoogleAppIndexingWarning">
 
         <activity
             android:name="org.poopeeland.tinytinyfeed.settings.SettingsActivity"
