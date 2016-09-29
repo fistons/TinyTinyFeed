@@ -18,6 +18,8 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 
 /**
+ * {@link AsyncTask} calls the request the server.
+ *
  * Created by setdemr on 28/09/2016.
  */
 public class RequestTask extends AsyncTask<JSONObject, Void, JSONObject> {
@@ -30,7 +32,7 @@ public class RequestTask extends AsyncTask<JSONObject, Void, JSONObject> {
         this.preferences = preferences;
     }
 
-    private JSONObject createError(TtrssError error, String message) throws JSONException {
+    private JSONObject createError(final TtrssError error, final String message) throws JSONException {
         JSONObject json = new JSONObject();
         json.put("status", 1);
         JSONObject reason = new JSONObject();

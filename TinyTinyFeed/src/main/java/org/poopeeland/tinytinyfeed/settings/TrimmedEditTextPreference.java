@@ -5,9 +5,9 @@ import android.preference.EditTextPreference;
 import android.util.AttributeSet;
 
 /**
+ * Extends {@link EditTextPreference} to trim the input.
  * Created by setdemr on 26/09/2016.
  */
-
 public class TrimmedEditTextPreference extends EditTextPreference {
 
     public TrimmedEditTextPreference(Context context, AttributeSet attrs, int defStyleAttr) {
