@@ -43,7 +43,7 @@ public class RequestTask extends AsyncTask<JSONObject, Void, JSONObject> {
     }
 
     @Override
-    protected JSONObject doInBackground(JSONObject... params) {
+    protected JSONObject doInBackground(final JSONObject... params) {
         JSONObject json = params[0];
         HttpURLConnection connection;
         try {

@@ -38,11 +38,11 @@ public abstract class Utils {
         }
 
         @SuppressLint("TrustAllX509TrustManager")
-        public void checkClientTrusted(X509Certificate[] certs, String authType) {
+        public void checkClientTrusted(final X509Certificate[] certs, final String authType) {
         }
 
         @SuppressLint("TrustAllX509TrustManager")
-        public void checkServerTrusted(X509Certificate[] certs, String authType) {
+        public void checkServerTrusted(final X509Certificate[] certs, final String authType) {
         }
     }};
 
@@ -99,7 +99,7 @@ public abstract class Utils {
     }
 
 
-    public static void checkNetwork(ConnectivityManager connectivityManager) throws NoInternetException {
+    public static void checkNetwork(final ConnectivityManager connectivityManager) throws NoInternetException {
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         if (networkInfo == null || !networkInfo.isConnected()) {
             throw new NoInternetException();

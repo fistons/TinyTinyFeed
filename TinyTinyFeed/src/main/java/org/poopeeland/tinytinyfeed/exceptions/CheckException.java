@@ -6,7 +6,7 @@ package org.poopeeland.tinytinyfeed.exceptions;
  */
 public class CheckException extends Exception {
 
-    public CheckException(String message) {
+    public CheckException(final String message) {
         super(message);
     }
 }

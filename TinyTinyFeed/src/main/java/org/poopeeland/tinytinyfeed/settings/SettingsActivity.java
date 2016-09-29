@@ -35,7 +35,7 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
     private boolean checked;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_settings);
@@ -57,7 +57,7 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
     }
 
     @Override
-    public void onClick(View view) {
+    public void onClick(final View view) {
 
         try {
             this.checkSetup();
@@ -93,11 +93,11 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
     }
 
 
-    public class CheckSetupTask extends RequestTask {
+    private class CheckSetupTask extends RequestTask {
 
         private ProgressDialog dialog;
 
-        public CheckSetupTask(final SharedPreferences preferences) {
+        CheckSetupTask(final SharedPreferences preferences) {
             super(preferences);
         }
 
@@ -152,7 +152,7 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
                 }
             } catch (JSONException ex) {
                 // This can not happen
-                Log.e(TAG, ex.getMessage());
+                Log.wtf(TAG, "JSON Exception while checking setup", ex);
                 return;
             }
 

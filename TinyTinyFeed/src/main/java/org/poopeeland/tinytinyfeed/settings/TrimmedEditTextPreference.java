@@ -10,15 +10,15 @@ import android.util.AttributeSet;
  */
 public class TrimmedEditTextPreference extends EditTextPreference {
 
-    public TrimmedEditTextPreference(Context context, AttributeSet attrs, int defStyleAttr) {
+    public TrimmedEditTextPreference(final Context context, final AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
-    public TrimmedEditTextPreference(Context context, AttributeSet attrs) {
+    public TrimmedEditTextPreference(final Context context, final AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public TrimmedEditTextPreference(Context context) {
+    public TrimmedEditTextPreference(final Context context) {
         super(context);
     }
 

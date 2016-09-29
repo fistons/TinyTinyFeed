@@ -47,7 +47,7 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
      * @param ids     the ids of the widgets to refresh
      * @return a pending intent
      */
-    private static PendingIntent actionPendingIntent(Context context, int[] ids) {
+    private static PendingIntent actionPendingIntent(final Context context, final int[] ids) {
         Log.d(TAG, "Create pending intent");
         Intent intent = new Intent(context, TinyTinyFeedWidget.class);
         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
@@ -56,7 +56,7 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
     }
 
     @Override
-    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+    public void onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
 
         Log.d(TAG, "Widget update");
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);

@@ -8,7 +8,7 @@ package org.poopeeland.tinytinyfeed.exceptions;
 
 public class HttpConnectionException extends Exception {
 
-    public HttpConnectionException(Throwable cause) {
+    public HttpConnectionException(final Throwable cause) {
         super(cause);
     }
 }
