@@ -22,7 +22,7 @@ import org.poopeeland.tinytinyfeed.exceptions.RequiredInfoNotRegistred;
 import org.poopeeland.tinytinyfeed.exceptions.TtrssError;
 import org.poopeeland.tinytinyfeed.model.Article;
 import org.poopeeland.tinytinyfeed.model.ArticleWrapper;
-import org.poopeeland.tinytinyfeed.utils.Utils;
+import org.poopeeland.tinytinyfeed.utils.HttpUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -149,7 +149,7 @@ public class WidgetService extends RemoteViewsService {
      */
     public List<Article> updateFeeds() throws RequiredInfoNotRegistred, CheckException, JSONException, ExecutionException, InterruptedException, NoInternetException {
         Log.d(TAG, "updateFeeds");
-        Utils.checkNetwork(this.connMgr);
+        HttpUtils.checkNetwork(this.connMgr);
         List<Article> list = new ArrayList<>();
 
         String session = login();
@@ -192,7 +192,7 @@ public class WidgetService extends RemoteViewsService {
      */
     public void setArticleToRead(final Article article) throws CheckException, ExecutionException, InterruptedException, JSONException, RequiredInfoNotRegistred, NoInternetException {
         Log.d(TAG, String.format("Article %s set to read", article.getId()));
-        Utils.checkNetwork(this.connMgr);
+        HttpUtils.checkNetwork(this.connMgr);
 
         String session = login();
         JSONObject jsonObject = new JSONObject();

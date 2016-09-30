@@ -20,7 +20,7 @@ import org.poopeeland.tinytinyfeed.exceptions.CheckException;
 import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
 import org.poopeeland.tinytinyfeed.exceptions.RequiredInfoNotRegistred;
 import org.poopeeland.tinytinyfeed.model.Article;
-import org.poopeeland.tinytinyfeed.utils.Utils;
+import org.poopeeland.tinytinyfeed.utils.HttpUtils;
 
 import java.util.concurrent.ExecutionException;
 
@@ -73,7 +73,7 @@ public class ArticleReadActivity extends Activity {
         Log.d(TAG, "Creation");
 
         try {
-            Utils.checkNetwork((ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE));
+            HttpUtils.checkNetwork((ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE));
         } catch (NoInternetException e) {
             Log.e(TAG, e.getMessage());
             Toast.makeText(getApplicationContext(), R.string.noInternetConnection, Toast.LENGTH_LONG).show();

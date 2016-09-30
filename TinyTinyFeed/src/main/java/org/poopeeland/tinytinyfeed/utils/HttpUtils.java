@@ -11,7 +11,6 @@ import org.poopeeland.tinytinyfeed.TinyTinyFeedWidget;
 import org.poopeeland.tinytinyfeed.exceptions.HttpConnectionException;
 import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -28,9 +27,9 @@ import javax.net.ssl.X509TrustManager;
  * Collections of usefull methods
  * Created by eric on 22/10/14.
  */
-public abstract class Utils {
+public abstract class HttpUtils {
 
-    private static final String TAG = Utils.class.getSimpleName();
+    private static final String TAG = HttpUtils.class.getSimpleName();
     private static final String URL_SUFFIX = "/api/";
     private static final TrustManager[] TRUST_ALL_CERTS = new TrustManager[]{new X509TrustManager() {
         public java.security.cert.X509Certificate[] getAcceptedIssuers() {
@@ -108,14 +107,5 @@ public abstract class Utils {
         }
     }
 
-    public static void closeQuietly(final Closeable closeable) {
-        try {
-            if (closeable != null) {
-                closeable.close();
-            }
-        } catch (IOException ex) {
-            // Ignore
-            Log.e(TAG, ex.getMessage());
-        }
-    }
+
 }

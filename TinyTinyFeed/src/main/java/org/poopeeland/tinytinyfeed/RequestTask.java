@@ -8,7 +8,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.poopeeland.tinytinyfeed.exceptions.HttpConnectionException;
 import org.poopeeland.tinytinyfeed.exceptions.TtrssError;
-import org.poopeeland.tinytinyfeed.utils.Utils;
+import org.poopeeland.tinytinyfeed.utils.FileUtils;
+import org.poopeeland.tinytinyfeed.utils.HttpUtils;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -48,13 +49,13 @@ public class RequestTask extends AsyncTask<JSONObject, Void, JSONObject> {
         Log.d(TAG, String.format("Requesting server with %s", json.toString()));
         HttpURLConnection connection;
         try {
-            connection = Utils.getHttpURLConnection(preferences);
+            connection = HttpUtils.getHttpURLConnection(preferences);
             BufferedWriter writer = null;
             try {
                 writer = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
                 writer.write(json.toString());
             } finally {
-                Utils.closeQuietly(writer);
+                FileUtils.closeQuietly(writer);
             }
             switch (connection.getResponseCode()) {
                 case 200:
@@ -75,7 +76,7 @@ public class RequestTask extends AsyncTask<JSONObject, Void, JSONObject> {
                     httpResponse.append(buffer);
                 }
             } finally {
-                Utils.closeQuietly(reader);
+                FileUtils.closeQuietly(reader);
             }
 
             return new JSONObject(httpResponse.toString());
