@@ -162,6 +162,7 @@ public class WidgetService extends RemoteViewsService {
         jsonObject.put("limit", this.numArticles);
         jsonObject.put("show_excerpt", "true");
         jsonObject.put("excerpt_length", preferences.getString(TinyTinyFeedWidget.EXCERPT_LENGHT_KEY, getText(R.string.preference_excerpt_lenght_default_value).toString()));
+        jsonObject.put("force_update", "true");
 
         RequestTask task = new RequestTask(preferences);
         task.execute(jsonObject);
