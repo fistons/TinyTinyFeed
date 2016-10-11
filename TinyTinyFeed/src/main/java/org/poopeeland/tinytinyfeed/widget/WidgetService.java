@@ -1,5 +1,7 @@
 package org.poopeeland.tinytinyfeed.widget;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,6 +10,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import org.json.JSONArray;
@@ -26,7 +29,9 @@ import org.poopeeland.tinytinyfeed.utils.HttpUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -149,6 +154,14 @@ public class WidgetService extends RemoteViewsService {
      */
     public List<Article> updateFeeds() throws RequiredInfoNotRegistred, CheckException, JSONException, ExecutionException, InterruptedException, NoInternetException {
         Log.d(TAG, "updateFeeds");
+        Context context = this.getApplicationContext();
+        ComponentName cn = new ComponentName(context, TinyTinyFeedWidget.class);
+        RemoteViews rvs = new RemoteViews(context.getPackageName(), R.layout.tiny_tiny_feed_widget);
+
+        CharSequence updatingText = context.getText(R.string.widget_update_text);
+        rvs.setTextViewText(R.id.lastUpdateText, updatingText);
+        AppWidgetManager.getInstance(context).updateAppWidget(cn, rvs);
+
         HttpUtils.checkNetwork(this.connMgr);
         List<Article> list = new ArrayList<>();
 
@@ -176,6 +189,12 @@ public class WidgetService extends RemoteViewsService {
         for (int i = 0; i < response.getJSONArray("content").length(); i++) {
             list.add(ArticleWrapper.fromJson(response.getJSONArray("content").getJSONObject(i).toString()));
         }
+
+        DateFormat dateFormat = DateFormat.getDateTimeInstance();
+        String dateStr = dateFormat.format(new Date());
+        CharSequence text = context.getText(R.string.lastUpdateText);
+        rvs.setTextViewText(R.id.lastUpdateText, String.format(text.toString(), dateStr));
+        AppWidgetManager.getInstance(context).updateAppWidget(cn, rvs);
 
         return list;
     }

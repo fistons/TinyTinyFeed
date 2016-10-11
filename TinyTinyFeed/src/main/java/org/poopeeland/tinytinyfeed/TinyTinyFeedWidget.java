@@ -15,9 +15,6 @@ import org.poopeeland.tinytinyfeed.settings.SettingsActivity;
 import org.poopeeland.tinytinyfeed.widget.ArticleReadActivity;
 import org.poopeeland.tinytinyfeed.widget.WidgetService;
 
-import java.text.DateFormat;
-import java.util.Date;
-
 
 /**
  * Implementation of App Widget functionality.
@@ -80,11 +77,6 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
                 Intent startActivityIntent = new Intent(context, ArticleReadActivity.class);
                 PendingIntent startActivityPendingIntent = PendingIntent.getActivity(context, 0, startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                 rv.setPendingIntentTemplate(R.id.listViewWidget, startActivityPendingIntent);
-
-                DateFormat dateFormat = DateFormat.getDateTimeInstance();
-                String dateStr = dateFormat.format(new Date());
-                CharSequence text = context.getText(R.string.lastUpdateText);
-                rv.setTextViewText(R.id.lastUpdateText, String.format(text.toString(), dateStr));
 
                 appWidgetManager.updateAppWidget(i, rv);
             }
