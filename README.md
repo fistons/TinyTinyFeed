@@ -16,15 +16,19 @@ Be aware that the widget update isn't in sync with the TTRss update.
 
 Artworks from my wife [Namida](https://www.facebook.com/NamidaArt) (or [here](http://namida-art.com)) - Kuddos to her
 
-If you want, you can send me a [gift](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=TPHRD64MV2B5U)
+If you want, buy me some [coffee](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=TPHRD64MV2B5U)
 
 ## Release notes
 
+* V1.10
+    * Status text now shows when the widget is updating
+    * Fix the color of the refresh button
+
 * V1.9
-   * Add a nice refresh button, more useless friendly than the "click on the status bar to refresh" thing.
-   * Fix the null url issue
-   * Fix the non-trimmed preference settings
-   * Refactorisation and cleaning
+    * Add a nice refresh button, more useless friendly than the "click on the status bar to refresh" thing.
+    * Fix the null url issue
+    * Fix the non-trimmed preference settings
+    * Refactorisation and cleaning
 
 * V1.8
     * Correct a bug that appear with version 1.15.3: the excerpt of the articles was empty. Now, you can choose the lenght of characters of the exceprt in the setting
