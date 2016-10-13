@@ -53,4 +53,5 @@
     <string name="ssl_exception_message">SSL problem: please check your settings</string>
     <string name="widget_refresh">Refresh</string>
     <string name="nullArticle">Unable to get the article URL</string>
+    <string name="widget_update_text">Updating…</string>
 </resources>

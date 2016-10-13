@@ -48,4 +48,5 @@
     <string name="preference_text_color_title">Couleur du texte </string>
     <string name="widget_refresh">Raffraichir</string>
     <string name="nullArticle">Impossible de récupérer l\'adresse de l\'article</string>
+    <string name="widget_update_text">Mise à jour en cours…</string>
 </resources>

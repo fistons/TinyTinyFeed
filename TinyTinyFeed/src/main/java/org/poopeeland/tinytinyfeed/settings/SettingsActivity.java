@@ -22,7 +22,7 @@ import org.poopeeland.tinytinyfeed.RequestTask;
 import org.poopeeland.tinytinyfeed.TinyTinyFeedWidget;
 import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
 import org.poopeeland.tinytinyfeed.exceptions.TtrssError;
-import org.poopeeland.tinytinyfeed.utils.Utils;
+import org.poopeeland.tinytinyfeed.utils.HttpUtils;
 
 import java.net.MalformedURLException;
 
@@ -76,7 +76,7 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
 
     private void checkSetup() throws JSONException, NoInternetException, MalformedURLException {
         Log.d(TAG, "checkSetup");
-        Utils.checkNetwork(this.connectivityManager);
+        HttpUtils.checkNetwork(this.connectivityManager);
 
         String url = this.preferences.getString(TinyTinyFeedWidget.URL_KEY, "");
         String user = this.preferences.getString(TinyTinyFeedWidget.USER_KEY, "");
