@@ -1,5 +1,7 @@
 package org.poopeeland.tinytinyfeed.widget;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,8 +25,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -61,6 +65,13 @@ class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public void onDataSetChanged() {
+        ComponentName cn = new ComponentName(context, TinyTinyFeedWidget.class);
+        RemoteViews rvs = new RemoteViews(context.getPackageName(), R.layout.tiny_tiny_feed_widget);
+
+        CharSequence updatingText = context.getText(R.string.widget_update_text);
+        rvs.setTextViewText(R.id.lastUpdateText, updatingText);
+        AppWidgetManager.getInstance(context).updateAppWidget(cn, rvs);
+
         try {
             Log.d(TAG, "Refresh the articles list");
             articleList = service.updateFeeds();
@@ -77,6 +88,12 @@ class ListProvider implements RemoteViewsService.RemoteViewsFactory {
             Log.e(TAG, context.getText(R.string.noInternetConnection).toString());
             this.articleList = this.loadLastList();
         }
+
+        DateFormat dateFormat = DateFormat.getDateTimeInstance();
+        String dateStr = dateFormat.format(new Date());
+        CharSequence text = context.getText(R.string.lastUpdateText);
+        rvs.setTextViewText(R.id.lastUpdateText, String.format(text.toString(), dateStr));
+        AppWidgetManager.getInstance(context).updateAppWidget(cn, rvs);
     }
 
     @Override
