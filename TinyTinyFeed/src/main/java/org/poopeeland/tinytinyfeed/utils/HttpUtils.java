@@ -70,7 +70,6 @@ public abstract class HttpUtils {
                 Log.d(TAG, "Trust all certs");
             } else {
                 sc.init(null, null, null);
-                Log.d(TAG, "Does not trust all certs");
             }
             HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
         } catch (NoSuchAlgorithmException | KeyManagementException ex) {
