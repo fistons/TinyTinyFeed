@@ -25,7 +25,7 @@ If you want, buy me some [coffee](https://www.paypal.com/cgi-bin/webscr?cmd=_s-x
     * Fix the color of the refresh button
 
 * V1.9
-    * Add a nice refresh button, more useless friendly than the "click on the status bar to refresh" thing.
+    * Add a nice refresh button, more user friendly than the "click on the status bar to refresh" thing.
     * Fix the null url issue
     * Fix the non-trimmed preference settings
     * Refactorisation and cleaning
