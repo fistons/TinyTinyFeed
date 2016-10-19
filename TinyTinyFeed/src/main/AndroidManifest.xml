@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          package="org.poopeeland.tinytinyfeed"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="org.poopeeland.tinytinyfeed"
     android:versionName="1.10.1">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -16,10 +16,11 @@
 
         <activity
             android:name="org.poopeeland.tinytinyfeed.settings.SettingsActivity"
-            android:label="@string/preference_activity_title" >
+            android:label="@string/preference_activity_title">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
@@ -39,7 +40,7 @@
             android:name="org.poopeeland.tinytinyfeed.widget.WidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
-        <receiver android:name="org.poopeeland.tinytinyfeed.TinyTinyFeedWidget" >
+        <receiver android:name="org.poopeeland.tinytinyfeed.TinyTinyFeedWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
