@@ -1,7 +1,7 @@
 TinyTinyFeed
 ============
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/73c3ef25ad6f4693aaaa9f230226e61d)](https://www.codacy.com/app/eric_7/TinyTinyFeed?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=fistons/TinyTinyFeed&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/af9db032239d4b8ea7c240ccad3a4935)](https://www.codacy.com/app/fistons/TinyTinyFeed?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=fistons/TinyTinyFeed&amp;utm_campaign=Badge_Grade)
 
 **You can get it from the Play Store [here](https://play.google.com/store/apps/details?id=org.poopeeland.tinytinyfeed)**
 
