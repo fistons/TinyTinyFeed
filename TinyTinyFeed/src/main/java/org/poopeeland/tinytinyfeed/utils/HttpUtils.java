@@ -18,8 +18,10 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
@@ -32,7 +34,7 @@ public abstract class HttpUtils {
     private static final String TAG = HttpUtils.class.getSimpleName();
     private static final String URL_SUFFIX = "/api/";
     private static final TrustManager[] TRUST_ALL_CERTS = new TrustManager[]{new X509TrustManager() {
-        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+        public X509Certificate[] getAcceptedIssuers() {
             return null;
         }
 
@@ -59,7 +61,12 @@ public abstract class HttpUtils {
 
         HttpURLConnection connection;
         if (preferences.getBoolean(TinyTinyFeedWidget.ALL_HOST_KEY, false)) {
-            HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
+            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            });
             Log.d(TAG, "All hostname allowed");
         }
 
