@@ -129,7 +129,11 @@ class ListProvider implements RemoteViewsService.RemoteViewsFactory {
             rv.setOnClickFillInIntent(R.id.readArticleLayout, fillInIntent);
         } else {
             rv = new RemoteViews(context.getPackageName(), R.layout.article_layout);
-            rv.setTextViewText(R.id.title, String.format("%s %s", unreadSymbol, listItem.getTitle()));
+            if (this.pref.getBoolean(TinyTinyFeedWidget.ONLY_UNREAD_KEY, false)) {
+                rv.setTextViewText(R.id.title, listItem.getTitle());
+            } else {
+                rv.setTextViewText(R.id.title, String.format("%s %s", unreadSymbol, listItem.getTitle()));
+            }
             rv.setInt(R.id.title, "setTextColor", color);
             rv.setTextViewText(R.id.feedNameAndDate, feedNameAndDate);
             rv.setInt(R.id.feedNameAndDate, "setTextColor", color);
