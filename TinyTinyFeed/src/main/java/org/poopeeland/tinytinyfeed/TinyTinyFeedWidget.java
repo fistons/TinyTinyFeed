@@ -29,6 +29,9 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
     public static final String HTTP_USER_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_HTTP_USER";
     public static final String HTTP_PASSWORD_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_HTTP_PASSWORD";
     public static final String TEXT_COLOR_KEY = "org.poopeeland.tinytinyfeed.TEXT_COLOR";
+    public static final String TEXT_SIZE_KEY = "org.poopeeland.tinytinyfeed.TEXT_SIZE";
+    public static final String SOURCE_SIZE_KEY = "org.poopeeland.tinytinyfeed.SOURCE_SIZE";
+    public static final String TITLE_SIZE_KEY = "org.poopeeland.tinytinyfeed.TITLE_SIZE";
     public static final String EXCERPT_LENGHT_KEY = "org.poopeeland.tinytinyfeed.EXCERPT_LENGHT_KEY";
     public static final String NUM_ARTICLE_KEY = "org.poopeeland.tinytinyfeed.NUM_ARTICLE_KEY";
     public static final String ALL_SLL_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_SSL_SELF";

@@ -44,8 +44,14 @@
     <string name="preference_article_excerpt_lenght_summary">Nombre de caractères a récuper pour l\'extrait</string>
     <string name="preference_background_color_title">Couleur de fond</string>
     <string name="preference_background_color_summary">Couleur de fond du widget</string>
-    <string name="preference_text_color_summary">Couleur des textes du widget</string>
-    <string name="preference_text_color_title">Couleur du texte </string>
+    <string name="preference_text_color_summary">Couleur du texte des articles</string>
+    <string name="preference_text_color_title">Couleur du texte</string>
+    <string name="preference_text_size_title">Taille des textes</string>
+    <string name="preference_text_size_summary">Taille des textes des articles</string>
+    <string name="preference_title_size_title">Taille des titres</string>
+    <string name="preference_title_size_summary">Taille des titres des articles</string>
+    <string name="preference_source_size_title">Taille des sources</string>
+    <string name="preference_source_size_summary">Taille des sources des articles</string>
     <string name="widget_refresh">Raffraichir</string>
     <string name="nullArticle">Impossible de récupérer l\'adresse de l\'article</string>
     <string name="widget_update_text">Mise à jour en cours…</string>

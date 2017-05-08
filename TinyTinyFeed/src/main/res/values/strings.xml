@@ -37,7 +37,7 @@
     <string name="preference_ssl_check_hostname_summary">Do not check if hostnames are matching</string>
     <string name="preference_httpauth_user_summary">Fill this if your tt-rss setup is protected by an HTTP Authentification</string>
     <string name="preference_httpauth_password_summary">Your HTTP Authentification password</string>
-    <string name="preference_article_excerpt_lenght">Exceprt lenght</string>
+    <string name="preference_article_excerpt_lenght">Exceprt length</string>
     <string name="preference_article_excerpt_lenght_summary">Number of characters to retrieve for the excerpt</string>
     <string name="preference_article_number_summary">The number of article you wish to retrieve</string>
     <string name="preference_article_number_default_value" translatable="false">20</string>
@@ -48,7 +48,13 @@
     <string name="preference_background_color_title">Backgroung color</string>
     <string name="preference_background_color_summary">Color of the background of the widget</string>
     <string name="preference_text_color_title">Text color</string>
-    <string name="preference_text_color_summary">Color of the widget\'s text</string>
+    <string name="preference_text_color_summary">Color of the article\'s text</string>
+    <string name="preference_text_size_title">Text size</string>
+    <string name="preference_text_size_summary">Size of the article\'s text</string>
+    <string name="preference_title_size_title">Title size</string>
+    <string name="preference_title_size_summary">Size of the article\'s title</string>
+    <string name="preference_source_size_title">Source size</string>
+    <string name="preference_source_size_summary">Size of the article\'s source</string>
     <string name="widget_no_setup">Please tap here to configure your widget</string>
     <string name="ssl_exception_message">SSL problem: please check your settings</string>
     <string name="widget_refresh">Refresh</string>

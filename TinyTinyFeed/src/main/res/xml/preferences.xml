@@ -45,6 +45,27 @@
             android:key="org.poopeeland.tinytinyfeed.TEXT_COLOR"
             android:summary="@string/preference_text_color_summary"
             android:title="@string/preference_text_color_title" />
+        <EditTextPreference
+            android:defaultValue="10"
+            android:inputType="number"
+            android:key="org.poopeeland.tinytinyfeed.TEXT_SIZE"
+            android:numeric="integer"
+            android:summary="@string/preference_text_size_summary"
+            android:title="@string/preference_text_size_title" />
+        <EditTextPreference
+            android:defaultValue="10"
+            android:inputType="number"
+            android:key="org.poopeeland.tinytinyfeed.SOURCE_SIZE"
+            android:numeric="integer"
+            android:summary="@string/preference_source_size_summary"
+            android:title="@string/preference_source_size_title" />
+        <EditTextPreference
+            android:defaultValue="10"
+            android:inputType="number"
+            android:key="org.poopeeland.tinytinyfeed.TITLE_SIZE"
+            android:numeric="integer"
+            android:summary="@string/preference_title_size_summary"
+            android:title="@string/preference_title_size_title" />
         <yuku.ambilwarna.widget.AmbilWarnaPreference
             android:defaultValue="0x80000000"
             android:key="org.poopeeland.tinytinyfeed.BACKGROUND_COLOR"

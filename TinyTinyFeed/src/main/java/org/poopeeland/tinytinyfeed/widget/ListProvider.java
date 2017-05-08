@@ -112,6 +112,9 @@ class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     public RemoteViews getViewAt(int position) {
         Article listItem = articleList.get(position);
         int color = pref.getInt(TinyTinyFeedWidget.TEXT_COLOR_KEY, 0xffffffff);
+        float textSize = Float.parseFloat(pref.getString(TinyTinyFeedWidget.TEXT_SIZE_KEY, "10"));
+        float sourceSize = Float.parseFloat(pref.getString(TinyTinyFeedWidget.SOURCE_SIZE_KEY, "10"));
+        float titleSize = Float.parseFloat(pref.getString(TinyTinyFeedWidget.TITLE_SIZE_KEY, "10"));
 
         final RemoteViews rv;
         Intent fillInIntent = new Intent();
@@ -126,6 +129,9 @@ class ListProvider implements RemoteViewsService.RemoteViewsFactory {
             rv.setInt(R.id.readFeedNameAndDate, "setTextColor", color);
             rv.setTextViewText(R.id.readResume, listItem.getExcerpt());
             rv.setInt(R.id.readResume, "setTextColor", color);
+            rv.setFloat(R.id.readResume, "setTextSize", textSize);
+            rv.setFloat(R.id.readTitle, "setTextSize", titleSize);
+            rv.setFloat(R.id.readFeedNameAndDate, "setTextSize", sourceSize);
             rv.setOnClickFillInIntent(R.id.readArticleLayout, fillInIntent);
         } else {
             rv = new RemoteViews(context.getPackageName(), R.layout.article_layout);
@@ -139,6 +145,9 @@ class ListProvider implements RemoteViewsService.RemoteViewsFactory {
             rv.setInt(R.id.feedNameAndDate, "setTextColor", color);
             rv.setTextViewText(R.id.resume, listItem.getExcerpt());
             rv.setInt(R.id.resume, "setTextColor", color);
+            rv.setFloat(R.id.resume, "setTextSize", textSize);
+            rv.setFloat(R.id.readTitle, "setTextSize", titleSize);
+            rv.setFloat(R.id.feedNameAndDate, "setTextSize", sourceSize);
             rv.setOnClickFillInIntent(R.id.articleLayout, fillInIntent);
         }
         return rv;
