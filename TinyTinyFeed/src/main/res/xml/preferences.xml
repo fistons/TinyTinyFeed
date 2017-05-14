@@ -52,6 +52,11 @@
             android:numeric="integer"
             android:summary="@string/preference_text_size_summary"
             android:title="@string/preference_text_size_title" />
+        <yuku.ambilwarna.widget.AmbilWarnaPreference
+            android:defaultValue="0xffffffff"
+            android:key="org.poopeeland.tinytinyfeed.SOURCE_COLOR"
+            android:summary="@string/preference_source_color_summary"
+            android:title="@string/preference_source_color_title" />
         <EditTextPreference
             android:defaultValue="10"
             android:inputType="number"
@@ -59,6 +64,11 @@
             android:numeric="integer"
             android:summary="@string/preference_source_size_summary"
             android:title="@string/preference_source_size_title" />
+        <yuku.ambilwarna.widget.AmbilWarnaPreference
+            android:defaultValue="0xffffffff"
+            android:key="org.poopeeland.tinytinyfeed.TITLE_COLOR"
+            android:summary="@string/preference_title_color_summary"
+            android:title="@string/preference_title_color_title" />
         <EditTextPreference
             android:defaultValue="10"
             android:inputType="number"
@@ -88,6 +98,11 @@
             android:key="org.poopeeland.tinytinyfeed.EXCERPT_LENGHT_KEY"
             android:summary="@string/preference_article_excerpt_lenght_summary"
             android:title="@string/preference_article_excerpt_lenght" />
+        <yuku.ambilwarna.widget.AmbilWarnaPreference
+            android:defaultValue="0xffffffff"
+            android:key="org.poopeeland.tinytinyfeed.STATUS_COLOR"
+            android:summary="@string/preference_status_color_summary"
+            android:title="@string/preference_status_color_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>

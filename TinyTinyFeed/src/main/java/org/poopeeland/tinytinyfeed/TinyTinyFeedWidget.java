@@ -31,7 +31,10 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
     public static final String TEXT_COLOR_KEY = "org.poopeeland.tinytinyfeed.TEXT_COLOR";
     public static final String TEXT_SIZE_KEY = "org.poopeeland.tinytinyfeed.TEXT_SIZE";
     public static final String SOURCE_SIZE_KEY = "org.poopeeland.tinytinyfeed.SOURCE_SIZE";
+    public static final String SOURCE_COLOR_KEY = "org.poopeeland.tinytinyfeed.SOURCE_COLOR";
     public static final String TITLE_SIZE_KEY = "org.poopeeland.tinytinyfeed.TITLE_SIZE";
+    public static final String TITLE_COLOR_KEY = "org.poopeeland.tinytinyfeed.TITLE_COLOR";
+    public static final String STATUS_COLOR_KEY = "org.poopeeland.tinytinyfeed.STATUS_COLOR";
     public static final String EXCERPT_LENGHT_KEY = "org.poopeeland.tinytinyfeed.EXCERPT_LENGHT_KEY";
     public static final String NUM_ARTICLE_KEY = "org.poopeeland.tinytinyfeed.NUM_ARTICLE_KEY";
     public static final String ALL_SLL_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_SSL_SELF";
@@ -59,7 +62,7 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
     public void onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
         Log.d(TAG, "Widget update");
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        int textColor = preferences.getInt(TEXT_COLOR_KEY, 0xffffff);
+        int textColor = preferences.getInt(STATUS_COLOR_KEY, 0xffffff);
         if (preferences.getBoolean(CHECKED, false)) {
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.listViewWidget);
             PendingIntent refreshIntent = actionPendingIntent(context, appWidgetIds);

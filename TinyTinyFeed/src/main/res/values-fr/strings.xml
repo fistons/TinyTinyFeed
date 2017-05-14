@@ -55,4 +55,10 @@
     <string name="widget_refresh">Raffraichir</string>
     <string name="nullArticle">Impossible de récupérer l\'adresse de l\'article</string>
     <string name="widget_update_text">Mise à jour en cours…</string>
+    <string name="preference_source_color_summary">Couleur de la source de l\'article</string>
+    <string name="preference_source_color_title">Couleur de la source</string>
+    <string name="preference_status_color_summary">Couleur de la barre de status</string>
+    <string name="preference_status_color_title">Coleur de la barre de status</string>
+    <string name="preference_title_color_summary">Couleur des titres des articles</string>
+    <string name="preference_title_color_title">Couleur des titres</string>
 </resources>

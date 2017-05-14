@@ -111,7 +111,9 @@ class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public RemoteViews getViewAt(int position) {
         Article listItem = articleList.get(position);
-        int color = pref.getInt(TinyTinyFeedWidget.TEXT_COLOR_KEY, 0xffffffff);
+        int textColor = pref.getInt(TinyTinyFeedWidget.TEXT_COLOR_KEY, 0xffffffff);
+        int sourceColor = pref.getInt(TinyTinyFeedWidget.SOURCE_COLOR_KEY, 0xffffffff);
+        int titleColor = pref.getInt(TinyTinyFeedWidget.TITLE_COLOR_KEY, 0xffffffff);
         float textSize = Float.parseFloat(pref.getString(TinyTinyFeedWidget.TEXT_SIZE_KEY, "10"));
         float sourceSize = Float.parseFloat(pref.getString(TinyTinyFeedWidget.SOURCE_SIZE_KEY, "10"));
         float titleSize = Float.parseFloat(pref.getString(TinyTinyFeedWidget.TITLE_SIZE_KEY, "10"));
@@ -124,11 +126,11 @@ class ListProvider implements RemoteViewsService.RemoteViewsFactory {
         if (!listItem.isUnread()) {
             rv = new RemoteViews(context.getPackageName(), R.layout.read_article_layout);
             rv.setTextViewText(R.id.readTitle, listItem.getTitle());
-            rv.setInt(R.id.readTitle, "setTextColor", color);
+            rv.setInt(R.id.readTitle, "setTextColor", titleColor);
             rv.setTextViewText(R.id.readFeedNameAndDate, feedNameAndDate);
-            rv.setInt(R.id.readFeedNameAndDate, "setTextColor", color);
+            rv.setInt(R.id.readFeedNameAndDate, "setTextColor", sourceColor);
             rv.setTextViewText(R.id.readResume, listItem.getExcerpt());
-            rv.setInt(R.id.readResume, "setTextColor", color);
+            rv.setInt(R.id.readResume, "setTextColor", textColor);
             rv.setFloat(R.id.readResume, "setTextSize", textSize);
             rv.setFloat(R.id.readTitle, "setTextSize", titleSize);
             rv.setFloat(R.id.readFeedNameAndDate, "setTextSize", sourceSize);
@@ -140,11 +142,11 @@ class ListProvider implements RemoteViewsService.RemoteViewsFactory {
             } else {
                 rv.setTextViewText(R.id.title, String.format("%s %s", unreadSymbol, listItem.getTitle()));
             }
-            rv.setInt(R.id.title, "setTextColor", color);
+            rv.setInt(R.id.title, "setTextColor", titleColor);
             rv.setTextViewText(R.id.feedNameAndDate, feedNameAndDate);
-            rv.setInt(R.id.feedNameAndDate, "setTextColor", color);
+            rv.setInt(R.id.feedNameAndDate, "setTextColor", sourceColor);
             rv.setTextViewText(R.id.resume, listItem.getExcerpt());
-            rv.setInt(R.id.resume, "setTextColor", color);
+            rv.setInt(R.id.resume, "setTextColor", textColor);
             rv.setFloat(R.id.resume, "setTextSize", textSize);
             rv.setFloat(R.id.readTitle, "setTextSize", titleSize);
             rv.setFloat(R.id.feedNameAndDate, "setTextSize", sourceSize);
