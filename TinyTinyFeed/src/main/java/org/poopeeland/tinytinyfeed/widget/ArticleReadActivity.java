@@ -18,7 +18,7 @@ import org.poopeeland.tinytinyfeed.R;
 import org.poopeeland.tinytinyfeed.TinyTinyFeedWidget;
 import org.poopeeland.tinytinyfeed.exceptions.CheckException;
 import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
-import org.poopeeland.tinytinyfeed.exceptions.RequiredInfoNotRegistred;
+import org.poopeeland.tinytinyfeed.exceptions.RequiredInfoNotRegistered;
 import org.poopeeland.tinytinyfeed.model.Article;
 import org.poopeeland.tinytinyfeed.utils.HttpUtils;
 
@@ -43,7 +43,7 @@ public class ArticleReadActivity extends Activity {
             Log.d(TAG, "Bounded");
             try {
                 service.setArticleToRead(article);
-            } catch (CheckException | InterruptedException | ExecutionException | JSONException | RequiredInfoNotRegistred e) {
+            } catch (CheckException | InterruptedException | ExecutionException | JSONException | RequiredInfoNotRegistered e) {
                 Log.e(TAG, "Error while trying to set the article to read", e);
                 Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                 return;

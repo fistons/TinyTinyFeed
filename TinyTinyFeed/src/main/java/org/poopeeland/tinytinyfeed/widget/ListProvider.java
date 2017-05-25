@@ -17,9 +17,9 @@ import org.poopeeland.tinytinyfeed.R;
 import org.poopeeland.tinytinyfeed.TinyTinyFeedWidget;
 import org.poopeeland.tinytinyfeed.exceptions.CheckException;
 import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
-import org.poopeeland.tinytinyfeed.exceptions.RequiredInfoNotRegistred;
+import org.poopeeland.tinytinyfeed.exceptions.RequiredInfoNotRegistered;
 import org.poopeeland.tinytinyfeed.model.Article;
-import org.poopeeland.tinytinyfeed.model.ArticleWrapper;
+import org.poopeeland.tinytinyfeed.model.JsonWrapper;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -75,8 +75,8 @@ class ListProvider implements RemoteViewsService.RemoteViewsFactory {
         try {
             Log.d(TAG, "Refresh the articles list");
             articleList = service.updateFeeds();
-        } catch (RequiredInfoNotRegistred ex) {
-            Log.e(TAG, "Some informations are missing");
+        } catch (RequiredInfoNotRegistered ex) {
+            Log.e(TAG, "Some information are missing");
             this.articleList = this.loadLastList();
         } catch (CheckException e) {
             Log.e(TAG, e.getMessage());
@@ -177,7 +177,7 @@ class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
 
     private List<Article> loadLastList() {
-        Log.d(TAG, String.format("Loading lastlist from %s", this.lastArticlesList.getAbsolutePath()));
+        Log.d(TAG, String.format("Loading last list from %s", this.lastArticlesList.getAbsolutePath()));
         if (!this.lastArticlesList.isFile()) {
             return Collections.emptyList();
         }
@@ -203,7 +203,7 @@ class ListProvider implements RemoteViewsService.RemoteViewsFactory {
         try {
             JSONArray response = new JSONArray(sb.toString());
             for (int i = 0; i < response.length(); i++) {
-                articles.add(ArticleWrapper.fromJson(response.getJSONObject(i).toString()));
+                articles.add(JsonWrapper.articleFromJson(response.getJSONObject(i).toString()));
             }
         } catch (JSONException ex) {
             return Collections.emptyList();

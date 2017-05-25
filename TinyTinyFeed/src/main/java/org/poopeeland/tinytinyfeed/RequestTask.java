@@ -62,7 +62,7 @@ public class RequestTask extends AsyncTask<JSONObject, Void, JSONObject> {
                     // All is fine
                     break;
                 case 401:
-                    return createError(TtrssError.HTTP_AUTH_REQUIERED, connection.getResponseMessage());
+                    return createError(TtrssError.HTTP_AUTH_REQUIRED, connection.getResponseMessage());
                 default:
                     return createError(TtrssError.UNREACHABLE_TTRSS, connection.getResponseMessage());
             }

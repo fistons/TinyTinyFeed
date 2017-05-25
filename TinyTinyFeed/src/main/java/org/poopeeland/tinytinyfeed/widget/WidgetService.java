@@ -18,10 +18,10 @@ import org.poopeeland.tinytinyfeed.RequestTask;
 import org.poopeeland.tinytinyfeed.TinyTinyFeedWidget;
 import org.poopeeland.tinytinyfeed.exceptions.CheckException;
 import org.poopeeland.tinytinyfeed.exceptions.NoInternetException;
-import org.poopeeland.tinytinyfeed.exceptions.RequiredInfoNotRegistred;
+import org.poopeeland.tinytinyfeed.exceptions.RequiredInfoNotRegistered;
 import org.poopeeland.tinytinyfeed.exceptions.TtrssError;
 import org.poopeeland.tinytinyfeed.model.Article;
-import org.poopeeland.tinytinyfeed.model.ArticleWrapper;
+import org.poopeeland.tinytinyfeed.model.JsonWrapper;
 import org.poopeeland.tinytinyfeed.utils.HttpUtils;
 
 import java.io.File;
@@ -102,13 +102,13 @@ public class WidgetService extends RemoteViewsService {
     /**
      * Log into the TTRss server
      *
-     * @throws org.poopeeland.tinytinyfeed.exceptions.RequiredInfoNotRegistred if some required information has not been registred
+     * @throws RequiredInfoNotRegistered if some required information has not been registred
      * @throws org.json.JSONException                                          (should not happen)
      * @throws java.util.concurrent.ExecutionException
      * @throws InterruptedException
      * @throws org.poopeeland.tinytinyfeed.exceptions.CheckException           When something wrong happened with the server
      */
-    private String login() throws RequiredInfoNotRegistred, JSONException, ExecutionException, InterruptedException, CheckException {
+    private String login() throws RequiredInfoNotRegistered, JSONException, ExecutionException, InterruptedException, CheckException {
         Log.d(TAG, "Login");
         checkRequieredInfoRegistred();
 
@@ -140,14 +140,14 @@ public class WidgetService extends RemoteViewsService {
      * Refresh the feeds et return the list of articles
      *
      * @return the list of last articles
-     * @throws RequiredInfoNotRegistred if the requiered info (login, password, url, etc) are not registred
+     * @throws RequiredInfoNotRegistered if the requiered info (login, password, url, etc) are not registred
      * @throws CheckException           if the json response is not correct
      * @throws JSONException            if there is a probleme with json parsing
      * @throws ExecutionException
      * @throws InterruptedException
      * @throws NoInternetException      if the is no internet connexion right now
      */
-    public List<Article> updateFeeds() throws RequiredInfoNotRegistred, CheckException, JSONException, ExecutionException, InterruptedException, NoInternetException {
+    public List<Article> updateFeeds() throws RequiredInfoNotRegistered, CheckException, JSONException, ExecutionException, InterruptedException, NoInternetException {
         Log.d(TAG, "updateFeeds");
 
         HttpUtils.checkNetwork(this.connMgr);
@@ -162,7 +162,7 @@ public class WidgetService extends RemoteViewsService {
         jsonObject.put("feed_id", feedId);
         jsonObject.put("limit", this.numArticles);
         jsonObject.put("show_excerpt", "true");
-        jsonObject.put("excerpt_length", preferences.getString(TinyTinyFeedWidget.EXCERPT_LENGHT_KEY, getText(R.string.preference_excerpt_lenght_default_value).toString()));
+        jsonObject.put("excerpt_length", preferences.getString(TinyTinyFeedWidget.EXCERPT_LENGTH_KEY, getText(R.string.preference_excerpt_lenght_default_value).toString()));
         jsonObject.put("force_update", "true");
 
         RequestTask task = new RequestTask(preferences);
@@ -175,7 +175,7 @@ public class WidgetService extends RemoteViewsService {
         this.saveList(response.getJSONArray("content"));
 
         for (int i = 0; i < response.getJSONArray("content").length(); i++) {
-            list.add(ArticleWrapper.fromJson(response.getJSONArray("content").getJSONObject(i).toString()));
+            list.add(JsonWrapper.articleFromJson(response.getJSONArray("content").getJSONObject(i).toString()));
         }
 
         return list;
@@ -185,14 +185,14 @@ public class WidgetService extends RemoteViewsService {
      * Set the article as read on the server
      *
      * @param article the article to set as read
-     * @throws RequiredInfoNotRegistred if the requiered info (login, password, url, etc) are not registred
+     * @throws RequiredInfoNotRegistered if the requiered info (login, password, url, etc) are not registred
      * @throws CheckException           if the json response is not correct
      * @throws JSONException            if there is a probleme with json parsing
      * @throws ExecutionException
      * @throws InterruptedException
      * @throws NoInternetException      if the is no internet connexion right now
      */
-    public void setArticleToRead(final Article article) throws CheckException, ExecutionException, InterruptedException, JSONException, RequiredInfoNotRegistred, NoInternetException {
+    public void setArticleToRead(final Article article) throws CheckException, ExecutionException, InterruptedException, JSONException, RequiredInfoNotRegistered, NoInternetException {
         Log.d(TAG, String.format("Article %s set to read", article.getId()));
         HttpUtils.checkNetwork(this.connMgr);
 
@@ -228,7 +228,7 @@ public class WidgetService extends RemoteViewsService {
                     case SSL_EXCEPTION:
                         Log.e(TAG, response.getJSONObject("content").getString("message"));
                         throw new CheckException(getString(R.string.ssl_exception_message));
-                    case HTTP_AUTH_REQUIERED:
+                    case HTTP_AUTH_REQUIRED:
                         Log.e(TAG, response.getJSONObject("content").getString("message"));
                         throw new CheckException(getString(R.string.connectionAuthError));
                     case UNSUPPORTED_ENCODING:
@@ -274,11 +274,11 @@ public class WidgetService extends RemoteViewsService {
     /**
      * Check if all the requiered information has been filled
      *
-     * @throws RequiredInfoNotRegistred if it is not the case
+     * @throws RequiredInfoNotRegistered if it is not the case
      */
-    private void checkRequieredInfoRegistred() throws RequiredInfoNotRegistred {
+    private void checkRequieredInfoRegistred() throws RequiredInfoNotRegistered {
         if (!preferences.getBoolean(TinyTinyFeedWidget.CHECKED, false)) {
-            throw new RequiredInfoNotRegistred();
+            throw new RequiredInfoNotRegistered();
         }
     }
 

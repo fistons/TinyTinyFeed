@@ -66,4 +66,8 @@
     <string name="widget_refresh">Refresh</string>
     <string name="nullArticle">Unable to get the article URL</string>
     <string name="widget_update_text">Updating…</string>
+    <string name="choose_category_title">Categories</string>
+    <string name="widget_categories_title">Categories for widget #%1$d </string>
+    <string name="widget_categories_summary">Categories to display for widget #%1$d</string>
+
 </resources>

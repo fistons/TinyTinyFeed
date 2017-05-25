@@ -35,11 +35,12 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
     public static final String TITLE_SIZE_KEY = "org.poopeeland.tinytinyfeed.TITLE_SIZE";
     public static final String TITLE_COLOR_KEY = "org.poopeeland.tinytinyfeed.TITLE_COLOR";
     public static final String STATUS_COLOR_KEY = "org.poopeeland.tinytinyfeed.STATUS_COLOR";
-    public static final String EXCERPT_LENGHT_KEY = "org.poopeeland.tinytinyfeed.EXCERPT_LENGHT_KEY";
+    public static final String EXCERPT_LENGTH_KEY = "org.poopeeland.tinytinyfeed.EXCERPT_LENGTH_KEY";
     public static final String NUM_ARTICLE_KEY = "org.poopeeland.tinytinyfeed.NUM_ARTICLE_KEY";
     public static final String ALL_SLL_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_SSL_SELF";
     public static final String ALL_HOST_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_SSL_HOSTNAME";
     public static final String CHECKED = "org.poopeeland.tinytinyfeed.CHECKED";
+    public static final String WIDGET_CATEGORIES_KEY = "org.poopeeland.tinytinyfeed.WIDGET_%d_CATEGORIES";
     private static final String TAG = "TinyTinyFeedWidget";
     private static final String BG_COLOR_KEY = "org.poopeeland.tinytinyfeed.BACKGROUND_COLOR";
 

@@ -112,7 +112,7 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
         protected void onPreExecute() {
             super.onPreExecute();
 
-            Log.d(TAG, "onPreExcecute");
+            Log.d(TAG, "onPreExecute");
             this.dialog = ProgressDialog.show(SettingsActivity.this, getText(R.string.waitTitle), getText(R.string.waitCheck));
         }
 
@@ -121,7 +121,7 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
             super.onPostExecute(response);
 
 
-            Log.d(TAG, "onPostExcecute");
+            Log.d(TAG, "onPostExecute");
             this.dialog.dismiss();
 
             try {
@@ -142,7 +142,7 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
                             Log.e(TAG, response.getJSONObject("content").getString("message"));
                             Toast.makeText(SettingsActivity.this, R.string.ssl_exception_message, Toast.LENGTH_LONG).show();
                             break;
-                        case HTTP_AUTH_REQUIERED:
+                        case HTTP_AUTH_REQUIRED:
                             Log.e(TAG, response.getJSONObject("content").getString("message"));
                             Toast.makeText(SettingsActivity.this, R.string.connectionAuthError, Toast.LENGTH_LONG).show();
                             break;
@@ -168,9 +168,7 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
                 return;
             }
 
-
             SettingsActivity.this.checked = true;
-
 
             SharedPreferences.Editor editor = SettingsActivity.this.preferences.edit();
             editor.putBoolean(TinyTinyFeedWidget.CHECKED, SettingsActivity.this.checked);
