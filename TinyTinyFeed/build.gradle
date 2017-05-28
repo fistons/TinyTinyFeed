@@ -5,13 +5,11 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.2'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
     }
 
 
 }
 apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
 
 repositories {
     mavenCentral()
@@ -28,8 +26,6 @@ android {
             exclude group: 'commons-logging', module: 'commons-logging'
         }
         compile 'com.google.code.gson:gson:2.7'
-        provided "org.projectlombok:lombok:1.12.6"
-        apt "org.projectlombok:lombok:1.12.6"
 
         compile 'io.reactivex.rxjava2:rxjava:2.0.6'
         compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
@@ -40,11 +36,15 @@ android {
         minSdkVersion 14
         targetSdkVersion 25
         versionCode 15
+
+        jackOptions {
+            enabled true
+        }
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
 }

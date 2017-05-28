@@ -15,15 +15,8 @@ public abstract class JsonWrapper {
             .setFieldNamingStrategy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .create();
 
-    public static Article articleFromJson(final String json) {
-        return GSON.fromJson(json, Article.class);
-    }
 
-    public static Category categoryFromJson(final String json) {
-        return GSON.fromJson(json, Category.class);
+    public static <T> T fromJson(final String json, final Class<T> cl) {
+        return GSON.fromJson(json, cl);
     }
-
-//    public static <T> T fromJson(final String json, final T cl) {
-//        return GSON.fromJson(json, cl.);
-//    }
 }

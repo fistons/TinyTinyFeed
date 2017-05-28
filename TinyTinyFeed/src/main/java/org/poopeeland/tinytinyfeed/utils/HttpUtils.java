@@ -31,9 +31,7 @@ import javax.net.ssl.X509TrustManager;
  */
 public abstract class HttpUtils {
 
-    private static final String TAG = HttpUtils.class.getSimpleName();
-    private static final String URL_SUFFIX = "/api/";
-    private static final TrustManager[] TRUST_ALL_CERTS = new TrustManager[]{new X509TrustManager() {
+    public static final TrustManager[] TRUST_ALL_CERTS = new TrustManager[]{new X509TrustManager() {
         public X509Certificate[] getAcceptedIssuers() {
             return null;
         }
@@ -48,7 +46,8 @@ public abstract class HttpUtils {
             // Placeholder
         }
     }};
-
+    private static final String TAG = HttpUtils.class.getSimpleName();
+    private static final String URL_SUFFIX = "/api/";
 
     private static String createBasicAuth(final String user, final String password) {
         String userPassword = String.format("%s:%s", user, password);

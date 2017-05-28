@@ -15,6 +15,9 @@ import org.poopeeland.tinytinyfeed.settings.SettingsActivity;
 import org.poopeeland.tinytinyfeed.widget.ArticleReadActivity;
 import org.poopeeland.tinytinyfeed.widget.WidgetService;
 
+import java.io.File;
+import java.util.Locale;
+
 
 /**
  * Implementation of App Widget functionality.
@@ -41,8 +44,9 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
     public static final String ALL_HOST_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_SSL_HOSTNAME";
     public static final String CHECKED = "org.poopeeland.tinytinyfeed.CHECKED";
     public static final String WIDGET_CATEGORIES_KEY = "org.poopeeland.tinytinyfeed.WIDGET_%d_CATEGORIES";
+    public static final String JSON_STORAGE_FILENAME_TEMPLATE = "listArticles_%d.json";
+    public static final String BG_COLOR_KEY = "org.poopeeland.tinytinyfeed.BACKGROUND_COLOR";
     private static final String TAG = "TinyTinyFeedWidget";
-    private static final String BG_COLOR_KEY = "org.poopeeland.tinytinyfeed.BACKGROUND_COLOR";
 
     /**
      * Return a Pending Intent asking the refresh of the widget
@@ -101,6 +105,22 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
 
+
+    @Override
+    public void onDeleted(final Context context, final int[] appWidgetIds) {
+        super.onDeleted(context, appWidgetIds);
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+        for (int widgetId : appWidgetIds) {
+            Log.i(TAG, "Deleting widget " + widgetId);
+            editor.remove(String.format(Locale.getDefault(), WIDGET_CATEGORIES_KEY, widgetId));
+            editor.apply();
+            File f = new File(context.getApplicationContext().getFilesDir()
+                    , String.format(Locale.getDefault(), JSON_STORAGE_FILENAME_TEMPLATE, widgetId));
+            if (!f.delete()) {
+                Log.e(TAG, f.getAbsolutePath() + " has not been deleted!");
+            }
+        }
+    }
 }
 
 
