@@ -1,5 +1,6 @@
 package org.poopeeland.tinytinyfeed.utils;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -38,7 +39,6 @@ import io.reactivex.schedulers.Schedulers;
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
 
-import static org.poopeeland.tinytinyfeed.TinyTinyFeedWidget.JSON_STORAGE_FILENAME_BY_CAT_TEMPLATE;
 import static org.poopeeland.tinytinyfeed.TinyTinyFeedWidget.JSON_STORAGE_FILENAME_TEMPLATE;
 
 /**
@@ -49,16 +49,18 @@ import static org.poopeeland.tinytinyfeed.TinyTinyFeedWidget.JSON_STORAGE_FILENA
 public class Fetcher {
 
     private static final String TAG = Fetcher.class.getSimpleName();
-    private static final String ARTICLE_ALL = "-4";
-    private static final String ARTICLE_ONLY_UNREAD = "-3";
     private static final TrustManager[] TRUST_ALL_CERTS = new TrustManager[]{
             new X509TrustManager() {
                 @Override
+                @SuppressLint("TrustAllX509TrustManager")
                 public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                    // Do nothing because everybody is beautiful
                 }
 
                 @Override
+                @SuppressLint("TrustAllX509TrustManager")
                 public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                    // Do nothing because everything is awesome
                 }
 
                 @Override
@@ -78,7 +80,6 @@ public class Fetcher {
     private final String numArticles;
     private final String excerptLength;
     private final String filenameTemplate;
-    private final String filenameByCatTemplate;
 
     private final boolean allowAllSslKey;
     private final boolean allowAllSslHost;
@@ -97,7 +98,6 @@ public class Fetcher {
         this.onlyUnread = preferences.getBoolean(TinyTinyFeedWidget.ONLY_UNREAD_KEY, false);
         this.excerptLength = preferences.getString(TinyTinyFeedWidget.EXCERPT_LENGTH_KEY, context.getText(R.string.preference_excerpt_lenght_default_value).toString());
         this.filenameTemplate = context.getApplicationContext().getFilesDir() + File.separator + JSON_STORAGE_FILENAME_TEMPLATE;
-        this.filenameByCatTemplate = context.getApplicationContext().getFilesDir() + File.separator + JSON_STORAGE_FILENAME_BY_CAT_TEMPLATE;
 
         try {
             AndroidNetworking.initialize(context, getOkHttpClient());
@@ -254,6 +254,7 @@ public class Fetcher {
                 .map(json -> {
                     List<Article> articles1 = new ArrayList<>();
                     JSONArray array = json.getJSONArray("content");
+                    this.saveList(array, widgetId);
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject c = array.getJSONObject(i);
                         articles1.add(JsonWrapper.fromJson(c.toString(), Article.class));
@@ -324,7 +325,7 @@ public class Fetcher {
     }
 
 
-    private void checkJsonResponse(JSONObject response) throws CheckException, JSONException {
+    private void checkJsonResponse(final JSONObject response) throws CheckException, JSONException {
         if (response.getInt("status") != 0) {
             try {
                 TtrssError reason = TtrssError.valueOf(response.getJSONObject("content").getString("error"));
