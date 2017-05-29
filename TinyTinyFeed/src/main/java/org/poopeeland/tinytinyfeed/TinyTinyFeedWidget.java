@@ -45,6 +45,7 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
     public static final String CHECKED = "org.poopeeland.tinytinyfeed.CHECKED";
     public static final String WIDGET_CATEGORIES_KEY = "org.poopeeland.tinytinyfeed.WIDGET_%d_CATEGORIES";
     public static final String JSON_STORAGE_FILENAME_TEMPLATE = "listArticles_%d.json";
+    public static final String JSON_STORAGE_FILENAME_BY_CAT_TEMPLATE = "listArticles_%d_%s.json";
     public static final String BG_COLOR_KEY = "org.poopeeland.tinytinyfeed.BACKGROUND_COLOR";
     private static final String TAG = "TinyTinyFeedWidget";
 

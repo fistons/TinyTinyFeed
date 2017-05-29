@@ -29,8 +29,10 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import static org.poopeeland.tinytinyfeed.TinyTinyFeedWidget.JSON_STORAGE_FILENAME_TEMPLATE;
+import static org.poopeeland.tinytinyfeed.TinyTinyFeedWidget.WIDGET_CATEGORIES_KEY;
 
 
 /**
@@ -59,6 +61,7 @@ class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public void onCreate() {
         Log.d(TAG, "onCreate");
+        this.articleList = this.loadLastList();
     }
 
     @Override
@@ -72,7 +75,12 @@ class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
         try {
             Log.d(TAG, "Refresh the articles list");
-            this.articleList = new Fetcher(this.pref, context).fetchFeeds(this.widgetId);
+            Set<String> categories = pref.getStringSet(String.format(Locale.getDefault(), WIDGET_CATEGORIES_KEY, this.widgetId), Collections.emptySet());
+            Log.d(TAG, "Categories:");
+            for (String cat : categories) {
+                Log.d(TAG, cat);
+            }
+            this.articleList = new Fetcher(this.pref, context).fetchFeeds(this.widgetId, categories);
         } catch (FetchException ex) {
             Log.e(TAG, "Error while fetching data", ex);
             this.articleList = this.loadLastList();

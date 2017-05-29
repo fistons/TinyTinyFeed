@@ -25,6 +25,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -32,10 +33,12 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
 
+import static org.poopeeland.tinytinyfeed.TinyTinyFeedWidget.JSON_STORAGE_FILENAME_BY_CAT_TEMPLATE;
 import static org.poopeeland.tinytinyfeed.TinyTinyFeedWidget.JSON_STORAGE_FILENAME_TEMPLATE;
 
 /**
@@ -75,6 +78,7 @@ public class Fetcher {
     private final String numArticles;
     private final String excerptLength;
     private final String filenameTemplate;
+    private final String filenameByCatTemplate;
 
     private final boolean allowAllSslKey;
     private final boolean allowAllSslHost;
@@ -93,6 +97,7 @@ public class Fetcher {
         this.onlyUnread = preferences.getBoolean(TinyTinyFeedWidget.ONLY_UNREAD_KEY, false);
         this.excerptLength = preferences.getString(TinyTinyFeedWidget.EXCERPT_LENGTH_KEY, context.getText(R.string.preference_excerpt_lenght_default_value).toString());
         this.filenameTemplate = context.getApplicationContext().getFilesDir() + File.separator + JSON_STORAGE_FILENAME_TEMPLATE;
+        this.filenameByCatTemplate = context.getApplicationContext().getFilesDir() + File.separator + JSON_STORAGE_FILENAME_BY_CAT_TEMPLATE;
 
         try {
             AndroidNetworking.initialize(context, getOkHttpClient());
@@ -213,53 +218,12 @@ public class Fetcher {
         return categories;
     }
 
-    public List<Article> fetchFeeds(final int widgetId) throws FetchException {
-        Log.d(TAG, "Fetching feeds for widget " + widgetId);
-
-        String session = login();
-
-        String feedId = this.onlyUnread ? ARTICLE_ONLY_UNREAD : ARTICLE_ALL;
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("sid", session);
-            jsonObject.put("op", "getHeadlines");
-            jsonObject.put("feed_id", feedId);
-            jsonObject.put("limit", this.numArticles);
-            jsonObject.put("show_excerpt", "true");
-            jsonObject.put("excerpt_length", this.excerptLength);
-            jsonObject.put("force_update", "true");
-        } catch (JSONException ex) {
-            Log.e(TAG, "Json exception while creating the fetch feeds request", ex);
-            throw new FetchException(ex);
-        }
-
-        List<Article> articles = Rx2AndroidNetworking.post(url)
-                .addJSONObjectBody(jsonObject)
-                .build()
-                .getJSONObjectObservable()
-                .subscribeOn(Schedulers.io())
-                .map(response -> {
-                    List<Article> articles1 = new ArrayList<>();
-                    JSONArray array = response.getJSONArray("content");
-                    saveList(array, widgetId);
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject c = array.getJSONObject(i);
-                        articles1.add(JsonWrapper.fromJson(c.toString(), Article.class));
-                    }
-                    return articles1;
-                })
-                .blockingFirst();
-        logout(session);
-
-        return articles;
-    }
-
-    public List<Article> fetchFeeds(final int widgetId, final String[] categoryIds) throws FetchException {
+    public List<Article> fetchFeeds(final int widgetId, final Set<String> categoryIds) throws FetchException {
         Log.d(TAG, "Fetching feeds for widget " + widgetId + " with categories");
 
         String session = login();
 
-        List<Observable> observables = new ArrayList<>();
+        List<ObservableSource<JSONObject>> observables = new ArrayList<>();
         for (String catId : categoryIds) {
             JSONObject jsonObject = new JSONObject();
             try {
@@ -280,14 +244,40 @@ public class Fetcher {
             observables.add(Rx2AndroidNetworking.post(this.url)
                     .addJSONObjectBody(jsonObject)
                     .build()
-                    .getJSONObjectObservable());
+                    .getJSONObjectObservable()
+                    .subscribeOn(Schedulers.io())
+                    .doOnComplete(() -> Log.d(TAG, "Fetching " + catId + " done for widget #" + widgetId)));
         }
 
+        final List<Article> articles = new ArrayList<>();
+        Observable.concat(observables)
+                .map(json -> {
+                    List<Article> articles1 = new ArrayList<>();
+                    JSONArray array = json.getJSONArray("content");
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject c = array.getJSONObject(i);
+                        articles1.add(JsonWrapper.fromJson(c.toString(), Article.class));
+                    }
+                    return articles1;
+                })
+                .doOnComplete(() -> Log.d(TAG, "Fetching done for widget #" + widgetId))
+                .blockingSubscribe(articles::addAll);
+
+        articles.sort((art1, art2) -> {
+            if (art1.getUpdated() > art2.getUpdated()) {
+                return -1;
+            }
+
+            if (art1.getUpdated() < art2.getUpdated()) {
+                return 1;
+            }
+
+            return 0;
+        });
 
         logout(session);
 
-
-        return null;
+        return articles;
     }
 
 
