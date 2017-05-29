@@ -10,21 +10,17 @@ import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.poopeeland.tinytinyfeed.R;
 import org.poopeeland.tinytinyfeed.TinyTinyFeedWidget;
 import org.poopeeland.tinytinyfeed.model.Article;
-import org.poopeeland.tinytinyfeed.model.JsonWrapper;
 import org.poopeeland.tinytinyfeed.utils.FetchException;
 import org.poopeeland.tinytinyfeed.utils.Fetcher;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -72,11 +68,9 @@ class ListProvider implements RemoteViewsService.RemoteViewsFactory {
         rvs.setTextViewText(R.id.lastUpdateText, updatingText);
         AppWidgetManager.getInstance(context).updateAppWidget(this.widgetId, rvs);
 
-
         try {
             Log.d(TAG, "Refresh the articles list");
             Set<String> categories = pref.getStringSet(String.format(Locale.getDefault(), WIDGET_CATEGORIES_KEY, this.widgetId), Collections.emptySet());
-            Log.d(TAG, "Categories:");
             for (String cat : categories) {
                 Log.d(TAG, cat);
             }
@@ -174,39 +168,19 @@ class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     }
 
 
+    @SuppressWarnings("unchecked")
     private List<Article> loadLastList() {
         Log.d(TAG, String.format("Loading last list from %s", this.lastArticlesList.getAbsolutePath()));
         if (!this.lastArticlesList.isFile()) {
             return Collections.emptyList();
         }
 
-        StringBuilder sb = new StringBuilder();
-        try {
-            BufferedReader fis = new BufferedReader(new FileReader(this.lastArticlesList));
-            String buffer;
-            while ((buffer = fis.readLine()) != null) {
-                sb.append(buffer);
-            }
-            fis.readLine();
-            fis.close();
-        } catch (IOException ex) {
+        try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(this.lastArticlesList))) {
+            return (List<Article>) inputStream.readObject();
+        } catch (IOException | ClassNotFoundException ex) {
             Log.wtf(TAG, "Error while reading the last article list", ex);
-        }
-
-        if (sb.toString().isEmpty()) {
             return Collections.emptyList();
         }
-
-        List<Article> articles = new ArrayList<>();
-        try {
-            JSONArray response = new JSONArray(sb.toString());
-            for (int i = 0; i < response.length(); i++) {
-                articles.add(JsonWrapper.fromJson(response.getJSONObject(i).toString(), Article.class));
-            }
-        } catch (JSONException ex) {
-            return Collections.emptyList();
-        }
-        return articles;
     }
 
 

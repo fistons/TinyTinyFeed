@@ -118,6 +118,8 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
                     , String.format(Locale.getDefault(), JSON_STORAGE_FILENAME_TEMPLATE, widgetId));
             if (!f.delete()) {
                 Log.e(TAG, f.getAbsolutePath() + " has not been deleted!");
+            } else {
+                Log.d(TAG, f.getAbsolutePath() + " not been deleted");
             }
         }
     }

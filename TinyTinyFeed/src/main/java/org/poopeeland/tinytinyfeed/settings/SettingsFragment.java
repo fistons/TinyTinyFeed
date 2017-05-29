@@ -22,8 +22,10 @@ import org.poopeeland.tinytinyfeed.utils.FetchException;
 import org.poopeeland.tinytinyfeed.utils.Fetcher;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 
 /**
@@ -86,13 +88,22 @@ public class SettingsFragment extends PreferenceFragment {
                                    final PreferenceScreen screen,
                                    final CharSequence[] entries,
                                    final CharSequence[] entryValues) {
+        String preferenceKey = String.format(Locale.getDefault(), TinyTinyFeedWidget.WIDGET_CATEGORIES_KEY, id);
         MultiSelectListPreference p = new MultiSelectListPreference(screen.getContext());
-        p.setKey(String.format(Locale.getDefault(), TinyTinyFeedWidget.WIDGET_CATEGORIES_KEY, id));
+        p.setKey(preferenceKey);
         p.setTitle(res.getString(R.string.widget_categories_title, id));
         p.setSummary(res.getString(R.string.widget_categories_summary, id));
         p.setEntries(entries);
         p.setEntryValues(entryValues);
-
+        SharedPreferences preferences = screen.getSharedPreferences();
+        if (!preferences.contains(preferenceKey)) {
+            Set<String> values = new HashSet<>();
+            for (int i = 0; i < entryValues.length - 3; i++) {
+                values.add(entryValues[i].toString());
+            }
+            p.setValues(values);
+            preferences.edit().putStringSet(preferenceKey, values).apply();
+        }
         category.addPreference(p);
     }
 

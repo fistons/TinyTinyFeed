@@ -21,10 +21,12 @@ import org.poopeeland.tinytinyfeed.model.JsonWrapper;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -33,8 +35,6 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
@@ -109,9 +109,11 @@ public class Fetcher {
 
     private OkHttpClient getOkHttpClient() throws NoSuchAlgorithmException, KeyManagementException {
         Log.d(TAG, "Creating http client");
+
         // Install the all-trusting trust manager
         final SSLContext sslContext = SSLContext.getInstance("SSL");
         sslContext.init(null, TRUST_ALL_CERTS, new java.security.SecureRandom());
+
         // Create an ssl socket factory with our all-trusting manager
         final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
 
@@ -160,6 +162,9 @@ public class Fetcher {
                         return jsonObject.getJSONObject("content").getString("session_id");
                     }
                 })
+                .doOnError(err -> {
+                    throw new FetchException("Error while logging in", err);
+                })
                 .blockingFirst();
     }
 
@@ -178,7 +183,10 @@ public class Fetcher {
                 .build()
                 .getJSONObjectObservable()
                 .subscribeOn(Schedulers.io())
-                .subscribe();
+                .doOnError(err -> {
+                    throw new FetchException("Error while logging out", err);
+                })
+                .subscribe(json -> Log.d(TAG, "Logged out from session " + sessionId));
     }
 
     public List<Category> fetchCategories() throws FetchException {
@@ -210,6 +218,9 @@ public class Fetcher {
                     }
                     return categories1;
                 })
+                .doOnError(err -> {
+                    throw new FetchException("Error while fetching categories", err);
+                })
                 .blockingFirst();
 
         Log.d(TAG, "Categories fetched");
@@ -222,8 +233,7 @@ public class Fetcher {
         Log.d(TAG, "Fetching feeds for widget " + widgetId + " with categories");
 
         String session = login();
-
-        List<ObservableSource<JSONObject>> observables = new ArrayList<>();
+        final List<Article> articles = new ArrayList<>();
         for (String catId : categoryIds) {
             JSONObject jsonObject = new JSONObject();
             try {
@@ -241,30 +251,34 @@ public class Fetcher {
                 throw new FetchException(ex);
             }
 
-            observables.add(Rx2AndroidNetworking.post(this.url)
+            Log.d(TAG, "Fetching cat. " + catId + " for widget #" + widgetId + "...");
+            Rx2AndroidNetworking.post(this.url)
                     .addJSONObjectBody(jsonObject)
                     .build()
                     .getJSONObjectObservable()
                     .subscribeOn(Schedulers.io())
-                    .doOnComplete(() -> Log.d(TAG, "Fetching " + catId + " done for widget #" + widgetId)));
+                    .map(json -> {
+                        List<Article> articles1 = new ArrayList<>();
+                        JSONArray array = json.getJSONArray("content");
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject c = array.getJSONObject(i);
+                            articles1.add(JsonWrapper.fromJson(c.toString(), Article.class));
+                        }
+                        return articles1;
+                    })
+                    .onErrorReturn(err -> {
+                        Log.e(TAG, "Error while fetching cat. " + catId + " for widget #" + widgetId + " done!", err);
+                        return Collections.emptyList();
+                    })
+                    .blockingSubscribe(list -> {
+                        articles.addAll(list);
+                        Log.d(TAG, "Fetching cat. " + catId + " for widget #" + widgetId + " done!");
+                    });
         }
+        Log.d(TAG, "Fetching done for widget #" + widgetId);
 
-        final List<Article> articles = new ArrayList<>();
-        Observable.concat(observables)
-                .map(json -> {
-                    List<Article> articles1 = new ArrayList<>();
-                    JSONArray array = json.getJSONArray("content");
-                    this.saveList(array, widgetId);
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject c = array.getJSONObject(i);
-                        articles1.add(JsonWrapper.fromJson(c.toString(), Article.class));
-                    }
-                    return articles1;
-                })
-                .doOnComplete(() -> Log.d(TAG, "Fetching done for widget #" + widgetId))
-                .blockingSubscribe(articles::addAll);
-
-        articles.sort((art1, art2) -> {
+        List<Article> subList = articles.subList(0, Integer.parseInt(numArticles));
+        subList.sort((art1, art2) -> {
             if (art1.getUpdated() > art2.getUpdated()) {
                 return -1;
             }
@@ -278,7 +292,7 @@ public class Fetcher {
 
         logout(session);
 
-        return articles;
+        return saveList(subList, widgetId);
     }
 
 
@@ -297,31 +311,30 @@ public class Fetcher {
             Log.e(TAG, "Json exception while creating the update article request", ex);
             throw new FetchException(ex);
         }
+
         Rx2AndroidNetworking.post(this.url)
                 .addJSONObjectBody(jsonObject)
                 .build()
                 .getJSONObjectObservable()
                 .subscribeOn(Schedulers.io())
+                .doOnError(err -> {
+                    throw new FetchException("Error while setting article to read", err);
+                })
                 .blockingSubscribe();
         Log.d(TAG, String.format("Article %s set to read!", article.getId()));
         logout(session);
     }
 
-    private void saveList(final JSONArray json, final int widgetId) {
-        if (json == null) {
-            Log.d(TAG, "List is empty, not saving it");
-            return;
-        }
+    private List<Article> saveList(final List<Article> articles, final int widgetId) {
         File fileName = new File(String.format(this.filenameTemplate, widgetId));
-
         Log.d(TAG, String.format("Saving the list to %s", fileName.getAbsolutePath()));
-        try {
-            FileOutputStream outputStream = new FileOutputStream(fileName);
-            outputStream.write(json.toString().getBytes());
-            outputStream.close();
+        try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            outputStream.writeObject(new ArrayList<>(articles));
         } catch (Exception e) {
             Log.e(TAG, "Error while saving the last articles list", e);
         }
+
+        return articles;
     }
 
 
