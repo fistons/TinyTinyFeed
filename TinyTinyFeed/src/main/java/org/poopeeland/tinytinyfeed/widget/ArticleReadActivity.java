@@ -3,8 +3,11 @@ package org.poopeeland.tinytinyfeed.widget;
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -37,11 +40,9 @@ public class ArticleReadActivity extends Activity {
 
         // Retrieve the article
         Article article = (Article) intent.getExtras().getSerializable("article");
-        try {
-            new Fetcher(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()), this).setArticleToRead(article);
-        } catch (FetchException ex) {
-            Log.e(TAG, "Can't update article!", ex);
-        }
+
+        AsyncSetRead async = new AsyncSetRead(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()), this);
+        async.execute(article);
 
         // Update all the widget. Maybe we should update only the widget which requires
         // the activity?
@@ -60,5 +61,29 @@ public class ArticleReadActivity extends Activity {
         finish();
     }
 
+    private class AsyncSetRead extends AsyncTask<Article, Void, Void> {
+
+        private final SharedPreferences preferences;
+        private final Context context;
+
+        public AsyncSetRead(final SharedPreferences preferences, final Context context) {
+            this.preferences = preferences;
+            this.context = context;
+        }
+
+        @Override
+        protected Void doInBackground(final Article... params) {
+            try {
+                Fetcher fetcher = new Fetcher(this.preferences, context);
+                for (Article article : params) {
+                    fetcher.setArticleToRead(article);
+                }
+            } catch (FetchException ex) {
+                Log.e(TAG, "Can't update article!", ex);
+            }
+            return null;
+        }
+
+    }
 
 }

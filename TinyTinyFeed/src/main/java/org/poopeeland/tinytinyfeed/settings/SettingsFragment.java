@@ -1,19 +1,17 @@
 package org.poopeeland.tinytinyfeed.settings;
 
-
-import android.app.Fragment;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.MultiSelectListPreference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.util.Log;
-
-import com.androidnetworking.AndroidNetworking;
 
 import org.poopeeland.tinytinyfeed.R;
 import org.poopeeland.tinytinyfeed.TinyTinyFeedWidget;
@@ -29,7 +27,7 @@ import java.util.Set;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * A simple {@link PreferenceFragment} subclass.
  */
 public class SettingsFragment extends PreferenceFragment {
 
@@ -49,30 +47,15 @@ public class SettingsFragment extends PreferenceFragment {
                 "org.poopeeland.tinytinyfeed.TinyTinyFeedWidget"));
 
 
-        AndroidNetworking.initialize(screen.getContext());
         SharedPreferences preferences = screen.getSharedPreferences();
-
-
         if (ids.length > 0 && preferences.getBoolean(TinyTinyFeedWidget.CHECKED, false)) {
             PreferenceCategory category = new PreferenceCategory(screen.getContext());
             category.setTitle(R.string.choose_category_title);
             screen.addPreference(category);
 
             try {
-                Fetcher fetcher = new Fetcher(preferences, screen.getContext());
-                final List<CharSequence> entriesList = new ArrayList<>();
-                final List<CharSequence> entryValuesList = new ArrayList<>();
-
-                for (final Category c : fetcher.fetchCategories()) {
-                    entryValuesList.add(c.getId());
-                    entriesList.add(c.getTitle());
-                }
-                final CharSequence[] entries = entriesList.toArray(new CharSequence[entriesList.size()]);
-                final CharSequence[] entryValues = entryValuesList.toArray(new CharSequence[entryValuesList.size()]);
-
-                for (int i : ids) {
-                    addPreferenceList(i, category, res, screen, entries, entryValues);
-                }
+                AsyncCategoryFetcher fetcher = new AsyncCategoryFetcher(preferences, ids, category, res, screen);
+                fetcher.execute();
             } catch (FetchException e) {
                 Log.e(TAG, "Data fetching exception", e);
                 //TODO Add a Toast here.
@@ -105,6 +88,62 @@ public class SettingsFragment extends PreferenceFragment {
             preferences.edit().putStringSet(preferenceKey, values).apply();
         }
         category.addPreference(p);
+    }
+
+    private class AsyncCategoryFetcher extends AsyncTask<Void, Void, Void> {
+
+        private final Context context;
+        private final int[] ids;
+        private final PreferenceCategory category;
+        private final Resources res;
+        private final PreferenceScreen screen;
+        private final List<Category> categories;
+        private final Fetcher fetcher;
+
+        public AsyncCategoryFetcher(final SharedPreferences preferences,
+                                    final int[] ids,
+                                    final PreferenceCategory category,
+                                    final Resources res,
+                                    final PreferenceScreen screen) throws FetchException {
+            this.context = screen.getContext();
+            this.ids = ids;
+            this.category = category;
+            this.res = res;
+            this.screen = screen;
+            this.categories = new ArrayList<>();
+            fetcher = new Fetcher(preferences, this.context);
+        }
+
+        @Override
+        protected Void doInBackground(final Void... params) {
+
+            try {
+                this.categories.addAll(fetcher.fetchCategories());
+            } catch (FetchException e) {
+                Log.e(TAG, "Error while fetching categories", e);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            final List<CharSequence> entriesList = new ArrayList<>();
+            final List<CharSequence> entryValuesList = new ArrayList<>();
+
+            for (final Category c : categories) {
+                entryValuesList.add(c.getId());
+                entriesList.add(c.getTitle());
+            }
+            final CharSequence[] entries = entriesList.toArray(new CharSequence[entriesList.size()]);
+            final CharSequence[] entryValues = entryValuesList.toArray(new CharSequence[entryValuesList.size()]);
+
+            for (int i : ids) {
+                addPreferenceList(i, category, res, screen, entries, entryValues);
+            }
+
+        }
     }
 
 }

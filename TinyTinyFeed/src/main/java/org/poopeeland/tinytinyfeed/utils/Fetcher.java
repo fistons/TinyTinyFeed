@@ -5,28 +5,25 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.androidnetworking.AndroidNetworking;
-import com.rx2androidnetworking.Rx2AndroidNetworking;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.poopeeland.tinytinyfeed.R;
 import org.poopeeland.tinytinyfeed.TinyTinyFeedWidget;
 import org.poopeeland.tinytinyfeed.exceptions.CheckException;
-import org.poopeeland.tinytinyfeed.exceptions.TtrssError;
+import org.poopeeland.tinytinyfeed.exceptions.TtRssError;
 import org.poopeeland.tinytinyfeed.model.Article;
 import org.poopeeland.tinytinyfeed.model.Category;
 import org.poopeeland.tinytinyfeed.model.JsonWrapper;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -35,9 +32,12 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import io.reactivex.schedulers.Schedulers;
 import okhttp3.Credentials;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import static org.poopeeland.tinytinyfeed.TinyTinyFeedWidget.JSON_STORAGE_FILENAME_TEMPLATE;
 
@@ -72,6 +72,8 @@ public class Fetcher {
 
     private final Context context;
 
+    private final OkHttpClient httpClient;
+
     private final String url;
     private final String user;
     private final String password;
@@ -100,7 +102,7 @@ public class Fetcher {
         this.filenameTemplate = context.getApplicationContext().getFilesDir() + File.separator + JSON_STORAGE_FILENAME_TEMPLATE;
 
         try {
-            AndroidNetworking.initialize(context, getOkHttpClient());
+            this.httpClient = getOkHttpClient();
         } catch (NoSuchAlgorithmException | KeyManagementException ex) {
             throw new FetchException(ex);
         }
@@ -139,6 +141,13 @@ public class Fetcher {
         return builder.build();
     }
 
+    private Request prepareRequest(final JSONObject json) {
+        return new Request.Builder()
+                .url(this.url)
+                .post(RequestBody.create(MediaType.parse("application/json"), json.toString()))
+                .build();
+    }
+
     private String login() throws FetchException {
         Log.d(TAG, "Login to api using " + this.user);
         final JSONObject jsonLogin = new JSONObject();
@@ -150,22 +159,15 @@ public class Fetcher {
             throw new FetchException(ex);
         }
 
-        return Rx2AndroidNetworking.post(this.url)
-                .addJSONObjectBody(jsonLogin)
-                .build()
-                .getJSONObjectObservable()
-                .subscribeOn(Schedulers.io())
-                .map(jsonObject -> {
-                    if (jsonObject.getJSONObject("content").has("error")) {
-                        throw new FetchException("Cant't login!");
-                    } else {
-                        return jsonObject.getJSONObject("content").getString("session_id");
-                    }
-                })
-                .doOnError(err -> {
-                    throw new FetchException("Error while logging in", err);
-                })
-                .blockingFirst();
+        try {
+            Request request = prepareRequest(jsonLogin);
+            Response response = this.httpClient.newCall(request).execute();
+            JSONObject jsonResponse = new JSONObject(response.body().string());
+            checkJsonResponse(jsonResponse);
+            return jsonResponse.getJSONObject("content").getString("session_id");
+        } catch (IOException | JSONException e) {
+            throw new FetchException("Cant't login!", e);
+        }
     }
 
     private void logout(final String sessionId) throws FetchException {
@@ -178,15 +180,22 @@ public class Fetcher {
             throw new FetchException(ex);
         }
 
-        Rx2AndroidNetworking.post(this.url)
-                .addJSONObjectBody(jsonLogin)
-                .build()
-                .getJSONObjectObservable()
-                .subscribeOn(Schedulers.io())
-                .doOnError(err -> {
-                    throw new FetchException("Error while logging out", err);
-                })
-                .subscribe(json -> Log.d(TAG, "Logged out from session " + sessionId));
+        try {
+            Request request = prepareRequest(jsonLogin);
+            Response response = this.httpClient.newCall(request).execute();
+            JSONObject jsonResponse = new JSONObject(response.body().string());
+            checkJsonResponse(jsonResponse);
+        } catch (IOException | JSONException e) {
+            throw new FetchException("Cant't login!", e);
+        }
+    }
+
+    public String testConnection() throws FetchException {
+        Log.d(TAG, "Testing connection...");
+        String session = login();
+        logout(session);
+        Log.d(TAG, "Connection ok!");
+        return session;
     }
 
     public List<Category> fetchCategories() throws FetchException {
@@ -203,28 +212,23 @@ public class Fetcher {
             throw new FetchException(ex);
         }
 
-
-        List<Category> categories = Rx2AndroidNetworking.post(this.url)
-                .addJSONObjectBody(json)
-                .build()
-                .getJSONObjectObservable()
-                .subscribeOn(Schedulers.io())
-                .map(response -> {
-                    List<Category> categories1 = new ArrayList<>();
-                    JSONArray array = response.getJSONArray("content");
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject c = array.getJSONObject(i);
-                        categories1.add(JsonWrapper.fromJson(c.toString(), Category.class));
-                    }
-                    return categories1;
-                })
-                .doOnError(err -> {
-                    throw new FetchException("Error while fetching categories", err);
-                })
-                .blockingFirst();
-
+        List<Category> categories = new ArrayList<>();
+        try {
+            Request request = prepareRequest(json);
+            Response response = this.httpClient.newCall(request).execute();
+            JSONObject jsonResponse = new JSONObject(response.body().string());
+            checkJsonResponse(jsonResponse);
+            JSONArray array = jsonResponse.getJSONArray("content");
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject c = array.getJSONObject(i);
+                categories.add(JsonWrapper.fromJson(c.toString(), Category.class));
+            }
+        } catch (IOException | JSONException e) {
+            throw new FetchException("Error while fetching categories", e);
+        } finally {
+            logout(sessionId);
+        }
         Log.d(TAG, "Categories fetched");
-        logout(sessionId);
 
         return categories;
     }
@@ -243,7 +247,7 @@ public class Fetcher {
                 jsonObject.put("limit", this.numArticles);
                 jsonObject.put("show_excerpt", "true");
                 jsonObject.put("excerpt_length", this.excerptLength);
-                jsonObject.put("force_update", "true");
+                jsonObject.put("force_update", "false"); // TODO Add as on option
                 jsonObject.put("is_cat", "true");
                 jsonObject.put("view_mode", onlyUnread ? "unread" : "all_articles");
             } catch (JSONException ex) {
@@ -252,41 +256,31 @@ public class Fetcher {
             }
 
             Log.d(TAG, "Fetching cat. " + catId + " for widget #" + widgetId + "...");
-            Rx2AndroidNetworking.post(this.url)
-                    .addJSONObjectBody(jsonObject)
-                    .build()
-                    .getJSONObjectObservable()
-                    .subscribeOn(Schedulers.io())
-                    .map(json -> {
-                        List<Article> articles1 = new ArrayList<>();
-                        JSONArray array = json.getJSONArray("content");
-                        for (int i = 0; i < array.length(); i++) {
-                            JSONObject c = array.getJSONObject(i);
-                            articles1.add(JsonWrapper.fromJson(c.toString(), Article.class));
-                        }
-                        return articles1;
-                    })
-                    .onErrorReturn(err -> {
-                        Log.e(TAG, "Error while fetching cat. " + catId + " for widget #" + widgetId + " done!", err);
-                        return Collections.emptyList();
-                    })
-                    .blockingSubscribe(list -> {
-                        articles.addAll(list);
-                        Log.d(TAG, "Fetching cat. " + catId + " for widget #" + widgetId + " done!");
-                    });
+            try {
+                Request request = prepareRequest(jsonObject);
+                Response response = this.httpClient.newCall(request).execute();
+                JSONObject jsonResponse = new JSONObject(response.body().string());
+                checkJsonResponse(jsonResponse);
+                JSONArray array = jsonResponse.getJSONArray("content");
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject c = array.getJSONObject(i);
+                    articles.add(JsonWrapper.fromJson(c.toString(), Article.class));
+                }
+            } catch (IOException | JSONException e) {
+                Log.e(TAG, "Error while fetching cat. " + catId + " for widget #" + widgetId + " done!", e);
+            }
+            Log.d(TAG, "Fetching cat. " + catId + " for widget #" + widgetId + " done!");
         }
-        Log.d(TAG, "Fetching done for widget #" + widgetId);
+        Log.d(TAG, "Fetching done for widget #" + widgetId + " " + articles.size() + " articles fetched");
 
-        List<Article> subList = articles.subList(0, Integer.parseInt(numArticles));
+        List<Article> subList = articles.subList(0, Math.min(Integer.parseInt(numArticles), articles.size()));
         subList.sort((art1, art2) -> {
             if (art1.getUpdated() > art2.getUpdated()) {
                 return -1;
             }
-
             if (art1.getUpdated() < art2.getUpdated()) {
                 return 1;
             }
-
             return 0;
         });
 
@@ -294,7 +288,6 @@ public class Fetcher {
 
         return saveList(subList, widgetId);
     }
-
 
     public void setArticleToRead(final Article article) throws FetchException {
         Log.d(TAG, String.format("Setting article %s set read...", article.getId()));
@@ -312,17 +305,18 @@ public class Fetcher {
             throw new FetchException(ex);
         }
 
-        Rx2AndroidNetworking.post(this.url)
-                .addJSONObjectBody(jsonObject)
-                .build()
-                .getJSONObjectObservable()
-                .subscribeOn(Schedulers.io())
-                .doOnError(err -> {
-                    throw new FetchException("Error while setting article to read", err);
-                })
-                .blockingSubscribe();
+        try {
+            Request request = prepareRequest(jsonObject);
+            Response response = this.httpClient.newCall(request).execute();
+            JSONObject jsonResponse = new JSONObject(response.body().string());
+            checkJsonResponse(jsonResponse);
+        } catch (IOException | JSONException e) {
+            throw new FetchException("Error while setting article to read", e);
+        } finally {
+            logout(session);
+        }
         Log.d(TAG, String.format("Article %s set to read!", article.getId()));
-        logout(session);
+
     }
 
     private List<Article> saveList(final List<Article> articles, final int widgetId) {
@@ -337,41 +331,44 @@ public class Fetcher {
         return articles;
     }
 
-
-    private void checkJsonResponse(final JSONObject response) throws CheckException, JSONException {
-        if (response.getInt("status") != 0) {
-            try {
-                TtrssError reason = TtrssError.valueOf(response.getJSONObject("content").getString("error"));
-                switch (reason) {
-                    case LOGIN_ERROR:
-                        Log.e(TAG, response.getJSONObject("content").getString("error"));
-                        throw new CheckException(this.context.getText(R.string.badLogin).toString());
-                    case CLIENT_PROTOCOL_EXCEPTION:
-                    case UNREACHABLE_TTRSS:
-                    case IO_EXCEPTION:
-                        Log.e(TAG, response.getJSONObject("content").getString("message"));
-                        throw new CheckException(this.context.getString(R.string.connectionError));
-                    case SSL_EXCEPTION:
-                        Log.e(TAG, response.getJSONObject("content").getString("message"));
-                        throw new CheckException(this.context.getString(R.string.ssl_exception_message));
-                    case HTTP_AUTH_REQUIRED:
-                        Log.e(TAG, response.getJSONObject("content").getString("message"));
-                        throw new CheckException(this.context.getString(R.string.connectionAuthError));
-                    case UNSUPPORTED_ENCODING:
-                    case JSON_EXCEPTION:
-                        Log.e(TAG, response.getJSONObject("content").getString("message"));
-                        throw new CheckException(String.format(this.context.getString(R.string.impossibleError), response.getJSONObject("content").getString("message")));
-                    case API_DISABLED:
-                        Log.e(TAG, "API disabled...");
-                        throw new CheckException(this.context.getString(R.string.setupApiDisabled));
-                    default:
-                        Log.e(TAG, response.getJSONObject("content").getString("message"));
-                        throw new CheckException(String.format(this.context.getString(R.string.unknownError), response.getJSONObject("content").getString("message")));
+    private void checkJsonResponse(final JSONObject response) throws FetchException {
+        try {
+            if (response.getInt("status") != 0) {
+                try {
+                    TtRssError reason = TtRssError.valueOf(response.getJSONObject("content").getString("error"));
+                    switch (reason) {
+                        case LOGIN_ERROR:
+                            Log.e(TAG, response.getJSONObject("content").getString("error"));
+                            throw new CheckException(this.context.getText(R.string.badLogin).toString());
+                        case CLIENT_PROTOCOL_EXCEPTION:
+                        case UNREACHABLE_TT_RSS:
+                        case IO_EXCEPTION:
+                            Log.e(TAG, response.getJSONObject("content").getString("message"));
+                            throw new CheckException(this.context.getString(R.string.connectionError));
+                        case SSL_EXCEPTION:
+                            Log.e(TAG, response.getJSONObject("content").getString("message"));
+                            throw new CheckException(this.context.getString(R.string.ssl_exception_message));
+                        case HTTP_AUTH_REQUIRED:
+                            Log.e(TAG, response.getJSONObject("content").getString("message"));
+                            throw new CheckException(this.context.getString(R.string.connectionAuthError));
+                        case UNSUPPORTED_ENCODING:
+                        case JSON_EXCEPTION:
+                            Log.e(TAG, response.getJSONObject("content").getString("message"));
+                            throw new CheckException(String.format(this.context.getString(R.string.impossibleError), response.getJSONObject("content").getString("message")));
+                        case API_DISABLED:
+                            Log.e(TAG, "API disabled...");
+                            throw new CheckException(this.context.getString(R.string.setupApiDisabled));
+                        default:
+                            Log.e(TAG, response.getJSONObject("content").getString("message"));
+                            throw new CheckException(String.format(this.context.getString(R.string.unknownError), response.getJSONObject("content").getString("message")));
+                    }
+                } catch (IllegalArgumentException ex) {
+                    Log.e(TAG, response.getJSONObject("content").getString("message"));
+                    throw new CheckException(String.format(this.context.getString(R.string.unknownError), response.getJSONObject("content").getString("message")));
                 }
-            } catch (IllegalArgumentException ex) {
-                Log.e(TAG, response.getJSONObject("content").getString("message"));
-                throw new CheckException(String.format(this.context.getString(R.string.unknownError), response.getJSONObject("content").getString("message")));
             }
+        } catch (JSONException ex) {
+            throw new FetchException(ex);
         }
     }
 }

@@ -104,17 +104,12 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 25 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="okhttp-3.8.0" level="project" />
     <orderEntry type="library" exported="" name="commons-digester-1.8" level="project" />
-    <orderEntry type="library" exported="" name="reactive-streams-1.0.0" level="project" />
-    <orderEntry type="library" exported="" name="okhttp-3.6.0" level="project" />
-    <orderEntry type="library" exported="" name="rx2-android-networking-1.0.0" level="project" />
     <orderEntry type="library" exported="" name="commons-beanutils-1.8.3" level="project" />
-    <orderEntry type="library" exported="" name="rxandroid-2.0.1" level="project" />
     <orderEntry type="library" exported="" name="commons-validator-1.4.0" level="project" />
-    <orderEntry type="library" exported="" name="gson-2.8.0" level="project" />
-    <orderEntry type="library" exported="" name="rxjava-2.0.6" level="project" />
-    <orderEntry type="library" exported="" name="okio-1.11.0" level="project" />
+    <orderEntry type="library" exported="" name="okio-1.13.0" level="project" />
+    <orderEntry type="library" exported="" name="gson-2.7" level="project" />
     <orderEntry type="library" exported="" name="ambilwarna-2.0.1" level="project" />
-    <orderEntry type="library" exported="" name="android-networking-1.0.0" level="project" />
   </component>
 </module>
