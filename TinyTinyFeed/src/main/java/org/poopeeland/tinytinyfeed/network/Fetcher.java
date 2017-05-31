@@ -11,17 +11,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.poopeeland.tinytinyfeed.R;
-import org.poopeeland.tinytinyfeed.widgets.TinyTinyFeedWidget;
+import org.poopeeland.tinytinyfeed.models.Article;
+import org.poopeeland.tinytinyfeed.models.Category;
+import org.poopeeland.tinytinyfeed.models.JsonWrapper;
 import org.poopeeland.tinytinyfeed.network.exceptions.ApiDisabledException;
 import org.poopeeland.tinytinyfeed.network.exceptions.BadCredentialException;
 import org.poopeeland.tinytinyfeed.network.exceptions.FetchException;
 import org.poopeeland.tinytinyfeed.network.exceptions.GeneralHttpException;
 import org.poopeeland.tinytinyfeed.network.exceptions.HttpAuthException;
 import org.poopeeland.tinytinyfeed.network.exceptions.NoInternetException;
+import org.poopeeland.tinytinyfeed.network.exceptions.NotLoggedException;
 import org.poopeeland.tinytinyfeed.network.exceptions.SslException;
-import org.poopeeland.tinytinyfeed.models.Article;
-import org.poopeeland.tinytinyfeed.models.Category;
-import org.poopeeland.tinytinyfeed.models.JsonWrapper;
+import org.poopeeland.tinytinyfeed.widgets.TinyTinyFeedWidget;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -134,6 +135,45 @@ public class Fetcher {
         } catch (IOException | JSONException e) {
             throw new FetchException(e);
         }
+    }
+
+    private static Response checkHttpResponse(final Response response) throws FetchException {
+        if (!response.isSuccessful()) {
+            Log.e(TAG, "Http error: " + response.code());
+            switch (response.code()) {
+                case 401:
+                case 403:
+                    throw new HttpAuthException();
+                default:
+                    throw new GeneralHttpException();
+            }
+        }
+        return response;
+    }
+
+    private static JSONObject checkJsonResponse(final JSONObject response) throws FetchException {
+        try {
+            if (response.getInt("status") != 0) {
+                String reason = response.getJSONObject("content").getString("error").toUpperCase();
+                switch (reason) {
+                    case "LOGIN_ERROR":
+                        Log.e(TAG, reason);
+                        throw new BadCredentialException();
+                    case "NOT_LOGGED_IN":
+                        Log.e(TAG, "Not logged in");
+                        throw new NotLoggedException();
+                    case "API_DISABLED":
+                        Log.e(TAG, "API disabled...");
+                        throw new ApiDisabledException();
+                    default:
+                        Log.e(TAG, response.getJSONObject("content").getString("message"));
+                        throw new FetchException("Unknown error while checking JSON response");
+                }
+            }
+        } catch (JSONException ex) {
+            throw new FetchException("Impossible to parse JSON response");
+        }
+        return response;
     }
 
     private void checkIfNetworkAvailable() throws NoInternetException {
@@ -366,41 +406,5 @@ public class Fetcher {
         }
 
         return articles;
-    }
-
-    private static Response checkHttpResponse(final Response response) throws FetchException {
-        if (!response.isSuccessful()) {
-            Log.e(TAG, "Http error: " + response.code());
-            switch (response.code()) {
-                case 401:
-                case 403:
-                    throw new HttpAuthException();
-                default:
-                    throw new GeneralHttpException();
-            }
-        }
-        return response;
-    }
-
-    private static JSONObject checkJsonResponse(final JSONObject response) throws FetchException {
-        try {
-            if (response.getInt("status") != 0) {
-                String reason = response.getJSONObject("content").getString("error").toUpperCase();
-                switch (reason) {
-                    case "LOGIN_ERROR":
-                        Log.e(TAG, reason);
-                        throw new BadCredentialException();
-                    case "API_DISABLED":
-                        Log.e(TAG, "API disabled...");
-                        throw new ApiDisabledException();
-                    default:
-                        Log.e(TAG, response.getJSONObject("content").getString("message"));
-                        throw new FetchException("Unknown error while checking JSON response");
-                }
-            }
-        } catch (JSONException ex) {
-            throw new FetchException("Impossible to parse JSON response");
-        }
-        return response;
     }
 }
