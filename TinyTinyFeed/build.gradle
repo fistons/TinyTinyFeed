@@ -32,7 +32,7 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 25
-        versionCode 17
+        versionCode 18
 
         jackOptions {
             enabled true
