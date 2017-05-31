@@ -29,4 +29,5 @@ proguard/
 .idea/
 .gradle/
 build/
+captures/
 projectFilesBackup/
