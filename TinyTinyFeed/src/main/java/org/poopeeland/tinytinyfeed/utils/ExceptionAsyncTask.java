@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import org.poopeeland.tinytinyfeed.R;
 import org.poopeeland.tinytinyfeed.network.exceptions.ApiDisabledException;
 import org.poopeeland.tinytinyfeed.network.exceptions.BadCredentialException;
 import org.poopeeland.tinytinyfeed.network.exceptions.GeneralHttpException;
@@ -18,14 +17,12 @@ import org.poopeeland.tinytinyfeed.network.exceptions.SslException;
  * Created by emr on 31/05/2017.
  */
 
-public abstract class ExceptionAsyncTask<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> {
+public abstract class ExceptionAsyncTask<P, T, R> extends AsyncTask<P, T, R> {
 
     private static final String TAG = ExceptionAsyncTask.class.getName();
-
-    private Exception exception = null;
-    private Params[] params;
-
     private final Context context;
+    private Exception exception = null;
+    private P[] params;
 
     public ExceptionAsyncTask(final Context context) {
         this.context = context;
@@ -33,7 +30,7 @@ public abstract class ExceptionAsyncTask<Params, Progress, Result> extends Async
 
     @Override
     @SafeVarargs
-    protected final Result doInBackground(final Params... params) {
+    protected final R doInBackground(final P... params) {
         try {
             this.params = params;
             return doInBackground();
@@ -44,10 +41,10 @@ public abstract class ExceptionAsyncTask<Params, Progress, Result> extends Async
         }
     }
 
-    protected abstract Result doInBackground() throws Exception;
+    protected abstract R doInBackground() throws Exception;
 
     @Override
-    protected final void onPostExecute(final Result result) {
+    protected final void onPostExecute(final R result) {
         super.onPostExecute(result);
         if (exception != null) {
             handleException();
@@ -55,9 +52,9 @@ public abstract class ExceptionAsyncTask<Params, Progress, Result> extends Async
         onSafePostExecute(result);
     }
 
-    protected abstract void onSafePostExecute(final Result result);
+    protected abstract void onSafePostExecute(final R result);
 
-    protected Params[] getParams() {
+    protected P[] getParams() {
         return params;
     }
 
@@ -65,17 +62,17 @@ public abstract class ExceptionAsyncTask<Params, Progress, Result> extends Async
         try {
             throw this.exception;
         } catch (NoInternetException ex) {
-            Toast.makeText(context, R.string.noInternetConnection, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, org.poopeeland.tinytinyfeed.R.string.noInternetConnection, Toast.LENGTH_SHORT).show();
         } catch (BadCredentialException e) {
-            Toast.makeText(context, R.string.badLogin, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, org.poopeeland.tinytinyfeed.R.string.badLogin, Toast.LENGTH_SHORT).show();
         } catch (GeneralHttpException e) {
-            Toast.makeText(context, R.string.connectionError, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, org.poopeeland.tinytinyfeed.R.string.connectionError, Toast.LENGTH_SHORT).show();
         } catch (SslException e) {
-            Toast.makeText(context, R.string.ssl_exception_message, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, org.poopeeland.tinytinyfeed.R.string.ssl_exception_message, Toast.LENGTH_SHORT).show();
         } catch (HttpAuthException e) {
-            Toast.makeText(context, R.string.connectionAuthError, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, org.poopeeland.tinytinyfeed.R.string.connectionAuthError, Toast.LENGTH_SHORT).show();
         } catch (ApiDisabledException e) {
-            Toast.makeText(context, R.string.setupApiDisabled, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, org.poopeeland.tinytinyfeed.R.string.setupApiDisabled, Toast.LENGTH_SHORT).show();
         } catch (Throwable e) {
             Toast.makeText(context, "Unexpected error: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
