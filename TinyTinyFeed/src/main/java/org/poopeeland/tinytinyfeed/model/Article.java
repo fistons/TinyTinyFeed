@@ -10,7 +10,7 @@ import java.util.Date;
  * Created by setdemr on 27/09/2016.
  */
 @SuppressWarnings("unused")
-public class Article implements Serializable {
+public class Article implements Serializable, Comparable<Article> {
     public static final long serialVersionUID = 1L;
     private static final DateFormat SDF = DateFormat.getDateTimeInstance();
 
@@ -80,5 +80,16 @@ public class Article implements Serializable {
 
     public void setUpdated(long updated) {
         this.updated = updated;
+    }
+
+    @Override
+    public int compareTo(final Article o) {
+        if (this.getUpdated() > o.getUpdated()) {
+            return -1;
+        }
+        if (this.getUpdated() < o.getUpdated()) {
+            return 1;
+        }
+        return 0;
     }
 }

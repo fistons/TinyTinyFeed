@@ -24,6 +24,7 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -38,6 +39,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 import static org.poopeeland.tinytinyfeed.TinyTinyFeedWidget.JSON_STORAGE_FILENAME_TEMPLATE;
 
@@ -108,6 +110,17 @@ public class Fetcher {
         }
     }
 
+    private static JSONObject parseResponse(final Response response) throws FetchException {
+        try {
+            ResponseBody body = response.body();
+            if (body == null) {
+                throw new FetchException("HTTP Response body is null!");
+            }
+            return new JSONObject(body.string());
+        } catch (IOException | JSONException e) {
+            throw new FetchException(e);
+        }
+    }
 
     private OkHttpClient getOkHttpClient() throws NoSuchAlgorithmException, KeyManagementException {
         Log.d(TAG, "Creating http client");
@@ -162,7 +175,7 @@ public class Fetcher {
         try {
             Request request = prepareRequest(jsonLogin);
             Response response = this.httpClient.newCall(request).execute();
-            JSONObject jsonResponse = new JSONObject(response.body().string());
+            JSONObject jsonResponse = parseResponse(response);
             checkJsonResponse(jsonResponse);
             return jsonResponse.getJSONObject("content").getString("session_id");
         } catch (IOException | JSONException e) {
@@ -183,9 +196,9 @@ public class Fetcher {
         try {
             Request request = prepareRequest(jsonLogin);
             Response response = this.httpClient.newCall(request).execute();
-            JSONObject jsonResponse = new JSONObject(response.body().string());
+            JSONObject jsonResponse = parseResponse(response);
             checkJsonResponse(jsonResponse);
-        } catch (IOException | JSONException e) {
+        } catch (IOException e) {
             throw new FetchException("Cant't login!", e);
         }
     }
@@ -216,7 +229,7 @@ public class Fetcher {
         try {
             Request request = prepareRequest(json);
             Response response = this.httpClient.newCall(request).execute();
-            JSONObject jsonResponse = new JSONObject(response.body().string());
+            JSONObject jsonResponse = parseResponse(response);
             checkJsonResponse(jsonResponse);
             JSONArray array = jsonResponse.getJSONArray("content");
             for (int i = 0; i < array.length(); i++) {
@@ -259,7 +272,7 @@ public class Fetcher {
             try {
                 Request request = prepareRequest(jsonObject);
                 Response response = this.httpClient.newCall(request).execute();
-                JSONObject jsonResponse = new JSONObject(response.body().string());
+                JSONObject jsonResponse = parseResponse(response);
                 checkJsonResponse(jsonResponse);
                 JSONArray array = jsonResponse.getJSONArray("content");
                 for (int i = 0; i < array.length(); i++) {
@@ -273,17 +286,8 @@ public class Fetcher {
         }
         Log.d(TAG, "Fetching done for widget #" + widgetId + " " + articles.size() + " articles fetched");
 
+        Collections.sort(articles);
         List<Article> subList = articles.subList(0, Math.min(Integer.parseInt(numArticles), articles.size()));
-        subList.sort((art1, art2) -> {
-            if (art1.getUpdated() > art2.getUpdated()) {
-                return -1;
-            }
-            if (art1.getUpdated() < art2.getUpdated()) {
-                return 1;
-            }
-            return 0;
-        });
-
         logout(session);
 
         return saveList(subList, widgetId);
@@ -308,9 +312,9 @@ public class Fetcher {
         try {
             Request request = prepareRequest(jsonObject);
             Response response = this.httpClient.newCall(request).execute();
-            JSONObject jsonResponse = new JSONObject(response.body().string());
+            JSONObject jsonResponse = parseResponse(response);
             checkJsonResponse(jsonResponse);
-        } catch (IOException | JSONException e) {
+        } catch (IOException e) {
             throw new FetchException("Error while setting article to read", e);
         } finally {
             logout(session);
