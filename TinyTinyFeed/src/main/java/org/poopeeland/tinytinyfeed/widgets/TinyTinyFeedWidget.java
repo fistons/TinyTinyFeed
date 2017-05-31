@@ -46,6 +46,7 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
     public static final String NUM_ARTICLE_KEY = "org.poopeeland.tinytinyfeed.NUM_ARTICLE_KEY";
     public static final String ALL_SLL_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_SSL_SELF";
     public static final String ALL_HOST_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_SSL_HOSTNAME";
+    public static final String FORCE_UPDATE_KEY = "org.poopeeland.tinytinyfeed.FORCE_UPDATE";
     public static final String CHECKED = "org.poopeeland.tinytinyfeed.CHECKED";
     public static final String WIDGET_CATEGORIES_KEY = "org.poopeeland.tinytinyfeed.WIDGET_%d_CATEGORIES";
     public static final String JSON_STORAGE_FILENAME_TEMPLATE = "listArticles_%d.json";
