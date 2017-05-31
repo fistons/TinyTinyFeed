@@ -12,6 +12,7 @@ import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.poopeeland.tinytinyfeed.R;
 import org.poopeeland.tinytinyfeed.TinyTinyFeedWidget;
@@ -49,16 +50,12 @@ public class SettingsFragment extends PreferenceFragment {
 
         SharedPreferences preferences = screen.getSharedPreferences();
         if (ids.length > 0 && preferences.getBoolean(TinyTinyFeedWidget.CHECKED, false)) {
-            PreferenceCategory category = new PreferenceCategory(screen.getContext());
-            category.setTitle(R.string.choose_category_title);
-            screen.addPreference(category);
-
             try {
-                AsyncCategoryFetcher fetcher = new AsyncCategoryFetcher(preferences, ids, category, res, screen);
+                AsyncCategoryFetcher fetcher = new AsyncCategoryFetcher(preferences, ids, res, screen);
                 fetcher.execute();
             } catch (FetchException e) {
-                Log.e(TAG, "Data fetching exception", e);
-                //TODO Add a Toast here.
+                Log.e(TAG, "Exception while creating the fetcher", e);
+                Toast.makeText(screen.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
             }
 
         }
@@ -90,35 +87,29 @@ public class SettingsFragment extends PreferenceFragment {
         category.addPreference(p);
     }
 
-    private class AsyncCategoryFetcher extends AsyncTask<Void, Void, Void> {
+    private class AsyncCategoryFetcher extends AsyncTask<Void, Void, List<Category>> {
 
         private final Context context;
         private final int[] ids;
-        private final PreferenceCategory category;
         private final Resources res;
         private final PreferenceScreen screen;
-        private final List<Category> categories;
         private final Fetcher fetcher;
 
         public AsyncCategoryFetcher(final SharedPreferences preferences,
                                     final int[] ids,
-                                    final PreferenceCategory category,
                                     final Resources res,
                                     final PreferenceScreen screen) throws FetchException {
             this.context = screen.getContext();
             this.ids = ids;
-            this.category = category;
             this.res = res;
             this.screen = screen;
-            this.categories = new ArrayList<>();
-            fetcher = new Fetcher(preferences, this.context);
+            this.fetcher = new Fetcher(preferences, this.context);
         }
 
         @Override
-        protected Void doInBackground(final Void... params) {
-
+        protected List<Category> doInBackground(final Void... params) {
             try {
-                this.categories.addAll(fetcher.fetchCategories());
+                return fetcher.fetchCategories();
             } catch (FetchException e) {
                 Log.e(TAG, "Error while fetching categories", e);
             }
@@ -126,8 +117,17 @@ public class SettingsFragment extends PreferenceFragment {
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+        protected void onPostExecute(final List<Category> categories) {
+            super.onPostExecute(categories);
+
+            if (categories == null) {
+                Toast.makeText(screen.getContext(), "no categories", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            PreferenceCategory category = new PreferenceCategory(screen.getContext());
+            category.setTitle(R.string.choose_category_title);
+            screen.addPreference(category);
 
             final List<CharSequence> entriesList = new ArrayList<>();
             final List<CharSequence> entryValuesList = new ArrayList<>();
