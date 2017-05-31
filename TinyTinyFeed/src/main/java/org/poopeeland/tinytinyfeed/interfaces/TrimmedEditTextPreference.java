@@ -1,4 +1,4 @@
-package org.poopeeland.tinytinyfeed.settings;
+package org.poopeeland.tinytinyfeed.interfaces;
 
 import android.content.Context;
 import android.preference.EditTextPreference;

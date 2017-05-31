@@ -2,17 +2,17 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory android:title="@string/preference_category_ttrss_settings">
-        <org.poopeeland.tinytinyfeed.settings.TrimmedEditTextPreference
+        <org.poopeeland.tinytinyfeed.interfaces.TrimmedEditTextPreference
             android:defaultValue="@string/preference_ttrss_url_default_value"
             android:inputType="textUri"
             android:key="org.poopeeland.tinytinyfeed.PREFERENCE_URL"
             android:summary="@string/preference_ttrss_url_summary"
             android:title="@string/setupUrlLabel" />
-        <org.poopeeland.tinytinyfeed.settings.TrimmedEditTextPreference
+        <org.poopeeland.tinytinyfeed.interfaces.TrimmedEditTextPreference
             android:key="org.poopeeland.tinytinyfeed.PREFERENCE_USER"
             android:summary="@string/preference_ttrss_user_summary"
             android:title="@string/setupUserLabel" />
-        <org.poopeeland.tinytinyfeed.settings.TrimmedEditTextPreference
+        <org.poopeeland.tinytinyfeed.interfaces.TrimmedEditTextPreference
             android:inputType="textPassword"
             android:key="org.poopeeland.tinytinyfeed.PREFERENCE_PASSWORD"
             android:summary="@string/preference_ttrss_password_summary"
@@ -29,11 +29,11 @@
             android:title="@string/preference_ssl_check_hostname_summary"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/preference_category_http_auth_settings">
-        <org.poopeeland.tinytinyfeed.settings.TrimmedEditTextPreference
+        <org.poopeeland.tinytinyfeed.interfaces.TrimmedEditTextPreference
             android:key="org.poopeeland.tinytinyfeed.PREFERENCE_HTTP_USER"
             android:summary="@string/preference_httpauth_user_summary"
             android:title="@string/httpAuthUserLabel" />
-        <org.poopeeland.tinytinyfeed.settings.TrimmedEditTextPreference
+        <org.poopeeland.tinytinyfeed.interfaces.TrimmedEditTextPreference
             android:inputType="textPassword"
             android:key="org.poopeeland.tinytinyfeed.PREFERENCE_HTTP_PASSWORD"
             android:summary="@string/preference_httpauth_password_summary"
@@ -86,13 +86,13 @@
             android:key="org.poopeeland.tinytinyfeed.ONLY_UNREAD"
             android:summary="@string/preference_unread_only_summary"
             android:title="@string/setupRetrieveOnlyUnread" />
-        <org.poopeeland.tinytinyfeed.settings.TrimmedEditTextPreference
+        <org.poopeeland.tinytinyfeed.interfaces.TrimmedEditTextPreference
             android:defaultValue="@string/preference_article_number_default_value"
             android:inputType="numberDecimal"
             android:key="org.poopeeland.tinytinyfeed.NUM_ARTICLE_KEY"
             android:summary="@string/preference_article_number_summary"
             android:title="@string/setupNumArticles" />
-        <org.poopeeland.tinytinyfeed.settings.TrimmedEditTextPreference
+        <org.poopeeland.tinytinyfeed.interfaces.TrimmedEditTextPreference
             android:defaultValue="@string/preference_excerpt_lenght_default_value"
             android:inputType="numberDecimal"
             android:key="org.poopeeland.tinytinyfeed.EXCERPT_LENGHT_KEY"

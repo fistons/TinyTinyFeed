@@ -1,8 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/widgetLayoutId"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="@dimen/widget_margin">
+    android:id="@+id/widgetLayoutId"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/widget_margin">
 
     <ListView
         android:id="@+id/listViewWidget"
@@ -12,7 +12,7 @@
         android:layout_gravity="start|top"
         android:clickable="true"
         android:fastScrollAlwaysVisible="false"
-        android:fastScrollEnabled="true"/>
+        android:fastScrollEnabled="true" />
 
     <TextView
         android:id="@+id/widgetEmptyList"
@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:text="@string/emptyWidgetListTest"/>
+        android:text="@string/emptyWidgetListTest" />
 
     <TextView
         android:id="@+id/lastUpdateText"
@@ -33,7 +33,7 @@
         android:layout_toStartOf="@+id/refreshButton"
         android:text="@string/defaultLastUpdateText"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textStyle="bold|italic"/>
+        android:textStyle="bold|italic" />
 
     <ImageButton
         android:id="@+id/refreshButton"
@@ -46,7 +46,7 @@
         android:layout_alignTop="@+id/lastUpdateText"
         android:background="@android:color/transparent"
         android:contentDescription="@string/widget_refresh"
-        android:src="@android:drawable/stat_notify_sync_noanim"/>
+        android:src="@android:drawable/stat_notify_sync_noanim" />
 
 
 </RelativeLayout>

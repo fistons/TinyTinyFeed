@@ -1,15 +1,19 @@
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.2'
     }
+
+
 }
 apply plugin: 'com.android.application'
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 android {
@@ -22,17 +26,23 @@ android {
             exclude group: 'commons-logging', module: 'commons-logging'
         }
         compile 'com.google.code.gson:gson:2.7'
+
+        compile 'com.squareup.okhttp3:okhttp:3.8.0'
     }
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 19
         targetSdkVersion 25
         versionCode 15
+
+        jackOptions {
+            enabled true
+        }
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
 }

@@ -6,7 +6,7 @@
     android:layout_gravity="start|center_vertical">
 
     <fragment
-        android:name="org.poopeeland.tinytinyfeed.settings.SettingsFragment"
+        android:name="org.poopeeland.tinytinyfeed.fragments.SettingsFragment"
         android:id="@+id/settingFragment"
         android:layout_width="fill_parent"
         android:layout_height="0dp"

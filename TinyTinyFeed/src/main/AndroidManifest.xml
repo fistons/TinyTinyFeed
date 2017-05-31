@@ -15,7 +15,7 @@
         tools:ignore="GoogleAppIndexingWarning">
 
         <activity
-            android:name="org.poopeeland.tinytinyfeed.settings.SettingsActivity"
+            android:name="org.poopeeland.tinytinyfeed.activities.SettingsActivity"
             android:label="@string/preference_activity_title">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
@@ -31,16 +31,16 @@
         </activity>
 
         <activity
-            android:name=".widget.ArticleReadActivity"
+            android:name=".activities.ArticleReadActivity"
             android:excludeFromRecents="true"
             android:noHistory="true"
             android:theme="@android:style/Theme.NoDisplay" />
 
         <service
-            android:name="org.poopeeland.tinytinyfeed.widget.WidgetService"
+            android:name="org.poopeeland.tinytinyfeed.services.WidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
-        <receiver android:name="org.poopeeland.tinytinyfeed.TinyTinyFeedWidget">
+        <receiver android:name="org.poopeeland.tinytinyfeed.widgets.TinyTinyFeedWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
