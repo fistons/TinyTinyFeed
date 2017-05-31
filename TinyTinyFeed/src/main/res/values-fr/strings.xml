@@ -7,7 +7,7 @@
     <string name="setupRetrieveOnlyUnread">Récuperer uniquement les articles non lus</string>
     <string name="httpAuthUserLabel">Login :</string>
     <string name="httpAuthPasswordLabel">Mot de passe:</string>>
-    <string name="badLogin">Vérifiez votre login/mot de passe</string>
+    <string name="badLogin">Veuillez vérifiez votre login/mot de passe</string>
     <string name="setupNumArticles">Nombre d\'articles à récupérer</string>
     <string name="emptyWidgetListTest">Aucun flux a afficher</string>
     <string name="setupCheckButtonText">Vérifier</string>
@@ -15,8 +15,6 @@
     <string name="lastUpdateText">Dernière mise à jour: %s</string>
     <string name="connectionError">Problème de connexion - Vérifiez que le serveur est fonctionnel et que l\'URL est la bonne</string>
     <string name="connectionAuthError">HTTP auth - Veuillez vérifier vos identifiant</string>
-    <string name="impossibleError">LOLWUT?! Comment c\'est possible? Erreur à la con: %s</string>
-    <string name="unknownError">Erreur inconnue: %s</string>
     <string name="noInternetConnection">Aucune connexion internet disponible pour le moment</string>
     <string name="waitTitle">Veuillez patienter</string>
     <string name="waitCheck">Vérification de votre configuration</string>

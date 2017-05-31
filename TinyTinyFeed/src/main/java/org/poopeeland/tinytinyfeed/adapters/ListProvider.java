@@ -1,4 +1,4 @@
-package org.poopeeland.tinytinyfeed.widget;
+package org.poopeeland.tinytinyfeed.adapters;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
@@ -11,10 +11,10 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import org.poopeeland.tinytinyfeed.R;
-import org.poopeeland.tinytinyfeed.TinyTinyFeedWidget;
-import org.poopeeland.tinytinyfeed.model.Article;
-import org.poopeeland.tinytinyfeed.utils.FetchException;
-import org.poopeeland.tinytinyfeed.utils.Fetcher;
+import org.poopeeland.tinytinyfeed.widgets.TinyTinyFeedWidget;
+import org.poopeeland.tinytinyfeed.models.Article;
+import org.poopeeland.tinytinyfeed.network.exceptions.FetchException;
+import org.poopeeland.tinytinyfeed.network.Fetcher;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,15 +27,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import static org.poopeeland.tinytinyfeed.TinyTinyFeedWidget.JSON_STORAGE_FILENAME_TEMPLATE;
-import static org.poopeeland.tinytinyfeed.TinyTinyFeedWidget.WIDGET_CATEGORIES_KEY;
+import static org.poopeeland.tinytinyfeed.widgets.TinyTinyFeedWidget.JSON_STORAGE_FILENAME_TEMPLATE;
+import static org.poopeeland.tinytinyfeed.widgets.TinyTinyFeedWidget.WIDGET_CATEGORIES_KEY;
 
 
 /**
  * ListProvider
  * Created by eric on 11/05/14.
  */
-class ListProvider implements RemoteViewsService.RemoteViewsFactory {
+public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
     private static final String TAG = ListProvider.class.getSimpleName();
     private final Context context;
@@ -45,7 +45,7 @@ class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     private final int widgetId;
     private List<Article> articleList;
 
-    ListProvider(final Context context, final int widgetId) {
+    public ListProvider(final Context context, final int widgetId) {
         this.context = context;
         this.unreadSymbol = this.context.getString(R.string.unreadSymbol);
         this.lastArticlesList = new File(this.context.getApplicationContext().getFilesDir()
@@ -71,12 +71,9 @@ class ListProvider implements RemoteViewsService.RemoteViewsFactory {
         try {
             Log.d(TAG, "Refresh the articles list");
             Set<String> categories = pref.getStringSet(String.format(Locale.getDefault(), WIDGET_CATEGORIES_KEY, this.widgetId), Collections.emptySet());
-            for (String cat : categories) {
-                Log.d(TAG, cat);
-            }
             this.articleList = new Fetcher(this.pref, context).fetchFeeds(this.widgetId, categories);
         } catch (FetchException ex) {
-            Log.e(TAG, "Error while fetching data", ex);
+            Log.e(TAG, "Error while fetching data: " + ex.getMessage(), ex);
             this.articleList = this.loadLastList();
         }
 

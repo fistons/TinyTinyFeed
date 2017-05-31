@@ -1,4 +1,4 @@
-package org.poopeeland.tinytinyfeed;
+package org.poopeeland.tinytinyfeed.widgets;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -11,9 +11,10 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-import org.poopeeland.tinytinyfeed.settings.SettingsActivity;
-import org.poopeeland.tinytinyfeed.widget.ArticleReadActivity;
-import org.poopeeland.tinytinyfeed.widget.WidgetService;
+import org.poopeeland.tinytinyfeed.R;
+import org.poopeeland.tinytinyfeed.activities.SettingsActivity;
+import org.poopeeland.tinytinyfeed.activities.ArticleReadActivity;
+import org.poopeeland.tinytinyfeed.services.WidgetService;
 
 import java.io.File;
 import java.util.Locale;
@@ -21,9 +22,13 @@ import java.util.Locale;
 
 /**
  * Implementation of App Widget functionality.
- * App Widget Configuration implemented in {@link org.poopeeland.tinytinyfeed.settings.SettingsActivity TinyTinyFeedWidgetConfigureActivity}
+ * App Widget Configuration implemented in {@link SettingsActivity TinyTinyFeedWidgetConfigureActivity}
  */
 public class TinyTinyFeedWidget extends AppWidgetProvider {
+
+    private static final String TAG = "TinyTinyFeedWidget";
+    private static final String STATUS_COLOR_KEY = "org.poopeeland.tinytinyfeed.STATUS_COLOR";
+    private static final String BG_COLOR_KEY = "org.poopeeland.tinytinyfeed.BACKGROUND_COLOR";
 
     public static final String URL_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_URL";
     public static final String USER_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_USER";
@@ -37,7 +42,6 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
     public static final String SOURCE_COLOR_KEY = "org.poopeeland.tinytinyfeed.SOURCE_COLOR";
     public static final String TITLE_SIZE_KEY = "org.poopeeland.tinytinyfeed.TITLE_SIZE";
     public static final String TITLE_COLOR_KEY = "org.poopeeland.tinytinyfeed.TITLE_COLOR";
-    public static final String STATUS_COLOR_KEY = "org.poopeeland.tinytinyfeed.STATUS_COLOR";
     public static final String EXCERPT_LENGTH_KEY = "org.poopeeland.tinytinyfeed.EXCERPT_LENGTH_KEY";
     public static final String NUM_ARTICLE_KEY = "org.poopeeland.tinytinyfeed.NUM_ARTICLE_KEY";
     public static final String ALL_SLL_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_SSL_SELF";
@@ -45,8 +49,7 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
     public static final String CHECKED = "org.poopeeland.tinytinyfeed.CHECKED";
     public static final String WIDGET_CATEGORIES_KEY = "org.poopeeland.tinytinyfeed.WIDGET_%d_CATEGORIES";
     public static final String JSON_STORAGE_FILENAME_TEMPLATE = "listArticles_%d.json";
-    public static final String BG_COLOR_KEY = "org.poopeeland.tinytinyfeed.BACKGROUND_COLOR";
-    private static final String TAG = "TinyTinyFeedWidget";
+
 
     /**
      * Return a Pending Intent asking the refresh of the widget
@@ -119,7 +122,7 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
             if (!f.delete()) {
                 Log.e(TAG, f.getAbsolutePath() + " has not been deleted!");
             } else {
-                Log.d(TAG, f.getAbsolutePath() + " not been deleted");
+                Log.d(TAG, f.getAbsolutePath() + " has been deleted");
             }
         }
     }

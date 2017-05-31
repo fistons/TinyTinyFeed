@@ -8,7 +8,7 @@
     <string name="setupRetrieveOnlyUnread">Retrieve only unread article</string>
     <string name="httpAuthUserLabel">Login:</string>
     <string name="httpAuthPasswordLabel">Password:</string>
-    <string name="badLogin">Check your login/password</string>
+    <string name="badLogin">Please check your login/password</string>
     <string name="setupNumArticles">Number of articles to retrieve</string>
     <string name="emptyWidgetListTest">Feed list is empty</string>
     <string name="setupCheckButtonText">Check</string>
@@ -17,8 +17,6 @@
     <string name="unreadSymbol" translatable="false">[*]</string>
     <string name="connectionError">Connection issue - Check if the server is online and if the url is the good one</string>
     <string name="connectionAuthError">HTTP auth - Please check your credentials</string>
-    <string name="impossibleError">LOLWUT?! Diz iz not pozible! LOOK AT ZAT!: %s</string>
-    <string name="unknownError">Unknown issue: %s</string>
     <string name="noInternetConnection">No Internet connection available right now</string>
     <string name="waitTitle">Please wait</string>
     <string name="waitCheck">Checking your configuration</string>

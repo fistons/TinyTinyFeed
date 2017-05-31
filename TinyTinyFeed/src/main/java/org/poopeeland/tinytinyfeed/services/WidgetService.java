@@ -1,8 +1,10 @@
-package org.poopeeland.tinytinyfeed.widget;
+package org.poopeeland.tinytinyfeed.services;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.widget.RemoteViewsService;
+
+import org.poopeeland.tinytinyfeed.adapters.ListProvider;
 
 /**
  * Central service managing the connections to the server

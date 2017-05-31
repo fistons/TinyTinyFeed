@@ -1,4 +1,4 @@
-package org.poopeeland.tinytinyfeed.model;
+package org.poopeeland.tinytinyfeed.models;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;

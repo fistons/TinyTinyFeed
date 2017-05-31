@@ -1,4 +1,4 @@
-package org.poopeeland.tinytinyfeed.model;
+package org.poopeeland.tinytinyfeed.models;
 
 import java.io.Serializable;
 
@@ -17,7 +17,7 @@ public class Category implements Serializable {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(final String id) {
         this.id = id;
     }
 
@@ -25,7 +25,7 @@ public class Category implements Serializable {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
         this.title = title;
     }
 }

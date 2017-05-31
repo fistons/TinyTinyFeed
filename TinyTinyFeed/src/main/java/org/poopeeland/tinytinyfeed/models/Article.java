@@ -1,4 +1,4 @@
-package org.poopeeland.tinytinyfeed.model;
+package org.poopeeland.tinytinyfeed.models;
 
 import java.io.Serializable;
 import java.text.DateFormat;
@@ -30,7 +30,7 @@ public class Article implements Serializable, Comparable<Article> {
         return excerpt;
     }
 
-    public void setExcerpt(String excerpt) {
+    public void setExcerpt(final String excerpt) {
         this.excerpt = excerpt;
     }
 
@@ -38,7 +38,7 @@ public class Article implements Serializable, Comparable<Article> {
         return feedTitle;
     }
 
-    public void setFeedTitle(String feedTitle) {
+    public void setFeedTitle(final String feedTitle) {
         this.feedTitle = feedTitle;
     }
 
@@ -46,7 +46,7 @@ public class Article implements Serializable, Comparable<Article> {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(final int id) {
         this.id = id;
     }
 
@@ -54,7 +54,7 @@ public class Article implements Serializable, Comparable<Article> {
         return link;
     }
 
-    public void setLink(String link) {
+    public void setLink(final String link) {
         this.link = link;
     }
 
@@ -62,7 +62,7 @@ public class Article implements Serializable, Comparable<Article> {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
         this.title = title;
     }
 
@@ -70,7 +70,7 @@ public class Article implements Serializable, Comparable<Article> {
         return unread;
     }
 
-    public void setUnread(boolean unread) {
+    public void setUnread(final boolean unread) {
         this.unread = unread;
     }
 
@@ -78,7 +78,7 @@ public class Article implements Serializable, Comparable<Article> {
         return updated;
     }
 
-    public void setUpdated(long updated) {
+    public void setUpdated(final long updated) {
         this.updated = updated;
     }
 

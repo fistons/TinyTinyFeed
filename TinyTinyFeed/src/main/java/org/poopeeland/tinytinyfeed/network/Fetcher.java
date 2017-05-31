@@ -1,25 +1,33 @@
-package org.poopeeland.tinytinyfeed.utils;
+package org.poopeeland.tinytinyfeed.network;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.poopeeland.tinytinyfeed.R;
-import org.poopeeland.tinytinyfeed.TinyTinyFeedWidget;
-import org.poopeeland.tinytinyfeed.exceptions.CheckException;
-import org.poopeeland.tinytinyfeed.exceptions.TtRssError;
-import org.poopeeland.tinytinyfeed.model.Article;
-import org.poopeeland.tinytinyfeed.model.Category;
-import org.poopeeland.tinytinyfeed.model.JsonWrapper;
+import org.poopeeland.tinytinyfeed.widgets.TinyTinyFeedWidget;
+import org.poopeeland.tinytinyfeed.network.exceptions.ApiDisabledException;
+import org.poopeeland.tinytinyfeed.network.exceptions.BadCredentialException;
+import org.poopeeland.tinytinyfeed.network.exceptions.FetchException;
+import org.poopeeland.tinytinyfeed.network.exceptions.GeneralHttpException;
+import org.poopeeland.tinytinyfeed.network.exceptions.HttpAuthException;
+import org.poopeeland.tinytinyfeed.network.exceptions.NoInternetException;
+import org.poopeeland.tinytinyfeed.network.exceptions.SslException;
+import org.poopeeland.tinytinyfeed.models.Article;
+import org.poopeeland.tinytinyfeed.models.Category;
+import org.poopeeland.tinytinyfeed.models.JsonWrapper;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
@@ -29,10 +37,13 @@ import java.util.List;
 import java.util.Set;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLHandshakeException;
+import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import okhttp3.Call;
 import okhttp3.Credentials;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -41,7 +52,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-import static org.poopeeland.tinytinyfeed.TinyTinyFeedWidget.JSON_STORAGE_FILENAME_TEMPLATE;
+import static org.poopeeland.tinytinyfeed.widgets.TinyTinyFeedWidget.JSON_STORAGE_FILENAME_TEMPLATE;
 
 /**
  * Fetch the datas.
@@ -111,13 +122,36 @@ public class Fetcher {
     }
 
     private static JSONObject parseResponse(final Response response) throws FetchException {
+        checkHttpResponse(response);
         try {
             ResponseBody body = response.body();
             if (body == null) {
                 throw new FetchException("HTTP Response body is null!");
             }
-            return new JSONObject(body.string());
+            return checkJsonResponse(new JSONObject(body.string()));
         } catch (IOException | JSONException e) {
+            throw new FetchException(e);
+        }
+    }
+
+    private void checkIfNetworkAvailable() throws NoInternetException {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        if (activeNetworkInfo == null || !activeNetworkInfo.isConnected()) {
+            throw new NoInternetException();
+        }
+    }
+
+    private Response call(final Request request) throws FetchException {
+        Call call = this.httpClient.newCall(request);
+        try {
+            return call.execute();
+        } catch (SSLHandshakeException | SSLPeerUnverifiedException ex) {
+            throw new SslException();
+        } catch (UnknownHostException ex) {
+            throw new GeneralHttpException();
+        } catch (IOException e) {
             throw new FetchException(e);
         }
     }
@@ -144,10 +178,16 @@ public class Fetcher {
 
         if (!this.httpAuthUser.isEmpty()) {
             Log.d(TAG, "Using HTTP basic auth with user " + this.httpAuthUser);
-            builder.authenticator((route, response) ->
-                    response.request().newBuilder()
-                            .header("Authorization", Credentials.basic(httpAuthUser, httpAuthPassword))
-                            .build());
+
+            builder.authenticator((route, response) -> {
+                String credentials = Credentials.basic(httpAuthUser, httpAuthPassword);
+                if (credentials.equals(response.request().header("Authorization"))) {
+                    return null; // If we already failed with these credentials, don't retry.
+                }
+                return response.request().newBuilder()
+                        .header("Authorization", credentials)
+                        .build();
+            });
         }
 
         Log.d(TAG, "Http client created");
@@ -174,12 +214,11 @@ public class Fetcher {
 
         try {
             Request request = prepareRequest(jsonLogin);
-            Response response = this.httpClient.newCall(request).execute();
+            Response response = call(request);
             JSONObject jsonResponse = parseResponse(response);
-            checkJsonResponse(jsonResponse);
             return jsonResponse.getJSONObject("content").getString("session_id");
-        } catch (IOException | JSONException e) {
-            throw new FetchException("Cant't login!", e);
+        } catch (JSONException e) {
+            throw new FetchException("Cant't login! " + e.getMessage(), e);
         }
     }
 
@@ -193,26 +232,23 @@ public class Fetcher {
             throw new FetchException(ex);
         }
 
-        try {
-            Request request = prepareRequest(jsonLogin);
-            Response response = this.httpClient.newCall(request).execute();
-            JSONObject jsonResponse = parseResponse(response);
-            checkJsonResponse(jsonResponse);
-        } catch (IOException e) {
-            throw new FetchException("Cant't login!", e);
-        }
+        Request request = prepareRequest(jsonLogin);
+        Response response = call(request);
+        parseResponse(response);
+
     }
 
-    public String testConnection() throws FetchException {
+    public void testConnection() throws FetchException {
         Log.d(TAG, "Testing connection...");
+        checkIfNetworkAvailable();
         String session = login();
         logout(session);
         Log.d(TAG, "Connection ok!");
-        return session;
     }
 
     public List<Category> fetchCategories() throws FetchException {
         Log.d(TAG, "Fetching categories");
+        checkIfNetworkAvailable();
         final String sessionId = login();
 
         final JSONObject json = new JSONObject();
@@ -228,15 +264,14 @@ public class Fetcher {
         List<Category> categories = new ArrayList<>();
         try {
             Request request = prepareRequest(json);
-            Response response = this.httpClient.newCall(request).execute();
+            Response response = call(request);
             JSONObject jsonResponse = parseResponse(response);
-            checkJsonResponse(jsonResponse);
             JSONArray array = jsonResponse.getJSONArray("content");
             for (int i = 0; i < array.length(); i++) {
                 JSONObject c = array.getJSONObject(i);
                 categories.add(JsonWrapper.fromJson(c.toString(), Category.class));
             }
-        } catch (IOException | JSONException e) {
+        } catch (JSONException e) {
             throw new FetchException("Error while fetching categories", e);
         } finally {
             logout(sessionId);
@@ -248,7 +283,7 @@ public class Fetcher {
 
     public List<Article> fetchFeeds(final int widgetId, final Set<String> categoryIds) throws FetchException {
         Log.d(TAG, "Fetching feeds for widget " + widgetId + " with categories");
-
+        checkIfNetworkAvailable();
         String session = login();
         final List<Article> articles = new ArrayList<>();
         for (String catId : categoryIds) {
@@ -271,15 +306,14 @@ public class Fetcher {
             Log.d(TAG, "Fetching cat. " + catId + " for widget #" + widgetId + "...");
             try {
                 Request request = prepareRequest(jsonObject);
-                Response response = this.httpClient.newCall(request).execute();
+                Response response = call(request);
                 JSONObject jsonResponse = parseResponse(response);
-                checkJsonResponse(jsonResponse);
                 JSONArray array = jsonResponse.getJSONArray("content");
                 for (int i = 0; i < array.length(); i++) {
                     JSONObject c = array.getJSONObject(i);
                     articles.add(JsonWrapper.fromJson(c.toString(), Article.class));
                 }
-            } catch (IOException | JSONException e) {
+            } catch (JSONException e) {
                 Log.e(TAG, "Error while fetching cat. " + catId + " for widget #" + widgetId + " done!", e);
             }
             Log.d(TAG, "Fetching cat. " + catId + " for widget #" + widgetId + " done!");
@@ -295,7 +329,7 @@ public class Fetcher {
 
     public void setArticleToRead(final Article article) throws FetchException {
         Log.d(TAG, String.format("Setting article %s set read...", article.getId()));
-
+        checkIfNetworkAvailable();
         String session = login();
         JSONObject jsonObject = new JSONObject();
         try {
@@ -311,11 +345,8 @@ public class Fetcher {
 
         try {
             Request request = prepareRequest(jsonObject);
-            Response response = this.httpClient.newCall(request).execute();
-            JSONObject jsonResponse = parseResponse(response);
-            checkJsonResponse(jsonResponse);
-        } catch (IOException e) {
-            throw new FetchException("Error while setting article to read", e);
+            Response response = call(request);
+            parseResponse(response);
         } finally {
             logout(session);
         }
@@ -335,44 +366,39 @@ public class Fetcher {
         return articles;
     }
 
-    private void checkJsonResponse(final JSONObject response) throws FetchException {
+    private static Response checkHttpResponse(final Response response) throws FetchException {
+        if (!response.isSuccessful()) {
+            Log.e(TAG, "Http error: " + response.code());
+            switch (response.code()) {
+                case 401:
+                case 403:
+                    throw new HttpAuthException();
+                default:
+                    throw new GeneralHttpException();
+            }
+        }
+        return response;
+    }
+
+    private static JSONObject checkJsonResponse(final JSONObject response) throws FetchException {
         try {
             if (response.getInt("status") != 0) {
-                try {
-                    TtRssError reason = TtRssError.valueOf(response.getJSONObject("content").getString("error"));
-                    switch (reason) {
-                        case LOGIN_ERROR:
-                            Log.e(TAG, response.getJSONObject("content").getString("error"));
-                            throw new CheckException(this.context.getText(R.string.badLogin).toString());
-                        case CLIENT_PROTOCOL_EXCEPTION:
-                        case UNREACHABLE_TT_RSS:
-                        case IO_EXCEPTION:
-                            Log.e(TAG, response.getJSONObject("content").getString("message"));
-                            throw new CheckException(this.context.getString(R.string.connectionError));
-                        case SSL_EXCEPTION:
-                            Log.e(TAG, response.getJSONObject("content").getString("message"));
-                            throw new CheckException(this.context.getString(R.string.ssl_exception_message));
-                        case HTTP_AUTH_REQUIRED:
-                            Log.e(TAG, response.getJSONObject("content").getString("message"));
-                            throw new CheckException(this.context.getString(R.string.connectionAuthError));
-                        case UNSUPPORTED_ENCODING:
-                        case JSON_EXCEPTION:
-                            Log.e(TAG, response.getJSONObject("content").getString("message"));
-                            throw new CheckException(String.format(this.context.getString(R.string.impossibleError), response.getJSONObject("content").getString("message")));
-                        case API_DISABLED:
-                            Log.e(TAG, "API disabled...");
-                            throw new CheckException(this.context.getString(R.string.setupApiDisabled));
-                        default:
-                            Log.e(TAG, response.getJSONObject("content").getString("message"));
-                            throw new CheckException(String.format(this.context.getString(R.string.unknownError), response.getJSONObject("content").getString("message")));
-                    }
-                } catch (IllegalArgumentException ex) {
-                    Log.e(TAG, response.getJSONObject("content").getString("message"));
-                    throw new CheckException(String.format(this.context.getString(R.string.unknownError), response.getJSONObject("content").getString("message")));
+                String reason = response.getJSONObject("content").getString("error").toUpperCase();
+                switch (reason) {
+                    case "LOGIN_ERROR":
+                        Log.e(TAG, reason);
+                        throw new BadCredentialException();
+                    case "API_DISABLED":
+                        Log.e(TAG, "API disabled...");
+                        throw new ApiDisabledException();
+                    default:
+                        Log.e(TAG, response.getJSONObject("content").getString("message"));
+                        throw new FetchException("Unknown error while checking JSON response");
                 }
             }
         } catch (JSONException ex) {
-            throw new FetchException(ex);
+            throw new FetchException("Impossible to parse JSON response");
         }
+        return response;
     }
 }
