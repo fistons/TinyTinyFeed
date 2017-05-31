@@ -59,6 +59,8 @@
     <string name="preference_source_color_summary">Color of the article\'s source</string>
     <string name="preference_status_color_title">Status bar color</string>
     <string name="preference_status_color_summary">Color of the status bar</string>
+    <string name="preference_force_update_title">Force update on server</string>
+    <string name="preference_force_update_summary">Force tt-rss server to update feeds</string>
     <string name="widget_no_setup">Please tap here to configure your widget</string>
     <string name="ssl_exception_message">SSL problem: please check your settings</string>
     <string name="widget_refresh">Refresh</string>

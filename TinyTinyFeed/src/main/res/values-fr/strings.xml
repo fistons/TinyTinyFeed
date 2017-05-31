@@ -62,4 +62,6 @@
     <string name="choose_category_title">Catégories</string>
     <string name="widget_categories_title">Catégories du widget #%1$d</string>
     <string name="widget_categories_summary">Catégories à afficher pour le widget #%1$d</string>
+    <string name="preference_force_update_title">Force la mise à jour du serveur</string>
+    <string name="preference_force_update_summary">Force tt-rss à mettre à jour les flux</string>
 </resources>

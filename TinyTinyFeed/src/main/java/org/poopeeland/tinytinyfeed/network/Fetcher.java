@@ -99,6 +99,7 @@ public class Fetcher {
     private final boolean allowAllSslKey;
     private final boolean allowAllSslHost;
     private final boolean onlyUnread;
+    private final boolean forceUpdate;
 
     public Fetcher(final SharedPreferences preferences, final Context context) throws FetchException {
         this.context = context;
@@ -111,6 +112,7 @@ public class Fetcher {
         this.httpAuthPassword = preferences.getString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, "");
         this.numArticles = preferences.getString(TinyTinyFeedWidget.NUM_ARTICLE_KEY, "");
         this.onlyUnread = preferences.getBoolean(TinyTinyFeedWidget.ONLY_UNREAD_KEY, false);
+        this.forceUpdate = preferences.getBoolean(TinyTinyFeedWidget.FORCE_UPDATE_KEY, false);
         this.excerptLength = preferences.getString(TinyTinyFeedWidget.EXCERPT_LENGTH_KEY, context.getText(R.string.preference_excerpt_lenght_default_value).toString());
         this.filenameTemplate = context.getApplicationContext().getFilesDir() + File.separator + JSON_STORAGE_FILENAME_TEMPLATE;
 
@@ -295,7 +297,7 @@ public class Fetcher {
                 jsonObject.put("limit", this.numArticles);
                 jsonObject.put("show_excerpt", "true");
                 jsonObject.put("excerpt_length", this.excerptLength);
-                jsonObject.put("force_update", "false"); // TODO Add as on option
+                jsonObject.put("force_update", forceUpdate ? "true" : "false"); // TODO Add as on option
                 jsonObject.put("is_cat", "true");
                 jsonObject.put("view_mode", onlyUnread ? "unread" : "all_articles");
             } catch (JSONException ex) {
