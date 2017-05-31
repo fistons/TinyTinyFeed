@@ -7,6 +7,8 @@ package org.poopeeland.tinytinyfeed.utils;
 
 public class FetchException extends Exception {
 
+    public static final long serialVersionUID = 1L;
+
     /**
      * Constructs a new exception with {@code null} as its detail message.
      * The cause is not initialized, and may subsequently be initialized by a
