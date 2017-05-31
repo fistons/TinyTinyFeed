@@ -99,7 +99,7 @@
         <org.poopeeland.tinytinyfeed.interfaces.TrimmedEditTextPreference
             android:defaultValue="@string/preference_excerpt_lenght_default_value"
             android:inputType="numberDecimal"
-            android:key="org.poopeeland.tinytinyfeed.EXCERPT_LENGHT_KEY"
+            android:key="org.poopeeland.tinytinyfeed.EXCERPT_LENGTH_KEY"
             android:summary="@string/preference_article_excerpt_lenght_summary"
             android:title="@string/preference_article_excerpt_lenght" />
         <yuku.ambilwarna.widget.AmbilWarnaPreference

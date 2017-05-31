@@ -1,5 +1,7 @@
 package org.poopeeland.tinytinyfeed.models;
 
+import android.text.Html;
+
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.Date;
@@ -27,7 +29,7 @@ public class Article implements Serializable, Comparable<Article> {
     }
 
     public String getExcerpt() {
-        return excerpt;
+        return Html.fromHtml(excerpt).toString();
     }
 
     public void setExcerpt(final String excerpt) {
@@ -35,7 +37,7 @@ public class Article implements Serializable, Comparable<Article> {
     }
 
     public String getFeedTitle() {
-        return feedTitle;
+        return Html.fromHtml(feedTitle).toString();
     }
 
     public void setFeedTitle(final String feedTitle) {
@@ -59,7 +61,7 @@ public class Article implements Serializable, Comparable<Article> {
     }
 
     public String getTitle() {
-        return title;
+        return Html.fromHtml(title).toString();
     }
 
     public void setTitle(final String title) {
