@@ -25,7 +25,6 @@
     <string name="preference_category_ttrss_settings">tt-rss settings</string>
     <string name="preference_category_ssl_settings">SSL settings</string>
     <string name="preference_category_http_auth_settings">HTTP Authentification (optional)</string>
-    <string name="preference_category_interface_settings">Interface</string>
     <string name="preference_ttrss_url_summary">The URL of your tt-rss server (i.e. http://tt-rss.example.org without /api/ at the end)</string>
     <string name="preference_ttrss_user_summary">Username to connect on tt-rss</string>
     <string name="preference_ttrss_password_summary">Password to connect on tt-rss</string>
@@ -38,7 +37,6 @@
     <string name="preference_article_excerpt_lenght">Excerpt length</string>
     <string name="preference_article_excerpt_lenght_summary">Number of characters to retrieve for the excerpt</string>
     <string name="preference_article_number_summary">The number of article you wish to retrieve</string>
-    <string name="preference_article_number_default_value" translatable="false">20</string>
     <string name="preference_excerpt_lenght_default_value" translatable="false">200</string>
     <string name="preference_ttrss_url_default_value" translatable="false">http://</string>
     <string name="preference_ttrss_url_not_null_or_default">Please enter a valid url</string>
@@ -66,8 +64,11 @@
     <string name="widget_refresh">Refresh</string>
     <string name="nullArticle">Unable to get the article URL</string>
     <string name="widget_update_text">Updating…</string>
-    <string name="choose_category_title">Categories</string>
-    <string name="widget_categories_title">Categories for widget #%1$d </string>
-    <string name="widget_categories_summary">Categories to display for widget #%1$d</string>
+    <string name="widget_configuration_title">Widget configuration</string>
+    <string name="widget_categories_title">Categories for widget %s</string>
+    <string name="widget_categories_summary">Categories to display for widget %s</string>
+    <string name="widget_preference_title">Configuration of the widget %s</string>
+    <string name="widget_name_title">Name</string>
+    <string name="widget_name_summary">Widget\'s name</string>
 
 </resources>

@@ -11,10 +11,10 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import org.poopeeland.tinytinyfeed.R;
-import org.poopeeland.tinytinyfeed.widgets.TinyTinyFeedWidget;
 import org.poopeeland.tinytinyfeed.models.Article;
-import org.poopeeland.tinytinyfeed.network.exceptions.FetchException;
 import org.poopeeland.tinytinyfeed.network.Fetcher;
+import org.poopeeland.tinytinyfeed.network.exceptions.FetchException;
+import org.poopeeland.tinytinyfeed.widgets.TinyTinyFeedWidget;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -99,12 +99,12 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public RemoteViews getViewAt(int position) {
         Article article = articleList.get(position);
-        int textColor = pref.getInt(TinyTinyFeedWidget.TEXT_COLOR_KEY, 0xffffffff);
-        int sourceColor = pref.getInt(TinyTinyFeedWidget.SOURCE_COLOR_KEY, 0xffffffff);
-        int titleColor = pref.getInt(TinyTinyFeedWidget.TITLE_COLOR_KEY, 0xffffffff);
-        float textSize = Float.parseFloat(pref.getString(TinyTinyFeedWidget.TEXT_SIZE_KEY, "10"));
-        float sourceSize = Float.parseFloat(pref.getString(TinyTinyFeedWidget.SOURCE_SIZE_KEY, "10"));
-        float titleSize = Float.parseFloat(pref.getString(TinyTinyFeedWidget.TITLE_SIZE_KEY, "10"));
+        int textColor = pref.getInt(String.format(Locale.getDefault(), TinyTinyFeedWidget.TEXT_COLOR_KEY, widgetId), 0xffffffff);
+        int sourceColor = pref.getInt(String.format(Locale.getDefault(), TinyTinyFeedWidget.SOURCE_COLOR_KEY, widgetId), 0xffffffff);
+        int titleColor = pref.getInt(String.format(Locale.getDefault(), TinyTinyFeedWidget.TITLE_COLOR_KEY, widgetId), 0xffffffff);
+        float textSize = Float.parseFloat(pref.getString(String.format(Locale.getDefault(), TinyTinyFeedWidget.TEXT_SIZE_KEY, widgetId), "10"));
+        float sourceSize = Float.parseFloat(pref.getString(String.format(Locale.getDefault(), TinyTinyFeedWidget.SOURCE_SIZE_KEY, widgetId), "10"));
+        float titleSize = Float.parseFloat(pref.getString(String.format(Locale.getDefault(), TinyTinyFeedWidget.TITLE_SIZE_KEY, widgetId), "10"));
 
         final RemoteViews rv;
         Intent fillInIntent = new Intent();
@@ -126,7 +126,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
             rv.setOnClickFillInIntent(R.id.readArticleLayout, fillInIntent);
         } else {
             rv = new RemoteViews(context.getPackageName(), R.layout.article_layout);
-            if (this.pref.getBoolean(TinyTinyFeedWidget.ONLY_UNREAD_KEY, false)) {
+            if (this.pref.getBoolean(String.format(Locale.getDefault(), TinyTinyFeedWidget.ONLY_UNREAD_KEY, widgetId), false)) {
                 rv.setTextViewText(R.id.title, article.getTitle());
             } else {
                 rv.setTextViewText(R.id.title, String.format("%s %s", unreadSymbol, article.getTitle()));

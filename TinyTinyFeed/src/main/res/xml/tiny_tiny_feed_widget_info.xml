@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="UnusedAttribute"
-    android:minWidth="300dp"
-    android:minHeight="40dp"
-    android:updatePeriodMillis="1800000"
-    android:initialLayout="@layout/configure_widget_layout"
-    android:configure="org.poopeeland.tinytinyfeed.activities.SettingsActivity"
-    android:resizeMode="horizontal|vertical"
-    android:widgetCategory="keyguard|home_screen"
+    android:configure="org.poopeeland.tinytinyfeed.activities.WidgetSettingsActivity"
     android:initialKeyguardLayout="@layout/configure_widget_layout"
-    android:previewImage="@drawable/ic_launcher" />
+    android:initialLayout="@layout/configure_widget_layout"
+    android:minHeight="40dp"
+    android:minWidth="300dp"
+    android:previewImage="@drawable/ic_launcher"
+    android:resizeMode="horizontal|vertical"
+    android:updatePeriodMillis="1800000"
+    android:widgetCategory="keyguard|home_screen"
+    tools:ignore="UnusedAttribute" />

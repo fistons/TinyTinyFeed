@@ -31,6 +31,18 @@
         </activity>
 
         <activity
+            android:name="org.poopeeland.tinytinyfeed.activities.WidgetSettingsActivity"
+            android:label="@string/preference_activity_title">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+            <!--<intent-filter>-->
+            <!--<action android:name="android.intent.action.MANAGE_NETWORK_USAGE" />-->
+            <!--<category android:name="android.intent.category.DEFAULT" />-->
+            <!--</intent-filter>-->
+        </activity>
+
+        <activity
             android:name=".activities.ArticleReadActivity"
             android:excludeFromRecents="true"
             android:noHistory="true"

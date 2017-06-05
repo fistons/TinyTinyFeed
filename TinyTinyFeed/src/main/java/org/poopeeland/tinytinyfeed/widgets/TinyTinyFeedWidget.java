@@ -12,8 +12,8 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 import org.poopeeland.tinytinyfeed.R;
-import org.poopeeland.tinytinyfeed.activities.SettingsActivity;
 import org.poopeeland.tinytinyfeed.activities.ArticleReadActivity;
+import org.poopeeland.tinytinyfeed.activities.SettingsActivity;
 import org.poopeeland.tinytinyfeed.services.WidgetService;
 
 import java.io.File;
@@ -26,37 +26,36 @@ import java.util.Locale;
  */
 public class TinyTinyFeedWidget extends AppWidgetProvider {
 
-    private static final String TAG = "TinyTinyFeedWidget";
-    private static final String STATUS_COLOR_KEY = "org.poopeeland.tinytinyfeed.STATUS_COLOR";
-    private static final String BG_COLOR_KEY = "org.poopeeland.tinytinyfeed.BACKGROUND_COLOR";
-
     public static final String URL_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_URL";
     public static final String USER_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_USER";
     public static final String PASSWORD_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_PASSWORD";
-    public static final String ONLY_UNREAD_KEY = "org.poopeeland.tinytinyfeed.ONLY_UNREAD";
     public static final String HTTP_USER_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_HTTP_USER";
     public static final String HTTP_PASSWORD_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_HTTP_PASSWORD";
-    public static final String TEXT_COLOR_KEY = "org.poopeeland.tinytinyfeed.TEXT_COLOR";
-    public static final String TEXT_SIZE_KEY = "org.poopeeland.tinytinyfeed.TEXT_SIZE";
-    public static final String SOURCE_SIZE_KEY = "org.poopeeland.tinytinyfeed.SOURCE_SIZE";
-    public static final String SOURCE_COLOR_KEY = "org.poopeeland.tinytinyfeed.SOURCE_COLOR";
-    public static final String TITLE_SIZE_KEY = "org.poopeeland.tinytinyfeed.TITLE_SIZE";
-    public static final String TITLE_COLOR_KEY = "org.poopeeland.tinytinyfeed.TITLE_COLOR";
-    public static final String EXCERPT_LENGTH_KEY = "org.poopeeland.tinytinyfeed.EXCERPT_LENGTH_KEY";
-    public static final String NUM_ARTICLE_KEY = "org.poopeeland.tinytinyfeed.NUM_ARTICLE_KEY";
+    public static final String TEXT_COLOR_KEY = "org.poopeeland.tinytinyfeed.TEXT_COLOR_%d";
+    public static final String TEXT_SIZE_KEY = "org.poopeeland.tinytinyfeed.TEXT_SIZE_%d";
+    public static final String SOURCE_SIZE_KEY = "org.poopeeland.tinytinyfeed.SOURCE_SIZE_%d";
+    public static final String SOURCE_COLOR_KEY = "org.poopeeland.tinytinyfeed.SOURCE_COLOR_%d";
+    public static final String TITLE_SIZE_KEY = "org.poopeeland.tinytinyfeed.TITLE_SIZE_%d";
+    public static final String TITLE_COLOR_KEY = "org.poopeeland.tinytinyfeed.TITLE_COLOR_%d";
+    public static final String EXCERPT_LENGTH_KEY = "org.poopeeland.tinytinyfeed.EXCERPT_LENGTH_KEY_%d";
+    public static final String NUM_ARTICLE_KEY = "org.poopeeland.tinytinyfeed.NUM_ARTICLE_KEY_%d";
+    public static final String WIDGET_CATEGORIES_KEY = "org.poopeeland.tinytinyfeed.WIDGET_CATEGORIES_%d";
+    public static final String FORCE_UPDATE_KEY = "org.poopeeland.tinytinyfeed.FORCE_UPDATE_%d";
+    public static final String WIDGET_NAME_KEY = "org.poopeeland.tinytinyfeed.WIDGET_NAME_%d";
+    public static final String STATUS_COLOR_KEY = "org.poopeeland.tinytinyfeed.STATUS_COLOR_%d";
+    public static final String BG_COLOR_KEY = "org.poopeeland.tinytinyfeed.BACKGROUND_COLOR_%d";
+    public static final String ONLY_UNREAD_KEY = "org.poopeeland.tinytinyfeed.ONLY_UNREAD_%d";
     public static final String ALL_SLL_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_SSL_SELF";
     public static final String ALL_HOST_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_SSL_HOSTNAME";
-    public static final String FORCE_UPDATE_KEY = "org.poopeeland.tinytinyfeed.FORCE_UPDATE";
     public static final String CHECKED = "org.poopeeland.tinytinyfeed.CHECKED";
-    public static final String WIDGET_CATEGORIES_KEY = "org.poopeeland.tinytinyfeed.WIDGET_%d_CATEGORIES";
     public static final String JSON_STORAGE_FILENAME_TEMPLATE = "listArticles_%d.json";
-
+    private static final String TAG = "TinyTinyFeedWidget";
 
     /**
      * Return a Pending Intent asking the refresh of the widget
      *
      * @param context the context
-     * @param ids     the ids of the widgets to refresh
+     * @param ids     the ids of the widget to refresh
      * @return a pending intent
      */
     private static PendingIntent actionPendingIntent(final Context context, final int[] ids) {
@@ -71,11 +70,13 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
     public void onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
         Log.d(TAG, "Widget update");
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        int textColor = preferences.getInt(STATUS_COLOR_KEY, 0xffffff);
         if (preferences.getBoolean(CHECKED, false)) {
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.listViewWidget);
             PendingIntent refreshIntent = actionPendingIntent(context, appWidgetIds);
             for (int i : appWidgetIds) {
+                int textColor = preferences.getInt(String.format(Locale.getDefault(), STATUS_COLOR_KEY, i), 0xff0000);
+                int bgColor = preferences.getInt(String.format(Locale.getDefault(), BG_COLOR_KEY, i), 0x80000000);
+
                 Intent intent = new Intent(context, WidgetService.class);
                 intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, i);
                 intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
@@ -88,7 +89,7 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
                 rv.setInt(R.id.refreshButton, "setColorFilter", textColor);
                 rv.setInt(R.id.lastUpdateText, "setTextColor", textColor);
                 rv.setInt(R.id.widgetEmptyList, "setTextColor", textColor);
-                rv.setInt(R.id.widgetLayoutId, "setBackgroundColor", preferences.getInt(BG_COLOR_KEY, 0x80000000));
+                rv.setInt(R.id.widgetLayoutId, "setBackgroundColor", bgColor);
                 Intent startActivityIntent = new Intent(context, ArticleReadActivity.class);
                 PendingIntent startActivityPendingIntent = PendingIntent.getActivity(context, 0, startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                 rv.setPendingIntentTemplate(R.id.listViewWidget, startActivityPendingIntent);
@@ -103,7 +104,7 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, new Intent(context, SettingsActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
             rv.setOnClickPendingIntent(R.id.no_settings_layout, pendingIntent);
-            rv.setInt(R.id.no_settings_layout, "setTextColor", textColor);
+            rv.setInt(R.id.no_settings_layout, "setTextColor", 0xffffff);
             appWidgetManager.updateAppWidget(appWidgetIds, rv);
         }
         super.onUpdate(context, appWidgetManager, appWidgetIds);
@@ -113,10 +114,23 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
     @Override
     public void onDeleted(final Context context, final int[] appWidgetIds) {
         super.onDeleted(context, appWidgetIds);
+
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
         for (int widgetId : appWidgetIds) {
             Log.i(TAG, "Deleting widget " + widgetId);
+            editor.remove(String.format(Locale.getDefault(), TEXT_COLOR_KEY, widgetId));
+            editor.remove(String.format(Locale.getDefault(), TEXT_SIZE_KEY, widgetId));
+            editor.remove(String.format(Locale.getDefault(), SOURCE_SIZE_KEY, widgetId));
+            editor.remove(String.format(Locale.getDefault(), SOURCE_COLOR_KEY, widgetId));
+            editor.remove(String.format(Locale.getDefault(), TITLE_SIZE_KEY, widgetId));
+            editor.remove(String.format(Locale.getDefault(), TITLE_COLOR_KEY, widgetId));
+            editor.remove(String.format(Locale.getDefault(), EXCERPT_LENGTH_KEY, widgetId));
+            editor.remove(String.format(Locale.getDefault(), NUM_ARTICLE_KEY, widgetId));
             editor.remove(String.format(Locale.getDefault(), WIDGET_CATEGORIES_KEY, widgetId));
+            editor.remove(String.format(Locale.getDefault(), FORCE_UPDATE_KEY, widgetId));
+            editor.remove(String.format(Locale.getDefault(), STATUS_COLOR_KEY, widgetId));
+            editor.remove(String.format(Locale.getDefault(), BG_COLOR_KEY, widgetId));
+
             editor.apply();
             File f = new File(context.getApplicationContext().getFilesDir()
                     , String.format(Locale.getDefault(), JSON_STORAGE_FILENAME_TEMPLATE, widgetId));

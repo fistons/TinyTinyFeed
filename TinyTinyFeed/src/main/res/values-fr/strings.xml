@@ -19,7 +19,6 @@
     <string name="waitTitle">Veuillez patienter</string>
     <string name="waitCheck">Vérification de votre configuration</string>
     <string name="setupApiDisabled">Les API semblent désactivées. Veuillez les activer dans les préférences de tt-rss.</string>
-    <string name="preference_category_interface_settings">Interface</string>
     <string name="preference_category_ssl_settings">Configuration SSL</string>
     <string name="preference_category_ttrss_settings">Configuration tt-rss</string>
     <string name="preference_category_http_auth_settings">Authentification HTTP (Optionelle)</string>
@@ -59,9 +58,12 @@
     <string name="preference_status_color_title">Coleur de la barre de status</string>
     <string name="preference_title_color_summary">Couleur des titres des articles</string>
     <string name="preference_title_color_title">Couleur des titres</string>
-    <string name="choose_category_title">Catégories</string>
-    <string name="widget_categories_title">Catégories du widget #%1$d</string>
-    <string name="widget_categories_summary">Catégories à afficher pour le widget #%1$d</string>
+    <string name="widget_categories_title">Catégories du widget %s</string>
+    <string name="widget_categories_summary">Catégories à afficher pour le widget %s</string>
     <string name="preference_force_update_title">Force la mise à jour du serveur</string>
     <string name="preference_force_update_summary">Force tt-rss à mettre à jour les flux</string>
+    <string name="widget_configuration_title">Configuration du widget</string>
+    <string name="widget_preference_title">Configuration du widget %s</string>
+    <string name="widget_name_title">Nom</string>
+    <string name="widget_name_summary">Nom du widget</string>
 </resources>

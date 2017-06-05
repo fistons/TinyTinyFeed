@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="@string/preference_category_ttrss_settings">
         <org.poopeeland.tinytinyfeed.interfaces.TrimmedEditTextPreference
             android:defaultValue="@string/preference_ttrss_url_default_value"
@@ -38,75 +37,6 @@
             android:key="org.poopeeland.tinytinyfeed.PREFERENCE_HTTP_PASSWORD"
             android:summary="@string/preference_httpauth_password_summary"
             android:title="@string/httpAuthPasswordLabel" />
-    </PreferenceCategory>
-    <PreferenceCategory android:title="@string/preference_category_interface_settings">
-        <yuku.ambilwarna.widget.AmbilWarnaPreference
-            android:defaultValue="0xffffffff"
-            android:key="org.poopeeland.tinytinyfeed.TEXT_COLOR"
-            android:summary="@string/preference_text_color_summary"
-            android:title="@string/preference_text_color_title" />
-        <EditTextPreference
-            android:defaultValue="10"
-            android:inputType="number"
-            android:key="org.poopeeland.tinytinyfeed.TEXT_SIZE"
-            android:numeric="integer"
-            android:summary="@string/preference_text_size_summary"
-            android:title="@string/preference_text_size_title" />
-        <yuku.ambilwarna.widget.AmbilWarnaPreference
-            android:defaultValue="0xffffffff"
-            android:key="org.poopeeland.tinytinyfeed.SOURCE_COLOR"
-            android:summary="@string/preference_source_color_summary"
-            android:title="@string/preference_source_color_title" />
-        <EditTextPreference
-            android:defaultValue="10"
-            android:inputType="number"
-            android:key="org.poopeeland.tinytinyfeed.SOURCE_SIZE"
-            android:numeric="integer"
-            android:summary="@string/preference_source_size_summary"
-            android:title="@string/preference_source_size_title" />
-        <yuku.ambilwarna.widget.AmbilWarnaPreference
-            android:defaultValue="0xffffffff"
-            android:key="org.poopeeland.tinytinyfeed.TITLE_COLOR"
-            android:summary="@string/preference_title_color_summary"
-            android:title="@string/preference_title_color_title" />
-        <EditTextPreference
-            android:defaultValue="10"
-            android:inputType="number"
-            android:key="org.poopeeland.tinytinyfeed.TITLE_SIZE"
-            android:numeric="integer"
-            android:summary="@string/preference_title_size_summary"
-            android:title="@string/preference_title_size_title" />
-        <yuku.ambilwarna.widget.AmbilWarnaPreference
-            android:defaultValue="0x80000000"
-            android:key="org.poopeeland.tinytinyfeed.BACKGROUND_COLOR"
-            android:summary="@string/preference_background_color_summary"
-            android:title="@string/preference_background_color_title"
-            app:supportsAlpha="true" />
-        <CheckBoxPreference
-            android:key="org.poopeeland.tinytinyfeed.ONLY_UNREAD"
-            android:summary="@string/preference_unread_only_summary"
-            android:title="@string/setupRetrieveOnlyUnread" />
-        <CheckBoxPreference
-            android:key="org.poopeeland.tinytinyfeed.FORCE_UPDATE"
-            android:summary="@string/preference_force_update_title"
-            android:title="@string/preference_force_update_summary"/>
-        <org.poopeeland.tinytinyfeed.interfaces.TrimmedEditTextPreference
-            android:defaultValue="@string/preference_article_number_default_value"
-            android:inputType="numberDecimal"
-            android:key="org.poopeeland.tinytinyfeed.NUM_ARTICLE_KEY"
-            android:summary="@string/preference_article_number_summary"
-            android:title="@string/setupNumArticles" />
-        <org.poopeeland.tinytinyfeed.interfaces.TrimmedEditTextPreference
-            android:defaultValue="@string/preference_excerpt_lenght_default_value"
-            android:inputType="numberDecimal"
-            android:key="org.poopeeland.tinytinyfeed.EXCERPT_LENGTH_KEY"
-            android:summary="@string/preference_article_excerpt_lenght_summary"
-            android:title="@string/preference_article_excerpt_lenght" />
-        <yuku.ambilwarna.widget.AmbilWarnaPreference
-            android:defaultValue="0xffffffff"
-            android:key="org.poopeeland.tinytinyfeed.STATUS_COLOR"
-            android:summary="@string/preference_status_color_summary"
-            android:title="@string/preference_status_color_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -35,6 +35,7 @@ import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.net.ssl.SSLContext;
@@ -87,23 +88,22 @@ public class Fetcher {
     private final Context context;
 
     private final OkHttpClient httpClient;
+    private final SharedPreferences preferences;
 
     private final String url;
     private final String user;
     private final String password;
     private final String httpAuthUser;
     private final String httpAuthPassword;
-    private final String numArticles;
-    private final String excerptLength;
     private final String filenameTemplate;
 
     private final boolean allowAllSslKey;
     private final boolean allowAllSslHost;
-    private final boolean onlyUnread;
-    private final boolean forceUpdate;
+
 
     public Fetcher(final SharedPreferences preferences, final Context context) throws FetchException {
         this.context = context;
+        this.preferences = preferences;
         this.url = preferences.getString(TinyTinyFeedWidget.URL_KEY, "") + "/api/";
         this.user = preferences.getString(TinyTinyFeedWidget.USER_KEY, "");
         this.password = preferences.getString(TinyTinyFeedWidget.PASSWORD_KEY, "");
@@ -111,10 +111,6 @@ public class Fetcher {
         this.allowAllSslHost = preferences.getBoolean(TinyTinyFeedWidget.ALL_HOST_KEY, false);
         this.httpAuthUser = preferences.getString(TinyTinyFeedWidget.HTTP_USER_KEY, "");
         this.httpAuthPassword = preferences.getString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, "");
-        this.numArticles = preferences.getString(TinyTinyFeedWidget.NUM_ARTICLE_KEY, "");
-        this.onlyUnread = preferences.getBoolean(TinyTinyFeedWidget.ONLY_UNREAD_KEY, false);
-        this.forceUpdate = preferences.getBoolean(TinyTinyFeedWidget.FORCE_UPDATE_KEY, false);
-        this.excerptLength = preferences.getString(TinyTinyFeedWidget.EXCERPT_LENGTH_KEY, context.getText(R.string.preference_excerpt_lenght_default_value).toString());
         this.filenameTemplate = context.getApplicationContext().getFilesDir() + File.separator + JSON_STORAGE_FILENAME_TEMPLATE;
 
         try {
@@ -137,7 +133,7 @@ public class Fetcher {
         }
     }
 
-    private static Response checkHttpResponse(final Response response) throws FetchException {
+    private static void checkHttpResponse(final Response response) throws FetchException {
         if (!response.isSuccessful()) {
             Log.e(TAG, "Http error: " + response.code());
             switch (response.code()) {
@@ -148,7 +144,6 @@ public class Fetcher {
                     throw new GeneralHttpException();
             }
         }
-        return response;
     }
 
     private static JSONObject checkJsonResponse(final JSONObject response) throws FetchException {
@@ -324,7 +319,15 @@ public class Fetcher {
     }
 
     public List<Article> fetchFeeds(final int widgetId, final Set<String> categoryIds) throws FetchException {
-        Log.d(TAG, "Fetching feeds for widget " + widgetId + " with categories");
+
+        String numArticles = preferences.getString(String.format(Locale.getDefault(), TinyTinyFeedWidget.NUM_ARTICLE_KEY, widgetId), "20");
+        boolean onlyUnread = preferences.getBoolean(String.format(Locale.getDefault(), TinyTinyFeedWidget.ONLY_UNREAD_KEY, widgetId), false);
+        boolean forceUpdate = preferences.getBoolean(String.format(Locale.getDefault(), TinyTinyFeedWidget.FORCE_UPDATE_KEY, widgetId), false);
+        String excerptLength = preferences.getString(String.format(Locale.getDefault(), TinyTinyFeedWidget.EXCERPT_LENGTH_KEY, widgetId)
+                , context.getText(R.string.preference_excerpt_lenght_default_value).toString());
+
+
+        Log.d(TAG, "Fetching feeds for widget " + widgetId + " with categories. Only unread: " + onlyUnread);
         checkIfNetworkAvailable();
         String session = login();
         final List<Article> articles = new ArrayList<>();
@@ -334,9 +337,9 @@ public class Fetcher {
                 jsonObject.put("sid", session);
                 jsonObject.put("op", "getHeadlines");
                 jsonObject.put("feed_id", catId);
-                jsonObject.put("limit", this.numArticles);
+                jsonObject.put("limit", numArticles);
                 jsonObject.put("show_excerpt", "true");
-                jsonObject.put("excerpt_length", this.excerptLength);
+                jsonObject.put("excerpt_length", excerptLength);
                 jsonObject.put("force_update", forceUpdate ? "true" : "false"); // TODO Add as on option
                 jsonObject.put("is_cat", "true");
                 jsonObject.put("view_mode", onlyUnread ? "unread" : "all_articles");
