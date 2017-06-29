@@ -21,7 +21,6 @@ android {
     buildToolsVersion "26"
 
     dependencies {
-        // compile 'com.github.yukuku:ambilwarna:2.0.1'
         compile 'com.rarepebble:colorpicker:2.2.0'
         compile('commons-validator:commons-validator:1.4.0') {
             exclude group: 'commons-logging', module: 'commons-logging'
