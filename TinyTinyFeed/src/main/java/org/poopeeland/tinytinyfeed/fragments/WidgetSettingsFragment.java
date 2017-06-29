@@ -14,6 +14,8 @@ import android.preference.PreferenceScreen;
 import android.text.InputType;
 import android.util.Log;
 
+import com.rarepebble.colorpicker.ColorPreference;
+
 import org.poopeeland.tinytinyfeed.R;
 import org.poopeeland.tinytinyfeed.interfaces.TrimmedEditTextPreference;
 import org.poopeeland.tinytinyfeed.models.Category;
@@ -27,8 +29,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-
-import yuku.ambilwarna.widget.AmbilWarnaPreference;
 
 import static org.poopeeland.tinytinyfeed.widgets.TinyTinyFeedWidget.WIDGET_NAME_KEY;
 
@@ -131,7 +131,7 @@ public class WidgetSettingsFragment extends PreferenceFragment {
     }
 
     private Preference createTextColorPref() {
-        AmbilWarnaPreference preference = new AmbilWarnaPreference(screen.getContext(), null);
+        ColorPreference preference = new ColorPreference(screen.getContext());
         preference.setDefaultValue(0xff000000);
         preference.setKey(textColorKey);
         preference.setSummary(R.string.preference_text_color_summary);
@@ -140,7 +140,7 @@ public class WidgetSettingsFragment extends PreferenceFragment {
     }
 
     private Preference createSourceColorPref() {
-        AmbilWarnaPreference preference = new AmbilWarnaPreference(screen.getContext(), null);
+        ColorPreference preference = new ColorPreference(screen.getContext());
         preference.setDefaultValue(0xff000000);
         preference.setKey(sourceColorKey);
         preference.setSummary(R.string.preference_source_color_summary);
@@ -149,7 +149,7 @@ public class WidgetSettingsFragment extends PreferenceFragment {
     }
 
     private Preference createTitleColorPref() {
-        AmbilWarnaPreference preference = new AmbilWarnaPreference(screen.getContext(), null);
+        ColorPreference preference = new ColorPreference(screen.getContext());
         preference.setDefaultValue(0xff000000);
         preference.setKey(titleColorKey);
         preference.setSummary(R.string.preference_title_color_summary);
@@ -158,7 +158,7 @@ public class WidgetSettingsFragment extends PreferenceFragment {
     }
 
     private Preference createStatusColorPref() {
-        AmbilWarnaPreference preference = new AmbilWarnaPreference(screen.getContext(), null);
+        ColorPreference preference = new ColorPreference(screen.getContext());
         preference.setDefaultValue(0xff000000);
         preference.setKey(statusColorKey);
         preference.setSummary(R.string.preference_status_color_summary);
@@ -167,7 +167,7 @@ public class WidgetSettingsFragment extends PreferenceFragment {
     }
 
     private Preference createBackgroundColorPref() {
-        AmbilWarnaPreference preference = new AmbilWarnaPreference(screen.getContext(), null);
+        ColorPreference preference = new ColorPreference(screen.getContext());
         preference.setDefaultValue(0x80000000);
         preference.setKey(bgColorKey);
         preference.setSummary(R.string.preference_background_color_summary);
