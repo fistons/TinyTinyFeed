@@ -2,26 +2,25 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/readArticleLayout"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <TextView
+        android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/readTitle"
         android:layout_gravity="start|center_vertical" />
 
     <TextView
+        android:id="@+id/feedNameAndDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/readFeedNameAndDate"
         android:layout_gravity="start|center_vertical"
         android:textStyle="italic" />
 
     <TextView
+        android:id="@+id/resume"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/readResume" />
+        android:layout_height="wrap_content" />
 </LinearLayout>
