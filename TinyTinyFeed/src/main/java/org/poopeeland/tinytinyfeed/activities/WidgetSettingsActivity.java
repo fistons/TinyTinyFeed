@@ -2,6 +2,8 @@ package org.poopeeland.tinytinyfeed.activities;
 
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -37,16 +39,17 @@ public class WidgetSettingsActivity extends Activity {
 
         setTitle(getString(R.string.widget_preference_title, widgetName));
         Log.d(TAG, "Caller widget: " + this.widgetId);
-
-        this.findViewById(R.id.setup_activity_check_button).setOnClickListener(view -> {
-            setResult(RESULT_OK);
-            finish();
-        });
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        setResult(RESULT_CANCELED);
+    protected void onPause() {
+        super.onPause();
+
+        int ids[] = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), TinyTinyFeedWidget.class));
+        Intent updateIntent = new Intent(this, TinyTinyFeedWidget.class);
+        updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+        sendBroadcast(updateIntent);
     }
+
 }

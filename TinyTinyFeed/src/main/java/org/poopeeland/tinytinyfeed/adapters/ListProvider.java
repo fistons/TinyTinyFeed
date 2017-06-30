@@ -106,41 +106,28 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
         float sourceSize = Float.parseFloat(pref.getString(String.format(Locale.getDefault(), TinyTinyFeedWidget.SOURCE_SIZE_KEY, widgetId), "10"));
         float titleSize = Float.parseFloat(pref.getString(String.format(Locale.getDefault(), TinyTinyFeedWidget.TITLE_SIZE_KEY, widgetId), "10"));
 
-        final RemoteViews rv;
         Intent fillInIntent = new Intent();
         fillInIntent.setData(Uri.parse(article.getLink()));
         fillInIntent.putExtra("article", article);
         fillInIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, this.widgetId);
         String feedNameAndDate = String.format("%s - %s", article.getFeedTitle(), article.getDate());
-        if (!article.isUnread()) {
-            rv = new RemoteViews(context.getPackageName(), R.layout.read_article_layout);
-            rv.setTextViewText(R.id.readTitle, article.getTitle());
-            rv.setInt(R.id.readTitle, "setTextColor", titleColor);
-            rv.setTextViewText(R.id.readFeedNameAndDate, feedNameAndDate);
-            rv.setInt(R.id.readFeedNameAndDate, "setTextColor", sourceColor);
-            rv.setTextViewText(R.id.readResume, article.getExcerpt());
-            rv.setInt(R.id.readResume, "setTextColor", textColor);
-            rv.setFloat(R.id.readResume, "setTextSize", textSize);
-            rv.setFloat(R.id.readTitle, "setTextSize", titleSize);
-            rv.setFloat(R.id.readFeedNameAndDate, "setTextSize", sourceSize);
-            rv.setOnClickFillInIntent(R.id.readArticleLayout, fillInIntent);
+        final RemoteViews rv = article.isUnread() ? new RemoteViews(context.getPackageName(), R.layout.article_layout)
+                : new RemoteViews(context.getPackageName(), R.layout.read_article_layout);
+        if (this.pref.getBoolean(String.format(Locale.getDefault(), TinyTinyFeedWidget.ONLY_UNREAD_KEY, widgetId), false)
+                || !article.isUnread()) {
+            rv.setTextViewText(R.id.title, article.getTitle());
         } else {
-            rv = new RemoteViews(context.getPackageName(), R.layout.article_layout);
-            if (this.pref.getBoolean(String.format(Locale.getDefault(), TinyTinyFeedWidget.ONLY_UNREAD_KEY, widgetId), false)) {
-                rv.setTextViewText(R.id.title, article.getTitle());
-            } else {
-                rv.setTextViewText(R.id.title, String.format("%s %s", unreadSymbol, article.getTitle()));
-            }
-            rv.setInt(R.id.title, "setTextColor", titleColor);
-            rv.setTextViewText(R.id.feedNameAndDate, feedNameAndDate);
-            rv.setInt(R.id.feedNameAndDate, "setTextColor", sourceColor);
-            rv.setTextViewText(R.id.resume, article.getExcerpt());
-            rv.setInt(R.id.resume, "setTextColor", textColor);
-            rv.setFloat(R.id.resume, "setTextSize", textSize);
-            rv.setFloat(R.id.readTitle, "setTextSize", titleSize);
-            rv.setFloat(R.id.feedNameAndDate, "setTextSize", sourceSize);
-            rv.setOnClickFillInIntent(R.id.articleLayout, fillInIntent);
+            rv.setTextViewText(R.id.title, String.format("%s %s", unreadSymbol, article.getTitle()));
         }
+        rv.setInt(R.id.title, "setTextColor", titleColor);
+        rv.setTextViewText(R.id.feedNameAndDate, feedNameAndDate);
+        rv.setInt(R.id.feedNameAndDate, "setTextColor", sourceColor);
+        rv.setTextViewText(R.id.resume, article.getExcerpt());
+        rv.setInt(R.id.resume, "setTextColor", textColor);
+        rv.setFloat(R.id.resume, "setTextSize", textSize);
+        rv.setFloat(R.id.title, "setTextSize", titleSize);
+        rv.setFloat(R.id.feedNameAndDate, "setTextSize", sourceSize);
+        rv.setOnClickFillInIntent(R.id.articleLayout, fillInIntent);
         return rv;
     }
 

@@ -73,9 +73,9 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
         if (preferences.getBoolean(CHECKED, false)) {
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.listViewWidget);
             PendingIntent refreshIntent = actionPendingIntent(context, appWidgetIds);
-            for (int i : appWidgetIds) {
-                int textColor = preferences.getInt(String.format(Locale.getDefault(), STATUS_COLOR_KEY, i), 0xff0000);
-                int bgColor = preferences.getInt(String.format(Locale.getDefault(), BG_COLOR_KEY, i), 0x80000000);
+            for (final int i : appWidgetIds) {
+                final int textColor = preferences.getInt(String.format(Locale.getDefault(), STATUS_COLOR_KEY, i), 0xff0000);
+                final int bgColor = preferences.getInt(String.format(Locale.getDefault(), BG_COLOR_KEY, i), 0x80000000);
 
                 Intent intent = new Intent(context, WidgetService.class);
                 intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, i);

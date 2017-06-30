@@ -1,7 +1,6 @@
 package org.poopeeland.tinytinyfeed.activities;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -9,6 +8,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import org.apache.commons.validator.routines.UrlValidator;
@@ -68,18 +69,22 @@ public class SettingsActivity extends Activity {
 
         private final SharedPreferences preferences;
         private final SettingsActivity activity;
-        private ProgressDialog dialog;
+        private final ProgressBar progressBar;
+        private final Button button;
 
         private Async(final SharedPreferences preferences, final SettingsActivity activity) {
             super(activity);
             this.preferences = preferences;
             this.activity = activity;
+            this.progressBar = findViewById(R.id.progressBar);
+            this.button = findViewById(R.id.setup_check_button);
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            dialog = ProgressDialog.show(activity, getText(R.string.waitTitle), getText(R.string.waitCheck));
+            this.progressBar.setVisibility(View.VISIBLE);
+            this.button.setVisibility(View.GONE);
         }
 
         @Override
@@ -90,7 +95,8 @@ public class SettingsActivity extends Activity {
 
         @Override
         protected void onSafePostExecute(final Void result) {
-            dialog.dismiss();
+            this.progressBar.setVisibility(View.GONE);
+            this.button.setVisibility(View.VISIBLE);
 
             if (onError()) {
                 return;
