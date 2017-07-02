@@ -37,7 +37,21 @@ public class SettingsActivity extends Activity {
         }
 
         this.preferences = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
-        findViewById(R.id.setup_check_button).setOnClickListener(this::checkSetup);
+
+        findViewById(R.id.setup_check_button).setOnClickListener(v -> {
+            try {
+                String url = this.preferences.getString(TinyTinyFeedWidget.URL_KEY, "");
+                String[] schemes = {"http", "https"};
+                UrlValidator urlValidator = new UrlValidator(schemes);
+                if (!urlValidator.isValid(url)) {
+                    throw new MalformedURLException();
+                }
+                Async async = new Async(this.preferences, this);
+                async.execute();
+            } catch (MalformedURLException e) {
+                Toast.makeText(this, R.string.preference_ttrss_url_not_null_or_default, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override
@@ -46,24 +60,6 @@ public class SettingsActivity extends Activity {
         this.checked = false;
         setResult(RESULT_CANCELED);
     }
-
-    private void checkSetup(final View view) {
-        try {
-            String url = this.preferences.getString(TinyTinyFeedWidget.URL_KEY, "");
-            String[] schemes = {"http", "https"};
-            UrlValidator urlValidator = new UrlValidator(schemes);
-            if (!urlValidator.isValid(url)) {
-                throw new MalformedURLException();
-            }
-
-            Async async = new Async(this.preferences, this);
-            async.execute();
-
-        } catch (MalformedURLException e) {
-            Toast.makeText(this, R.string.preference_ttrss_url_not_null_or_default, Toast.LENGTH_LONG).show();
-        }
-    }
-
 
     private class Async extends ExceptionAsyncTask<Void, Void, Void> {
 

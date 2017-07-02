@@ -10,7 +10,6 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.poopeeland.tinytinyfeed.R;
 import org.poopeeland.tinytinyfeed.models.Article;
 import org.poopeeland.tinytinyfeed.models.Category;
 import org.poopeeland.tinytinyfeed.models.JsonWrapper;
@@ -34,6 +33,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -54,7 +54,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-import static org.poopeeland.tinytinyfeed.widgets.TinyTinyFeedWidget.JSON_STORAGE_FILENAME_TEMPLATE;
+import static org.poopeeland.tinytinyfeed.widgets.TinyTinyFeedWidget.*;
 
 /**
  * Fetch the datas.
@@ -324,7 +324,7 @@ public class Fetcher {
         boolean onlyUnread = preferences.getBoolean(String.format(Locale.getDefault(), TinyTinyFeedWidget.ONLY_UNREAD_KEY, widgetId), false);
         boolean forceUpdate = preferences.getBoolean(String.format(Locale.getDefault(), TinyTinyFeedWidget.FORCE_UPDATE_KEY, widgetId), false);
         String excerptLength = preferences.getString(String.format(Locale.getDefault(), TinyTinyFeedWidget.EXCERPT_LENGTH_KEY, widgetId)
-                , context.getText(R.string.preference_excerpt_lenght_default_value).toString());
+                , DEFAULT_EXCERPT_SIZE);
 
 
         Log.d(TAG, "Fetching feeds for widget " + widgetId + " with categories. Only unread: " + onlyUnread);
@@ -340,7 +340,7 @@ public class Fetcher {
                 jsonObject.put("limit", numArticles);
                 jsonObject.put("show_excerpt", "true");
                 jsonObject.put("excerpt_length", excerptLength);
-                jsonObject.put("force_update", forceUpdate ? "true" : "false"); // TODO Add as on option
+                jsonObject.put("force_update", forceUpdate ? "true" : "false");
                 jsonObject.put("is_cat", "true");
                 jsonObject.put("view_mode", onlyUnread ? "unread" : "all_articles");
             } catch (JSONException ex) {
@@ -403,7 +403,7 @@ public class Fetcher {
         File fileName = new File(String.format(this.filenameTemplate, widgetId));
         Log.d(TAG, String.format("Saving the list to %s", fileName.getAbsolutePath()));
         try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
-            outputStream.writeObject(new ArrayList<>(articles));
+            outputStream.writeObject(new LinkedList<>(articles));
         } catch (Exception e) {
             Log.e(TAG, "Error while saving the last articles list", e);
         }
