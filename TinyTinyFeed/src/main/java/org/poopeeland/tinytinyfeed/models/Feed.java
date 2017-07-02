@@ -3,11 +3,11 @@ package org.poopeeland.tinytinyfeed.models;
 import java.io.Serializable;
 
 /**
- * Represents a TTRss category.
- * <p>
- * Created by eric on 25/05/17.
+ * Represent a tt-rss feed.
+ * Created by emr on 02/07/2017.
  */
-public class Category implements Serializable {
+
+public class Feed implements Serializable, Comparable<Feed> {
     public static final long serialVersionUID = 1L;
 
     private String id;
@@ -27,5 +27,10 @@ public class Category implements Serializable {
 
     public void setTitle(final String title) {
         this.title = title;
+    }
+
+    @Override
+    public int compareTo(final Feed feed) {
+        return this.getTitle().toLowerCase().compareTo(feed.getTitle().toLowerCase());
     }
 }

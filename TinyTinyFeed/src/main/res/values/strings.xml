@@ -18,8 +18,6 @@
     <string name="connectionError">Connection issue - Check if the server is online and if the url is the good one</string>
     <string name="connectionAuthError">HTTP auth - Please check your credentials</string>
     <string name="noInternetConnection">No Internet connection available right now</string>
-    <string name="waitTitle">Please wait</string>
-    <string name="waitCheck">Checking your configuration</string>
     <string name="setupApiDisabled">The API seems to be disabled, please enable them on the tt-rss preferences.</string>
     <string name="preference_activity_title" tools:ignore="Typos">Tiny Tiny Feed - Setup</string>
     <string name="preference_category_ttrss_settings">tt-rss settings</string>
@@ -37,7 +35,6 @@
     <string name="preference_article_excerpt_lenght">Excerpt length</string>
     <string name="preference_article_excerpt_lenght_summary">Number of characters to retrieve for the excerpt</string>
     <string name="preference_article_number_summary">The number of article you wish to retrieve</string>
-    <string name="preference_excerpt_lenght_default_value" translatable="false">200</string>
     <string name="preference_ttrss_url_default_value" translatable="false">http://</string>
     <string name="preference_ttrss_url_not_null_or_default">Please enter a valid url</string>
     <string name="preference_unread_only_summary">Check this if you want to retrieve only the unread articles</string>
@@ -64,11 +61,14 @@
     <string name="widget_refresh">Refresh</string>
     <string name="nullArticle">Unable to get the article URL</string>
     <string name="widget_update_text">Updating…</string>
-    <string name="widget_configuration_title">Widget configuration</string>
-    <string name="widget_categories_title">Categories for widget %s</string>
-    <string name="widget_categories_summary">Categories to display for widget %s</string>
+    <string name="widget_configuration_title">Widgets configuration</string>
+    <string name="widget_categories_title">Feeds</string>
+    <string name="widget_categories_summary">Feeds to display for the widget</string>
     <string name="widget_preference_title">Configuration of the widget %s</string>
     <string name="widget_name_title">Name</string>
     <string name="widget_name_summary">Widget\'s name</string>
+    <string name="preference_validate_button">OK</string>
+    <string name="preference_loading_categories">Loading feeds…</string>
+    <string name="preference_cant_load_categories">Could not load categories!</string>
 
 </resources>

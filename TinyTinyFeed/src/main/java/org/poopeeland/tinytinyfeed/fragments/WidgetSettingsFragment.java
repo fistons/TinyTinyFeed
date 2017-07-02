@@ -6,9 +6,9 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
+import android.preference.EditTextPreference;
 import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.text.InputType;
@@ -18,11 +18,10 @@ import com.rarepebble.colorpicker.ColorPreference;
 
 import org.poopeeland.tinytinyfeed.R;
 import org.poopeeland.tinytinyfeed.interfaces.TrimmedEditTextPreference;
-import org.poopeeland.tinytinyfeed.models.Category;
+import org.poopeeland.tinytinyfeed.models.Feed;
 import org.poopeeland.tinytinyfeed.network.Fetcher;
 import org.poopeeland.tinytinyfeed.network.exceptions.FetchException;
 import org.poopeeland.tinytinyfeed.utils.ExceptionAsyncTask;
-import org.poopeeland.tinytinyfeed.widgets.TinyTinyFeedWidget;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -30,7 +29,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import static org.poopeeland.tinytinyfeed.widgets.TinyTinyFeedWidget.WIDGET_NAME_KEY;
+import static org.poopeeland.tinytinyfeed.widgets.TinyTinyFeedWidget.*;
 
 /**
  * Widget settings fragment.
@@ -61,20 +60,20 @@ public class WidgetSettingsFragment extends PreferenceFragment {
     private PreferenceScreen screen;
 
     private void loadPreferencesKey() {
-        this.textColorKey = String.format(Locale.getDefault(), TinyTinyFeedWidget.TEXT_COLOR_KEY, widgetId);
-        this.sourceColorKey = String.format(Locale.getDefault(), TinyTinyFeedWidget.SOURCE_COLOR_KEY, widgetId);
-        this.titleColorKey = String.format(Locale.getDefault(), TinyTinyFeedWidget.TITLE_COLOR_KEY, widgetId);
-        this.textSizeKey = String.format(Locale.getDefault(), TinyTinyFeedWidget.TEXT_SIZE_KEY, widgetId);
-        this.sourceSizeKey = String.format(Locale.getDefault(), TinyTinyFeedWidget.SOURCE_SIZE_KEY, widgetId);
-        this.titleSizeKey = String.format(Locale.getDefault(), TinyTinyFeedWidget.TITLE_SIZE_KEY, widgetId);
-        this.bgColorKey = String.format(Locale.getDefault(), TinyTinyFeedWidget.BG_COLOR_KEY, widgetId);
-        this.numArticlesKey = String.format(Locale.getDefault(), TinyTinyFeedWidget.NUM_ARTICLE_KEY, widgetId);
-        this.onlyUnreadKey = String.format(Locale.getDefault(), TinyTinyFeedWidget.ONLY_UNREAD_KEY, widgetId);
-        this.forceUpdateKey = String.format(Locale.getDefault(), TinyTinyFeedWidget.FORCE_UPDATE_KEY, widgetId);
-        this.excerptLengthKey = String.format(Locale.getDefault(), TinyTinyFeedWidget.EXCERPT_LENGTH_KEY, widgetId);
-        this.statusColorKey = String.format(Locale.getDefault(), TinyTinyFeedWidget.STATUS_COLOR_KEY, widgetId);
-        this.categoriesKey = String.format(Locale.getDefault(), TinyTinyFeedWidget.WIDGET_CATEGORIES_KEY, widgetId);
-        this.widgetNameKey = String.format(Locale.getDefault(), TinyTinyFeedWidget.WIDGET_NAME_KEY, widgetId);
+        this.textColorKey = String.format(Locale.getDefault(), TEXT_COLOR_KEY, widgetId);
+        this.sourceColorKey = String.format(Locale.getDefault(), SOURCE_COLOR_KEY, widgetId);
+        this.titleColorKey = String.format(Locale.getDefault(), TITLE_COLOR_KEY, widgetId);
+        this.textSizeKey = String.format(Locale.getDefault(), TEXT_SIZE_KEY, widgetId);
+        this.sourceSizeKey = String.format(Locale.getDefault(), SOURCE_SIZE_KEY, widgetId);
+        this.titleSizeKey = String.format(Locale.getDefault(), TITLE_SIZE_KEY, widgetId);
+        this.bgColorKey = String.format(Locale.getDefault(), BG_COLOR_KEY, widgetId);
+        this.numArticlesKey = String.format(Locale.getDefault(), NUM_ARTICLE_KEY, widgetId);
+        this.onlyUnreadKey = String.format(Locale.getDefault(), ONLY_UNREAD_KEY, widgetId);
+        this.forceUpdateKey = String.format(Locale.getDefault(), FORCE_UPDATE_KEY, widgetId);
+        this.excerptLengthKey = String.format(Locale.getDefault(), EXCERPT_LENGTH_KEY, widgetId);
+        this.statusColorKey = String.format(Locale.getDefault(), STATUS_COLOR_KEY, widgetId);
+        this.categoriesKey = String.format(Locale.getDefault(), WIDGET_CATEGORIES_KEY, widgetId);
+        this.widgetNameKey = String.format(Locale.getDefault(), WIDGET_NAME_KEY, widgetId);
     }
 
 
@@ -84,22 +83,32 @@ public class WidgetSettingsFragment extends PreferenceFragment {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.widget_preferences);
 
-
         Bundle extras = getActivity().getIntent().getExtras();
-
-
         if (extras != null) {
             widgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
         }
 
         this.loadPreferencesKey();
 
-
         this.screen = getPreferenceScreen();
         Resources res = getResources();
         SharedPreferences preferences = screen.getSharedPreferences();
 
+        this.initDefaultColor(preferences);
+        try {
+            AsyncCategoryFetcher fetcher = new AsyncCategoryFetcher(preferences, res, screen);
+            fetcher.execute();
+        } catch (FetchException e) {
+            Log.e(TAG, "Exception while creating the fetcher", e);
+        }
+
         screen.addPreference(createWidgetNamePref());
+
+        screen.addPreference(createNumArticlePref());
+        screen.addPreference(createExcerptSizePref());
+
+        screen.addPreference(createOnlyUnreadPref());
+        screen.addPreference(createForceUpdatePref());
 
         screen.addPreference(createTitleColorPref());
         screen.addPreference(createTitleSizePref());
@@ -111,80 +120,85 @@ public class WidgetSettingsFragment extends PreferenceFragment {
         screen.addPreference(createTextSizePref());
 
         screen.addPreference(createStatusColorPref());
+
         screen.addPreference(createBackgroundColorPref());
+    }
 
-        screen.addPreference(createNumArticlePref());
-        screen.addPreference(createExcerptSizePref());
-
-        screen.addPreference(createOnlyUnreadPref());
-        screen.addPreference(createForceUpdatePref());
-
-
-        try {
-            String name = preferences.getString(String.format(Locale.getDefault(), WIDGET_NAME_KEY, widgetId), "Widget #" + widgetId);
-
-            AsyncCategoryFetcher fetcher = new AsyncCategoryFetcher(name, preferences, res, screen);
-            fetcher.execute();
-        } catch (FetchException e) {
-            Log.e(TAG, "Exception while creating the fetcher", e);
+    private void initDefaultColor(final SharedPreferences preferences) {
+        if (!preferences.contains(this.textColorKey) ||
+                !preferences.contains(this.sourceColorKey) ||
+                !preferences.contains(this.titleColorKey) ||
+                !preferences.contains(this.statusColorKey) ||
+                !preferences.contains(this.bgColorKey)) {
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putInt(this.textColorKey, DEFAULT_TEXT_COLOR);
+            editor.putInt(this.sourceColorKey, DEFAULT_TEXT_COLOR);
+            editor.putInt(this.titleColorKey, DEFAULT_TEXT_COLOR);
+            editor.putInt(this.statusColorKey, DEFAULT_TEXT_COLOR);
+            editor.putInt(this.bgColorKey, DEFAULT_BG_COLOR);
+            editor.apply();
         }
     }
 
     private Preference createTextColorPref() {
         ColorPreference preference = new ColorPreference(screen.getContext());
-        preference.setDefaultValue(0xff000000);
+        preference.setDefaultValue(DEFAULT_TEXT_COLOR);
         preference.setKey(textColorKey);
         preference.setSummary(R.string.preference_text_color_summary);
         preference.setTitle(R.string.preference_text_color_title);
+        preference.setOrder(9);
         return preference;
     }
 
     private Preference createSourceColorPref() {
         ColorPreference preference = new ColorPreference(screen.getContext());
-        preference.setDefaultValue(0xff000000);
+        preference.setDefaultValue(DEFAULT_TEXT_COLOR);
         preference.setKey(sourceColorKey);
         preference.setSummary(R.string.preference_source_color_summary);
         preference.setTitle(R.string.preference_source_color_title);
+        preference.setOrder(7);
         return preference;
     }
 
     private Preference createTitleColorPref() {
         ColorPreference preference = new ColorPreference(screen.getContext());
-        preference.setDefaultValue(0xff000000);
+        preference.setDefaultValue(DEFAULT_TEXT_COLOR);
         preference.setKey(titleColorKey);
         preference.setSummary(R.string.preference_title_color_summary);
         preference.setTitle(R.string.preference_title_color_title);
+        preference.setOrder(5);
         return preference;
     }
 
     private Preference createStatusColorPref() {
         ColorPreference preference = new ColorPreference(screen.getContext());
-        preference.setDefaultValue(0xff000000);
+        preference.setDefaultValue(DEFAULT_TEXT_COLOR);
         preference.setKey(statusColorKey);
         preference.setSummary(R.string.preference_status_color_summary);
         preference.setTitle(R.string.preference_status_color_title);
+        preference.setOrder(11);
         return preference;
     }
 
     private Preference createBackgroundColorPref() {
         ColorPreference preference = new ColorPreference(screen.getContext());
-        preference.setDefaultValue(0x80000000);
+        preference.setDefaultValue(DEFAULT_BG_COLOR);
         preference.setKey(bgColorKey);
         preference.setSummary(R.string.preference_background_color_summary);
         preference.setTitle(R.string.preference_background_color_title);
-
+        preference.setOrder(12);
         return preference;
     }
 
     private Preference createTextSizePref() {
-
         TrimmedEditTextPreference preference = new TrimmedEditTextPreference(screen.getContext());
         preference.getEditText().setRawInputType(InputType.TYPE_CLASS_NUMBER);
         preference.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
-        preference.setDefaultValue("10");
+        preference.setDefaultValue(DEFAULT_TEXT_SIZE);
         preference.setKey(textSizeKey);
         preference.setSummary(R.string.preference_text_size_summary);
         preference.setTitle(R.string.preference_text_size_title);
+        preference.setOrder(10);
         return preference;
     }
 
@@ -192,10 +206,11 @@ public class WidgetSettingsFragment extends PreferenceFragment {
         TrimmedEditTextPreference preference = new TrimmedEditTextPreference(screen.getContext());
         preference.getEditText().setRawInputType(InputType.TYPE_CLASS_NUMBER);
         preference.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
-        preference.setDefaultValue("10");
+        preference.setDefaultValue(DEFAULT_TEXT_SIZE);
         preference.setKey(titleSizeKey);
         preference.setSummary(R.string.preference_title_size_summary);
         preference.setTitle(R.string.preference_title_size_title);
+        preference.setOrder(6);
         return preference;
     }
 
@@ -203,10 +218,11 @@ public class WidgetSettingsFragment extends PreferenceFragment {
         TrimmedEditTextPreference preference = new TrimmedEditTextPreference(screen.getContext());
         preference.getEditText().setRawInputType(InputType.TYPE_CLASS_NUMBER);
         preference.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
-        preference.setDefaultValue("10");
+        preference.setDefaultValue(DEFAULT_TEXT_SIZE);
         preference.setKey(sourceSizeKey);
         preference.setSummary(R.string.preference_source_size_summary);
         preference.setTitle(R.string.preference_source_size_title);
+        preference.setOrder(8);
         return preference;
     }
 
@@ -214,10 +230,11 @@ public class WidgetSettingsFragment extends PreferenceFragment {
         TrimmedEditTextPreference preference = new TrimmedEditTextPreference(screen.getContext());
         preference.getEditText().setRawInputType(InputType.TYPE_CLASS_NUMBER);
         preference.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
-        preference.setDefaultValue("20");
+        preference.setDefaultValue(DEFAULT_NUM_ARTICLE);
         preference.setKey(numArticlesKey);
         preference.setSummary(R.string.preference_article_number_summary);
         preference.setTitle(R.string.setupNumArticles);
+        preference.setOrder(2);
         return preference;
     }
 
@@ -225,10 +242,11 @@ public class WidgetSettingsFragment extends PreferenceFragment {
         TrimmedEditTextPreference preference = new TrimmedEditTextPreference(screen.getContext());
         preference.getEditText().setRawInputType(InputType.TYPE_CLASS_NUMBER);
         preference.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
-        preference.setDefaultValue("200");
+        preference.setDefaultValue(DEFAULT_EXCERPT_SIZE);
         preference.setKey(excerptLengthKey);
         preference.setSummary(R.string.preference_article_excerpt_lenght_summary);
         preference.setTitle(R.string.preference_article_excerpt_lenght);
+        preference.setOrder(3);
         return preference;
     }
 
@@ -238,6 +256,7 @@ public class WidgetSettingsFragment extends PreferenceFragment {
         preference.setKey(widgetNameKey);
         preference.setSummary(R.string.widget_name_summary);
         preference.setTitle(R.string.widget_name_title);
+        preference.setOrder(0);
         return preference;
     }
 
@@ -247,6 +266,7 @@ public class WidgetSettingsFragment extends PreferenceFragment {
         preference.setKey(forceUpdateKey);
         preference.setSummary(R.string.preference_force_update_summary);
         preference.setTitle(R.string.preference_force_update_title);
+        preference.setOrder(4);
         return preference;
     }
 
@@ -257,80 +277,83 @@ public class WidgetSettingsFragment extends PreferenceFragment {
         preference.setKey(onlyUnreadKey);
         preference.setSummary(R.string.preference_unread_only_summary);
         preference.setTitle(R.string.setupRetrieveOnlyUnread);
+        preference.setOrder(3);
         return preference;
     }
 
 
-    private void addPreferenceList(final String name,
-                                   final Resources res,
+    private void addCategoriesList(final Resources res,
                                    final PreferenceScreen screen,
                                    final CharSequence[] entries,
                                    final CharSequence[] entryValues) {
 
         MultiSelectListPreference p = new MultiSelectListPreference(screen.getContext());
+        p.setOrder(1);
         p.setKey(categoriesKey);
-        p.setTitle(res.getString(R.string.widget_categories_title, name));
-        p.setSummary(res.getString(R.string.widget_categories_summary, name));
+        p.setTitle(res.getString(R.string.widget_categories_title));
+        p.setSummary(res.getString(R.string.widget_categories_summary));
         p.setEntries(entries);
         p.setEntryValues(entryValues);
         SharedPreferences preferences = screen.getSharedPreferences();
         if (!preferences.contains(categoriesKey)) {
             Set<String> values = new HashSet<>();
-            for (int i = 0; i < entryValues.length - 3; i++) {
-                values.add(entryValues[i].toString());
-            }
+            values.add("-4");
             p.setValues(values);
             preferences.edit().putStringSet(categoriesKey, values).apply();
         }
         screen.addPreference(p);
     }
 
-    private class AsyncCategoryFetcher extends ExceptionAsyncTask<Void, Void, List<Category>> {
+    private class AsyncCategoryFetcher extends ExceptionAsyncTask<Void, Void, List<Feed>> {
 
-        private final String name;
         private final Context context;
         private final Resources res;
         private final PreferenceScreen screen;
         private final Fetcher fetcher;
+        private final EditTextPreference loadingPreferences;
 
-        private AsyncCategoryFetcher(final String name,
-                                     final SharedPreferences preferences,
+        private AsyncCategoryFetcher(final SharedPreferences preferences,
                                      final Resources res,
                                      final PreferenceScreen screen) throws FetchException {
             super(screen.getContext());
             this.context = screen.getContext();
 
-            this.name = name;
             this.res = res;
             this.screen = screen;
             this.fetcher = new Fetcher(preferences, this.context);
+
+            loadingPreferences = new EditTextPreference(screen.getContext());
+            loadingPreferences.setOrder(1);
+            loadingPreferences.setSummary(R.string.preference_loading_categories);
+            loadingPreferences.setEnabled(false);
+            screen.addPreference(loadingPreferences);
         }
 
         @Override
-        protected List<Category> doInBackground() throws FetchException {
-            return fetcher.fetchCategories();
+        protected List<Feed> doInBackground() throws FetchException {
+            return fetcher.fetchFeeds();
         }
 
         @Override
-        protected void onSafePostExecute(final List<Category> categories) {
+        protected void onSafePostExecute(final List<Feed> feeds) {
             if (onError()) {
+                loadingPreferences.setSummary(R.string.preference_cant_load_categories);
                 return;
             }
-            PreferenceCategory category = new PreferenceCategory(screen.getContext());
-            category.setTitle(R.string.widget_configuration_title);
-            screen.addPreference(category);
 
             final List<CharSequence> entriesList = new ArrayList<>();
             final List<CharSequence> entryValuesList = new ArrayList<>();
 
-            for (Category c : categories) {
-                entryValuesList.add(c.getId());
-                entriesList.add(c.getTitle());
+            for (Feed d : feeds) {
+                entryValuesList.add(d.getId());
+                entriesList.add(d.getTitle());
             }
             final CharSequence[] entries = entriesList.toArray(new CharSequence[entriesList.size()]);
             final CharSequence[] entryValues = entryValuesList.toArray(new CharSequence[entryValuesList.size()]);
 
-            addPreferenceList(name, res, screen, entries, entryValues);
+            addCategoriesList(res, screen, entries, entryValues);
+
+            screen.removePreference(loadingPreferences);
         }
     }
 }

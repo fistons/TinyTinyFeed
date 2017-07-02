@@ -27,8 +27,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import static org.poopeeland.tinytinyfeed.widgets.TinyTinyFeedWidget.JSON_STORAGE_FILENAME_TEMPLATE;
-import static org.poopeeland.tinytinyfeed.widgets.TinyTinyFeedWidget.WIDGET_CATEGORIES_KEY;
+import static org.poopeeland.tinytinyfeed.widgets.TinyTinyFeedWidget.*;
 
 
 /**
@@ -71,7 +70,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
         try {
             Log.d(TAG, "Refresh the articles list");
             Set<String> categories = pref.getStringSet(String.format(Locale.getDefault(), WIDGET_CATEGORIES_KEY, this.widgetId), Collections.emptySet());
-            this.articleList = new Fetcher(this.pref, context).fetchFeeds(this.widgetId, categories);
+            this.articleList = new Fetcher(this.pref, context).fetchArticles(this.widgetId, categories);
         } catch (FetchException ex) {
             Log.e(TAG, "Error while fetching data: " + ex.getMessage(), ex);
             this.articleList = this.loadLastList();
@@ -97,28 +96,26 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
 
 
     @Override
-    public RemoteViews getViewAt(int position) {
-        Article article = articleList.get(position);
-        int textColor = pref.getInt(String.format(Locale.getDefault(), TinyTinyFeedWidget.TEXT_COLOR_KEY, widgetId), 0xffffffff);
-        int sourceColor = pref.getInt(String.format(Locale.getDefault(), TinyTinyFeedWidget.SOURCE_COLOR_KEY, widgetId), 0xffffffff);
-        int titleColor = pref.getInt(String.format(Locale.getDefault(), TinyTinyFeedWidget.TITLE_COLOR_KEY, widgetId), 0xffffffff);
-        float textSize = Float.parseFloat(pref.getString(String.format(Locale.getDefault(), TinyTinyFeedWidget.TEXT_SIZE_KEY, widgetId), "10"));
-        float sourceSize = Float.parseFloat(pref.getString(String.format(Locale.getDefault(), TinyTinyFeedWidget.SOURCE_SIZE_KEY, widgetId), "10"));
-        float titleSize = Float.parseFloat(pref.getString(String.format(Locale.getDefault(), TinyTinyFeedWidget.TITLE_SIZE_KEY, widgetId), "10"));
+    public RemoteViews getViewAt(final int position) {
+        Log.d(TAG, "Getting article at position " + position);
+        final Article article = articleList.get(position);
+        final int textColor = pref.getInt(String.format(Locale.getDefault(), TEXT_COLOR_KEY, widgetId), DEFAULT_TEXT_COLOR);
+        final int sourceColor = pref.getInt(String.format(Locale.getDefault(), SOURCE_COLOR_KEY, widgetId), DEFAULT_TEXT_COLOR);
+        final int titleColor = pref.getInt(String.format(Locale.getDefault(), TITLE_COLOR_KEY, widgetId), DEFAULT_TEXT_COLOR);
+        final float textSize = Float.parseFloat(pref.getString(String.format(Locale.getDefault(), TEXT_SIZE_KEY, widgetId), DEFAULT_TEXT_SIZE));
+        final float sourceSize = Float.parseFloat(pref.getString(String.format(Locale.getDefault(), SOURCE_SIZE_KEY, widgetId), DEFAULT_TEXT_SIZE));
+        final float titleSize = Float.parseFloat(pref.getString(String.format(Locale.getDefault(), TITLE_SIZE_KEY, widgetId), DEFAULT_TEXT_SIZE));
 
-        Intent fillInIntent = new Intent();
+        final Intent fillInIntent = new Intent();
         fillInIntent.setData(Uri.parse(article.getLink()));
         fillInIntent.putExtra("article", article);
         fillInIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, this.widgetId);
-        String feedNameAndDate = String.format("%s - %s", article.getFeedTitle(), article.getDate());
-        final RemoteViews rv = article.isUnread() ? new RemoteViews(context.getPackageName(), R.layout.article_layout)
-                : new RemoteViews(context.getPackageName(), R.layout.read_article_layout);
-        if (this.pref.getBoolean(String.format(Locale.getDefault(), TinyTinyFeedWidget.ONLY_UNREAD_KEY, widgetId), false)
-                || !article.isUnread()) {
-            rv.setTextViewText(R.id.title, article.getTitle());
-        } else {
-            rv.setTextViewText(R.id.title, String.format("%s %s", unreadSymbol, article.getTitle()));
-        }
+        final String feedNameAndDate = String.format("%s - %s", article.getFeedTitle(), article.getDate());
+        final int layout = article.isUnread() ? R.layout.article_layout : R.layout.read_article_layout;
+        final int layoutId = article.isUnread() ? R.id.articleLayout : R.id.readArticleLayout;
+
+        final RemoteViews rv = new RemoteViews(context.getPackageName(), layout);
+        rv.setTextViewText(R.id.title, getTitle(article));
         rv.setInt(R.id.title, "setTextColor", titleColor);
         rv.setTextViewText(R.id.feedNameAndDate, feedNameAndDate);
         rv.setInt(R.id.feedNameAndDate, "setTextColor", sourceColor);
@@ -127,8 +124,14 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
         rv.setFloat(R.id.resume, "setTextSize", textSize);
         rv.setFloat(R.id.title, "setTextSize", titleSize);
         rv.setFloat(R.id.feedNameAndDate, "setTextSize", sourceSize);
-        rv.setOnClickFillInIntent(R.id.articleLayout, fillInIntent);
+        rv.setOnClickFillInIntent(layoutId, fillInIntent);
+
         return rv;
+    }
+
+    private String getTitle(final Article article) {
+        return this.pref.getBoolean(String.format(Locale.getDefault(), TinyTinyFeedWidget.ONLY_UNREAD_KEY, widgetId), false)
+                || !article.isUnread() ? article.getTitle() : String.format("%s %s", unreadSymbol, article.getTitle());
     }
 
     @Override
@@ -142,8 +145,8 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     }
 
     @Override
-    public long getItemId(int position) {
-        return position;
+    public long getItemId(final int position) {
+        return articleList.get(position).getId();
     }
 
     @Override
@@ -166,6 +169,5 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
             return Collections.emptyList();
         }
     }
-
 
 }

@@ -24,12 +24,21 @@ public class Article implements Serializable, Comparable<Article> {
     private boolean unread;
     private long updated;
 
+    @SuppressWarnings("deprecation")
+    private String cleanHtml(final String html) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            return Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY).toString();
+        } else {
+            return Html.fromHtml(html).toString();
+        }
+    }
+
     public String getDate() {
         return SDF.format(new Date(this.updated * 1000));
     }
 
     public String getExcerpt() {
-        return Html.fromHtml(excerpt).toString();
+        return cleanHtml(excerpt);
     }
 
     public void setExcerpt(final String excerpt) {
@@ -37,7 +46,7 @@ public class Article implements Serializable, Comparable<Article> {
     }
 
     public String getFeedTitle() {
-        return Html.fromHtml(feedTitle).toString();
+        return cleanHtml(feedTitle);
     }
 
     public void setFeedTitle(final String feedTitle) {
@@ -61,7 +70,7 @@ public class Article implements Serializable, Comparable<Article> {
     }
 
     public String getTitle() {
-        return Html.fromHtml(title).toString();
+        return cleanHtml(title);
     }
 
     public void setTitle(final String title) {
@@ -93,5 +102,22 @@ public class Article implements Serializable, Comparable<Article> {
             return 1;
         }
         return 0;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Article article = (Article) o;
+
+        return id == article.id;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
     }
 }

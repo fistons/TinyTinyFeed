@@ -39,6 +39,17 @@ public class WidgetSettingsActivity extends Activity {
 
         setTitle(getString(R.string.widget_preference_title, widgetName));
         Log.d(TAG, "Caller widget: " + this.widgetId);
+
+        findViewById(R.id.setup_check_button).setOnClickListener(v -> {
+            if (widgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+                Intent resultValue = new Intent();
+                resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
+                setResult(RESULT_OK, resultValue);
+            } else {
+                setResult(RESULT_OK);
+            }
+            finish();
+        });
     }
 
     @Override

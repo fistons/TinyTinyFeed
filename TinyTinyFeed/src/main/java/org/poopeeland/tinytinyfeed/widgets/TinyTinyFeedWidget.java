@@ -49,6 +49,12 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
     public static final String ALL_HOST_KEY = "org.poopeeland.tinytinyfeed.PREFERENCE_SSL_HOSTNAME";
     public static final String CHECKED = "org.poopeeland.tinytinyfeed.CHECKED";
     public static final String JSON_STORAGE_FILENAME_TEMPLATE = "listArticles_%d.json";
+    public static final int DEFAULT_TEXT_COLOR = 0xff000000;
+    public static final int DEFAULT_BG_COLOR = 0x80000000;
+    public static final String DEFAULT_TEXT_SIZE = "10";
+    public static final String DEFAULT_NUM_ARTICLE = "20";
+    public static final String DEFAULT_EXCERPT_SIZE = "200";
+
     private static final String TAG = "TinyTinyFeedWidget";
 
     /**
@@ -74,8 +80,8 @@ public class TinyTinyFeedWidget extends AppWidgetProvider {
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.listViewWidget);
             PendingIntent refreshIntent = actionPendingIntent(context, appWidgetIds);
             for (final int i : appWidgetIds) {
-                final int textColor = preferences.getInt(String.format(Locale.getDefault(), STATUS_COLOR_KEY, i), 0xff0000);
-                final int bgColor = preferences.getInt(String.format(Locale.getDefault(), BG_COLOR_KEY, i), 0x80000000);
+                final int textColor = preferences.getInt(String.format(Locale.getDefault(), STATUS_COLOR_KEY, i), DEFAULT_TEXT_COLOR);
+                final int bgColor = preferences.getInt(String.format(Locale.getDefault(), BG_COLOR_KEY, i), DEFAULT_BG_COLOR);
 
                 Intent intent = new Intent(context, WidgetService.class);
                 intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, i);
