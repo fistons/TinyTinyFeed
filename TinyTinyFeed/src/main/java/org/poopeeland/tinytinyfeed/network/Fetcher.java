@@ -11,7 +11,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.poopeeland.tinytinyfeed.models.Article;
-import org.poopeeland.tinytinyfeed.models.Category;
 import org.poopeeland.tinytinyfeed.models.Feed;
 import org.poopeeland.tinytinyfeed.models.JsonWrapper;
 import org.poopeeland.tinytinyfeed.network.exceptions.ApiDisabledException;
@@ -283,41 +282,6 @@ public class Fetcher {
         String session = login();
         logout(session);
         Log.d(TAG, "Connection ok!");
-    }
-
-    public List<Category> fetchCategories() throws FetchException {
-        Log.d(TAG, "Fetching categories");
-        checkIfNetworkAvailable();
-        final String sessionId = login();
-
-        final JSONObject json = new JSONObject();
-        try {
-            json.put("sid", sessionId);
-            json.put("op", "getCategories");
-            json.put("enable_nested", false);
-            json.put("include_empty", true);
-        } catch (JSONException ex) {
-            throw new FetchException(ex);
-        }
-
-        List<Category> categories = new ArrayList<>();
-        try {
-            Request request = prepareRequest(json);
-            Response response = call(request);
-            JSONObject jsonResponse = parseResponse(response);
-            JSONArray array = jsonResponse.getJSONArray("content");
-            for (int i = 0; i < array.length(); i++) {
-                JSONObject c = array.getJSONObject(i);
-                categories.add(JsonWrapper.fromJson(c.toString(), Category.class));
-            }
-        } catch (JSONException e) {
-            throw new FetchException("Error while fetching categories", e);
-        } finally {
-            logout(sessionId);
-        }
-        Log.d(TAG, "Categories fetched");
-
-        return categories;
     }
 
     public List<Feed> fetchFeeds() throws FetchException {
