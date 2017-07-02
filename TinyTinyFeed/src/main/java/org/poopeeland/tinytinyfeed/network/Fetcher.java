@@ -12,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.poopeeland.tinytinyfeed.models.Article;
 import org.poopeeland.tinytinyfeed.models.Category;
+import org.poopeeland.tinytinyfeed.models.Feed;
 import org.poopeeland.tinytinyfeed.models.JsonWrapper;
 import org.poopeeland.tinytinyfeed.network.exceptions.ApiDisabledException;
 import org.poopeeland.tinytinyfeed.network.exceptions.BadCredentialException;
@@ -33,6 +34,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -318,7 +320,53 @@ public class Fetcher {
         return categories;
     }
 
-    public List<Article> fetchFeeds(final int widgetId, final Set<String> categoryIds) throws FetchException {
+    public List<Feed> fetchFeeds() throws FetchException {
+        Log.d(TAG, "Fetching feeds");
+        checkIfNetworkAvailable();
+
+        List<Feed> regularFeeds = getSpecialFeeds("-3");
+        List<Feed> virtualFeeds = getSpecialFeeds("-1");
+
+        Log.d(TAG, "Feeds fetched");
+
+        Collections.sort(regularFeeds);
+        List<Feed> feeds = new LinkedList<>();
+        feeds.addAll(virtualFeeds);
+        feeds.addAll(regularFeeds);
+        return feeds;
+    }
+
+    private List<Feed> getSpecialFeeds(final String feedsId) throws FetchException {
+        final String sessionId = login();
+        final JSONObject json = new JSONObject();
+        try {
+            json.put("sid", sessionId);
+            json.put("op", "getFeeds");
+            json.put("cat_id", feedsId);
+        } catch (JSONException ex) {
+            throw new FetchException(ex);
+        }
+
+        List<Feed> feeds = new LinkedList<>();
+        try {
+            Request request = prepareRequest(json);
+            Response response = call(request);
+            JSONObject jsonResponse = parseResponse(response);
+            JSONArray array = jsonResponse.getJSONArray("content");
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject c = array.getJSONObject(i);
+                feeds.add(JsonWrapper.fromJson(c.toString(), Feed.class));
+            }
+        } catch (JSONException e) {
+            throw new FetchException("Error while fetching feeds", e);
+        } finally {
+            logout(sessionId);
+        }
+
+        return feeds;
+    }
+
+    public List<Article> fetchArticles(final int widgetId, final Set<String> feedsId) throws FetchException {
 
         String numArticles = preferences.getString(String.format(Locale.getDefault(), TinyTinyFeedWidget.NUM_ARTICLE_KEY, widgetId), "20");
         boolean onlyUnread = preferences.getBoolean(String.format(Locale.getDefault(), TinyTinyFeedWidget.ONLY_UNREAD_KEY, widgetId), false);
@@ -327,28 +375,28 @@ public class Fetcher {
                 , DEFAULT_EXCERPT_SIZE);
 
 
-        Log.d(TAG, "Fetching feeds for widget " + widgetId + " with categories. Only unread: " + onlyUnread);
+        Log.d(TAG, "Fetching feeds for widget " + widgetId + ". Only unread: " + onlyUnread);
         checkIfNetworkAvailable();
         String session = login();
         final List<Article> articles = new ArrayList<>();
-        for (String catId : categoryIds) {
+        for (String feedId : feedsId) {
             JSONObject jsonObject = new JSONObject();
             try {
                 jsonObject.put("sid", session);
                 jsonObject.put("op", "getHeadlines");
-                jsonObject.put("feed_id", catId);
+                jsonObject.put("feed_id", feedId);
                 jsonObject.put("limit", numArticles);
                 jsonObject.put("show_excerpt", "true");
                 jsonObject.put("excerpt_length", excerptLength);
                 jsonObject.put("force_update", forceUpdate ? "true" : "false");
-                jsonObject.put("is_cat", "true");
+                jsonObject.put("is_cat", "false");
                 jsonObject.put("view_mode", onlyUnread ? "unread" : "all_articles");
             } catch (JSONException ex) {
                 Log.e(TAG, "Json exception while creating the update article request", ex);
                 throw new FetchException(ex);
             }
 
-            Log.d(TAG, "Fetching cat. " + catId + " for widget #" + widgetId + "...");
+            Log.d(TAG, "Fetching feed " + feedId + " for widget #" + widgetId + "...");
             try {
                 Request request = prepareRequest(jsonObject);
                 Response response = call(request);
@@ -359,15 +407,17 @@ public class Fetcher {
                     articles.add(JsonWrapper.fromJson(c.toString(), Article.class));
                 }
             } catch (JSONException e) {
-                Log.e(TAG, "Error while fetching cat. " + catId + " for widget #" + widgetId + " done!", e);
+                Log.e(TAG, "Error while fetching cat. " + feedId + " for widget #" + widgetId + " done!", e);
             }
-            Log.d(TAG, "Fetching cat. " + catId + " for widget #" + widgetId + " done!");
+            Log.d(TAG, "Fetching feed " + feedId + " for widget #" + widgetId + " done!");
         }
+        logout(session);
+
         Log.d(TAG, "Fetching done for widget #" + widgetId + " " + articles.size() + " articles fetched");
 
-        Collections.sort(articles);
-        List<Article> subList = articles.subList(0, Math.min(Integer.parseInt(numArticles), articles.size()));
-        logout(session);
+        Collections.sort(articles); // Sort the collection.
+        Set<Article> s = new LinkedHashSet<>(articles); // Remove the duplicate
+        List<Article> subList = new LinkedList<>(s).subList(0, Math.min(Integer.parseInt(numArticles), articles.size())); // Retrieve only the n first elements
 
         return saveList(subList, widgetId);
     }

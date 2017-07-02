@@ -70,7 +70,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
         try {
             Log.d(TAG, "Refresh the articles list");
             Set<String> categories = pref.getStringSet(String.format(Locale.getDefault(), WIDGET_CATEGORIES_KEY, this.widgetId), Collections.emptySet());
-            this.articleList = new Fetcher(this.pref, context).fetchFeeds(this.widgetId, categories);
+            this.articleList = new Fetcher(this.pref, context).fetchArticles(this.widgetId, categories);
         } catch (FetchException ex) {
             Log.e(TAG, "Error while fetching data: " + ex.getMessage(), ex);
             this.articleList = this.loadLastList();

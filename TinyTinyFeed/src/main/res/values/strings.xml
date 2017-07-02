@@ -62,13 +62,13 @@
     <string name="nullArticle">Unable to get the article URL</string>
     <string name="widget_update_text">Updating…</string>
     <string name="widget_configuration_title">Widgets configuration</string>
-    <string name="widget_categories_title">Categories</string>
-    <string name="widget_categories_summary">Categories to display for the widget</string>
+    <string name="widget_categories_title">Feeds</string>
+    <string name="widget_categories_summary">Feeds to display for the widget</string>
     <string name="widget_preference_title">Configuration of the widget %s</string>
     <string name="widget_name_title">Name</string>
     <string name="widget_name_summary">Widget\'s name</string>
     <string name="preference_validate_button">OK</string>
-    <string name="preference_loading_categories">Loading categories…</string>
+    <string name="preference_loading_categories">Loading feeds…</string>
     <string name="preference_cant_load_categories">Could not load categories!</string>
 
 </resources>

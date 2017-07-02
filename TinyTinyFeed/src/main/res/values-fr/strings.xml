@@ -56,8 +56,8 @@
     <string name="preference_status_color_title">Coleur de la barre de status</string>
     <string name="preference_title_color_summary">Couleur des titres des articles</string>
     <string name="preference_title_color_title">Couleur des titres</string>
-    <string name="widget_categories_title">Catégories du widget</string>
-    <string name="widget_categories_summary">Catégories à afficher pour le widget</string>
+    <string name="widget_categories_title">Flux</string>
+    <string name="widget_categories_summary">Flux à afficher pour le widget</string>
     <string name="preference_force_update_title">Force la mise à jour du serveur</string>
     <string name="preference_force_update_summary">Force tt-rss à mettre à jour les flux</string>
     <string name="widget_configuration_title">Configuration des widgets</string>
@@ -65,6 +65,6 @@
     <string name="widget_name_title">Nom</string>
     <string name="widget_name_summary">Nom du widget</string>
     <string name="preference_validate_button">OK</string>
-    <string name="preference_loading_categories">Chargement des catégories…</string>
+    <string name="preference_loading_categories">Chargement des flux…</string>
     <string name="preference_cant_load_categories">Impossible de charger les categories!</string>
 </resources>

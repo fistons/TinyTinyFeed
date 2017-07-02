@@ -18,7 +18,7 @@ import com.rarepebble.colorpicker.ColorPreference;
 
 import org.poopeeland.tinytinyfeed.R;
 import org.poopeeland.tinytinyfeed.interfaces.TrimmedEditTextPreference;
-import org.poopeeland.tinytinyfeed.models.Category;
+import org.poopeeland.tinytinyfeed.models.Feed;
 import org.poopeeland.tinytinyfeed.network.Fetcher;
 import org.poopeeland.tinytinyfeed.network.exceptions.FetchException;
 import org.poopeeland.tinytinyfeed.utils.ExceptionAsyncTask;
@@ -297,16 +297,14 @@ public class WidgetSettingsFragment extends PreferenceFragment {
         SharedPreferences preferences = screen.getSharedPreferences();
         if (!preferences.contains(categoriesKey)) {
             Set<String> values = new HashSet<>();
-            for (int i = 0; i < entryValues.length - 3; i++) {
-                values.add(entryValues[i].toString());
-            }
+            values.add("-4");
             p.setValues(values);
             preferences.edit().putStringSet(categoriesKey, values).apply();
         }
         screen.addPreference(p);
     }
 
-    private class AsyncCategoryFetcher extends ExceptionAsyncTask<Void, Void, List<Category>> {
+    private class AsyncCategoryFetcher extends ExceptionAsyncTask<Void, Void, List<Feed>> {
 
         private final Context context;
         private final Resources res;
@@ -332,12 +330,12 @@ public class WidgetSettingsFragment extends PreferenceFragment {
         }
 
         @Override
-        protected List<Category> doInBackground() throws FetchException {
-            return fetcher.fetchCategories();
+        protected List<Feed> doInBackground() throws FetchException {
+            return fetcher.fetchFeeds();
         }
 
         @Override
-        protected void onSafePostExecute(final List<Category> categories) {
+        protected void onSafePostExecute(final List<Feed> feeds) {
             if (onError()) {
                 loadingPreferences.setSummary(R.string.preference_cant_load_categories);
                 return;
@@ -346,9 +344,9 @@ public class WidgetSettingsFragment extends PreferenceFragment {
             final List<CharSequence> entriesList = new ArrayList<>();
             final List<CharSequence> entryValuesList = new ArrayList<>();
 
-            for (Category c : categories) {
-                entryValuesList.add(c.getId());
-                entriesList.add(c.getTitle());
+            for (Feed d : feeds) {
+                entryValuesList.add(d.getId());
+                entriesList.add(d.getTitle());
             }
             final CharSequence[] entries = entriesList.toArray(new CharSequence[entriesList.size()]);
             final CharSequence[] entryValues = entryValuesList.toArray(new CharSequence[entryValuesList.size()]);
