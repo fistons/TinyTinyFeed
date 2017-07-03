@@ -2,9 +2,8 @@ TinyTinyFeed
 ============
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/af9db032239d4b8ea7c240ccad3a4935)](https://www.codacy.com/app/fistons/TinyTinyFeed?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=fistons/TinyTinyFeed&amp;utm_campaign=Badge_Grade)
-[![Get it on Google Play](https://play.google.com/store/apps/details?id=org.poopeeland.tinytinyfeed&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)](https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png)
 
-**You can get it from the Play Store [here](https://play.google.com/store/apps/details?id=org.poopeeland.tinytinyfeed)**
+[<img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" alt="Download from Google Play" height="80">](https://play.google.com/store/apps/details?id=org.poopeeland.tinytinyfeed)
 
 ## Introduction
 
