@@ -21,7 +21,6 @@ import org.poopeeland.tinytinyfeed.network.exceptions.HttpAuthException;
 import org.poopeeland.tinytinyfeed.network.exceptions.NoInternetException;
 import org.poopeeland.tinytinyfeed.network.exceptions.NotLoggedException;
 import org.poopeeland.tinytinyfeed.network.exceptions.SslException;
-import org.poopeeland.tinytinyfeed.widgets.TinyTinyFeedWidget;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -58,7 +57,7 @@ import okhttp3.ResponseBody;
 import static org.poopeeland.tinytinyfeed.widgets.TinyTinyFeedWidget.*;
 
 /**
- * Fetch the datas.
+ * Fetch the data.
  * Created by eric on 28/05/17.
  */
 
@@ -105,13 +104,13 @@ public class Fetcher {
     public Fetcher(final SharedPreferences preferences, final Context context) throws FetchException {
         this.context = context;
         this.preferences = preferences;
-        this.url = preferences.getString(TinyTinyFeedWidget.URL_KEY, "") + "/api/";
-        this.user = preferences.getString(TinyTinyFeedWidget.USER_KEY, "");
-        this.password = preferences.getString(TinyTinyFeedWidget.PASSWORD_KEY, "");
-        this.allowAllSslKey = preferences.getBoolean(TinyTinyFeedWidget.ALL_SLL_KEY, false);
-        this.allowAllSslHost = preferences.getBoolean(TinyTinyFeedWidget.ALL_HOST_KEY, false);
-        this.httpAuthUser = preferences.getString(TinyTinyFeedWidget.HTTP_USER_KEY, "");
-        this.httpAuthPassword = preferences.getString(TinyTinyFeedWidget.HTTP_PASSWORD_KEY, "");
+        this.url = preferences.getString(URL_KEY, "") + "/api/";
+        this.user = preferences.getString(USER_KEY, "");
+        this.password = preferences.getString(PASSWORD_KEY, "");
+        this.allowAllSslKey = preferences.getBoolean(ALL_SLL_KEY, false);
+        this.allowAllSslHost = preferences.getBoolean(ALL_HOST_KEY, false);
+        this.httpAuthUser = preferences.getString(HTTP_USER_KEY, "");
+        this.httpAuthPassword = preferences.getString(HTTP_PASSWORD_KEY, "");
         this.filenameTemplate = context.getApplicationContext().getFilesDir() + File.separator + JSON_STORAGE_FILENAME_TEMPLATE;
 
         try {
@@ -332,10 +331,10 @@ public class Fetcher {
 
     public List<Article> fetchArticles(final int widgetId, final Set<String> feedsId) throws FetchException {
 
-        String numArticles = preferences.getString(String.format(Locale.getDefault(), TinyTinyFeedWidget.NUM_ARTICLE_KEY, widgetId), "20");
-        boolean onlyUnread = preferences.getBoolean(String.format(Locale.getDefault(), TinyTinyFeedWidget.ONLY_UNREAD_KEY, widgetId), false);
-        boolean forceUpdate = preferences.getBoolean(String.format(Locale.getDefault(), TinyTinyFeedWidget.FORCE_UPDATE_KEY, widgetId), false);
-        String excerptLength = preferences.getString(String.format(Locale.getDefault(), TinyTinyFeedWidget.EXCERPT_LENGTH_KEY, widgetId)
+        String numArticles = preferences.getString(String.format(Locale.getDefault(), NUM_ARTICLE_KEY, widgetId), DEFAULT_NUM_ARTICLE);
+        boolean onlyUnread = preferences.getBoolean(String.format(Locale.getDefault(), ONLY_UNREAD_KEY, widgetId), false);
+        boolean forceUpdate = preferences.getBoolean(String.format(Locale.getDefault(), FORCE_UPDATE_KEY, widgetId), false);
+        String excerptLength = preferences.getString(String.format(Locale.getDefault(), EXCERPT_LENGTH_KEY, widgetId)
                 , DEFAULT_EXCERPT_SIZE);
 
 

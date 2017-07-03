@@ -14,7 +14,6 @@ import org.poopeeland.tinytinyfeed.R;
 import org.poopeeland.tinytinyfeed.models.Article;
 import org.poopeeland.tinytinyfeed.network.Fetcher;
 import org.poopeeland.tinytinyfeed.network.exceptions.FetchException;
-import org.poopeeland.tinytinyfeed.widgets.TinyTinyFeedWidget;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -130,7 +129,7 @@ public class ListProvider implements RemoteViewsService.RemoteViewsFactory {
     }
 
     private String getTitle(final Article article) {
-        return this.pref.getBoolean(String.format(Locale.getDefault(), TinyTinyFeedWidget.ONLY_UNREAD_KEY, widgetId), false)
+        return this.pref.getBoolean(String.format(Locale.getDefault(), ONLY_UNREAD_KEY, widgetId), false)
                 || !article.isUnread() ? article.getTitle() : String.format("%s %s", unreadSymbol, article.getTitle());
     }
 
