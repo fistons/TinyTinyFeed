@@ -4,7 +4,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.3'
+        classpath 'com.android.tools.build:gradle:3.0.0'
     }
 
 
@@ -18,14 +18,14 @@ repositories {
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26"
+    buildToolsVersion '26.0.2'
 
     dependencies {
         compile 'com.rarepebble:colorpicker:2.2.0'
         compile('commons-validator:commons-validator:1.4.0') {
             exclude group: 'commons-logging', module: 'commons-logging'
         }
-        compile 'com.google.code.gson:gson:2.7'
+        compile 'com.google.code.gson:gson:2.8.0'
         compile 'com.squareup.okhttp3:okhttp:3.8.0'
     }
 
@@ -33,10 +33,6 @@ android {
         minSdkVersion 19
         targetSdkVersion 26
         versionCode 22
-
-        jackOptions {
-            enabled true
-        }
     }
 
     compileOptions {
