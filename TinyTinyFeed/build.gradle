@@ -34,6 +34,8 @@ android {
         minSdkVersion 19
         targetSdkVersion 26
         versionCode 22
+        versionName "1.12"
+        applicationId "org.poopeeland.tinytinyfeed"
     }
 
     compileOptions {
