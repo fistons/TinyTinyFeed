@@ -23,7 +23,7 @@ android {
 
     dependencies {
         compile 'com.rarepebble:colorpicker:2.2.0'
-        compile('commons-validator:commons-validator:1.4.0') {
+        compile('commons-validator:commons-validator:1.6') {
             exclude group: 'commons-logging', module: 'commons-logging'
         }
         compile 'com.google.code.gson:gson:2.8.0'
