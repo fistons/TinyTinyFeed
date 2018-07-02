@@ -11,8 +11,7 @@
         android:layout_above="@+id/refreshButton"
         android:layout_gravity="start|top"
         android:clickable="true"
-        android:fastScrollAlwaysVisible="false"
-        android:fastScrollEnabled="true" />
+        android:focusable="true" />
 
     <TextView
         android:id="@+id/widgetEmptyList"
