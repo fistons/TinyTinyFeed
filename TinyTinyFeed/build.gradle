@@ -27,8 +27,8 @@ android {
         api('commons-validator:commons-validator:1.6') {
             exclude group: 'commons-logging', module: 'commons-logging'
         }
-        api 'com.google.code.gson:gson:2.8.0'
-        api 'com.squareup.okhttp3:okhttp:3.8.0'
+        api 'com.google.code.gson:gson:2.8.5'
+        api 'com.squareup.okhttp3:okhttp:3.10.0'
     }
 
     defaultConfig {
