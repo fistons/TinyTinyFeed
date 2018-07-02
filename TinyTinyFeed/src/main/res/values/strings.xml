@@ -38,7 +38,7 @@
     <string name="preference_ttrss_url_default_value" translatable="false">http://</string>
     <string name="preference_ttrss_url_not_null_or_default">Please enter a valid url</string>
     <string name="preference_unread_only_summary">Check this if you want to retrieve only the unread articles</string>
-    <string name="preference_background_color_title">Backgroung color</string>
+    <string name="preference_background_color_title">Background color</string>
     <string name="preference_background_color_summary">Color of the background of the widget</string>
     <string name="preference_text_color_title">Text color</string>
     <string name="preference_text_color_summary">Color of the article\'s text</string>
