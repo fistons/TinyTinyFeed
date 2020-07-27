@@ -29,7 +29,9 @@ import java.io.ObjectOutputStream;
 import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -38,12 +40,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLHandshakeException;
-import javax.net.ssl.SSLPeerUnverifiedException;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
+import javax.net.ssl.*;
 
 import okhttp3.Call;
 import okhttp3.Credentials;
@@ -68,19 +65,19 @@ public class Fetcher {
             new X509TrustManager() {
                 @Override
                 @SuppressLint("TrustAllX509TrustManager")
-                public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
                     // Do nothing because everybody is beautiful
                 }
 
                 @Override
                 @SuppressLint("TrustAllX509TrustManager")
-                public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
                     // Do nothing because everything is awesome
                 }
 
                 @Override
-                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                    return new java.security.cert.X509Certificate[]{};
+                public X509Certificate[] getAcceptedIssuers() {
+                    return new X509Certificate[]{};
                 }
             }
     };
@@ -198,7 +195,12 @@ public class Fetcher {
 
         // Install the all-trusting trust manager
         final SSLContext sslContext = SSLContext.getInstance("SSL");
-        sslContext.init(null, TRUST_ALL_CERTS, new java.security.SecureRandom());
+        sslContext.init(null, TRUST_ALL_CERTS, new SecureRandom());
+        SSLSessionContext sslSessionContext = sslContext.getServerSessionContext();
+        int sessionCacheSize = sslSessionContext.getSessionCacheSize();
+        if (sessionCacheSize > 0) {
+            sslSessionContext.setSessionCacheSize(0);
+        }
 
         // Create an ssl socket factory with our all-trusting manager
         final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
