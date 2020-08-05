@@ -40,7 +40,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import javax.net.ssl.*;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLHandshakeException;
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import javax.net.ssl.SSLSessionContext;
 
 import okhttp3.Call;
 import okhttp3.Credentials;
