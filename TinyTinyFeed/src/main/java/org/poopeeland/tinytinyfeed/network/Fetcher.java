@@ -29,9 +29,7 @@ import java.io.ObjectOutputStream;
 import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -71,19 +69,19 @@ public class Fetcher {
             new X509TrustManager() {
                 @Override
                 @SuppressLint("TrustAllX509TrustManager")
-                public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
                     // Do nothing because everybody is beautiful
                 }
 
                 @Override
                 @SuppressLint("TrustAllX509TrustManager")
-                public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
                     // Do nothing because everything is awesome
                 }
 
                 @Override
-                public X509Certificate[] getAcceptedIssuers() {
-                    return new X509Certificate[]{};
+                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                    return new java.security.cert.X509Certificate[]{};
                 }
             }
     };
