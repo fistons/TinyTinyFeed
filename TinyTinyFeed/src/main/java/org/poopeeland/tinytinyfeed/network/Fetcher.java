@@ -44,6 +44,7 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import javax.net.ssl.SSLSessionContext;
 
 import okhttp3.Call;
 import okhttp3.Credentials;
@@ -198,7 +199,12 @@ public class Fetcher {
 
         // Install the all-trusting trust manager
         final SSLContext sslContext = SSLContext.getInstance("SSL");
-        sslContext.init(null, TRUST_ALL_CERTS, new java.security.SecureRandom());
+        sslContext.init(null, TRUST_ALL_CERTS, new SecureRandom());
+        SSLSessionContext sslSessionContext = sslContext.getServerSessionContext();
+        int sessionCacheSize = sslSessionContext.getSessionCacheSize();
+        if (sessionCacheSize > 0) {
+            sslSessionContext.setSessionCacheSize(0);
+        }
 
         // Create an ssl socket factory with our all-trusting manager
         final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
