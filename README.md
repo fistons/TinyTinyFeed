@@ -1,7 +1,9 @@
 TinyTinyFeed
 ============
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/af9db032239d4b8ea7c240ccad3a4935)](https://www.codacy.com/app/fistons/TinyTinyFeed?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=fistons/TinyTinyFeed&amp;utm_campaign=Badge_Grade)
+# **Your attention please**
+# **This project won't be updated anymore**
+# **Thank you.**
 
 [<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/org.poopeeland.tinytinyfeed/)
 [<img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" alt="Get it on Google Play" height="80">](https://play.google.com/store/apps/details?id=org.poopeeland.tinytinyfeed)
